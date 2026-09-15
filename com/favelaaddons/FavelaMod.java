@@ -189,7 +189,7 @@ public class FavelaMod implements ClientModInitializer {
 
          for(String trigger : Config.parsedSoundTriggers) {
             if (!trigger.isEmpty() && lowerChat.contains(trigger)) {
-               System.out.println("[FA Sound] Trigger matched: '" + trigger + "'");
+
                playExternalSound();
                break;
             }

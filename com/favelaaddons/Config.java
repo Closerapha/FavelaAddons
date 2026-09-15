@@ -231,7 +231,7 @@ public class Config {
 
             reader.close();
          } catch (IOException var5) {
-            System.out.println("Error loading FavelaClient configurations.");
+            System.out.println("Error loading FavelaAddons configurations.");
          }
       } else {
          save();
@@ -254,7 +254,6 @@ public class Config {
             try {
                if (in != null) {
                   Files.copy(in, soundFile.toPath(), new CopyOption[]{StandardCopyOption.REPLACE_EXISTING});
-                  System.out.println("[FavelaAddons] Default favela_alerta.wav file extracted successfully.");
                } else {
                   System.out.println("[FavelaAddons] Warning: favela_alerta.wav not found inside mod resources.");
                }
@@ -304,7 +303,7 @@ public class Config {
 
          writer.close();
       } catch (IOException var5) {
-         System.out.println("Error saving FavelaClient configurations.");
+         System.out.println("Error saving FavelaAddons configurations.");
       }
 
    }

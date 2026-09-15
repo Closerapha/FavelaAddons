@@ -24,7 +24,7 @@ public class FavelaModMenu implements ModMenuApi {
 
    public ConfigScreenFactory<?> getModConfigScreenFactory() {
       return (parent) -> {
-         ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(Component.literal("FavelaClient"));
+         ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(Component.literal("FavelaAddons"));
          ConfigEntryBuilder entryBuilder = builder.entryBuilder();
          ConfigCategory qol = builder.getOrCreateCategory(Component.literal("QOL"));
 
@@ -52,7 +52,7 @@ public class FavelaModMenu implements ModMenuApi {
          qol.addEntry(entryBuilder.startSubCategory(Component.literal("Traps"), secTraps).setExpanded(false).build());
 
          List<AbstractConfigListEntry> secCalls = new ArrayList();
-         secCalls.add(entryBuilder.startBooleanToggle(Component.literal("Ambush and Deathmark"), Config.calls).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Calls the party plays for itself while a boss bar is up:"), Component.literal("it watches the bar and shouts at the percentages below."), Component.literal("Drag the text with /fa editarHUD.")}).setSaveConsumer((newValue) -> Config.calls = newValue).build());
+         secCalls.add(entryBuilder.startBooleanToggle(Component.literal("Ambush and Deathmark"), Config.calls).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Calls the party plays for itself while a boss bar is up:"), Component.literal("it watches the bar and shouts at the percentages below."), Component.literal("Drag the text with /fa hud.")}).setSaveConsumer((newValue) -> Config.calls = newValue).build());
          secCalls.add(entryBuilder.startIntField(Component.literal("Call Ambush At (%)"), Config.ambushAt).setDefaultValue(65).setMin(1).setMax(100).setSaveConsumer((newValue) -> Config.ambushAt = newValue).build());
          secCalls.add(entryBuilder.startStrField(Component.literal("Ambush Text"), Config.ambushText).setDefaultValue("AMBUSH").setSaveConsumer((newValue) -> Config.ambushText = newValue).build());
          secCalls.add(entryBuilder.startIntField(Component.literal("Call Deathmark At (%)"), Config.deathmarkAt).setDefaultValue(40).setMin(1).setMax(100).setSaveConsumer((newValue) -> Config.deathmarkAt = newValue).build());
@@ -69,7 +69,7 @@ public class FavelaModMenu implements ModMenuApi {
          qol.addEntry(entryBuilder.startSubCategory(Component.literal("Primed Timer"), secPrimed).setExpanded(false).build());
 
          List<AbstractConfigListEntry> secBossHp = new ArrayList();
-         secBossHp.add(entryBuilder.startBooleanToggle(Component.literal("Boss HP Percent"), Config.bossHp).setDefaultValue(true).setTooltip(new Component[]{Component.literal("Reads the boss bar on screen and shows its health"), Component.literal("as a number. Drag it with /fa editarHUD.")}).setSaveConsumer((newValue) -> Config.bossHp = newValue).build());
+         secBossHp.add(entryBuilder.startBooleanToggle(Component.literal("Boss HP Percent"), Config.bossHp).setDefaultValue(true).setTooltip(new Component[]{Component.literal("Reads the boss bar on screen and shows its health"), Component.literal("as a number. Drag it with /fa hud.")}).setSaveConsumer((newValue) -> Config.bossHp = newValue).build());
          secBossHp.add(entryBuilder.startStrField(Component.literal("Label"), Config.bossHpLabel).setDefaultValue("Boss ").setTooltip(new Component[]{Component.literal("Text before the number. Leave empty for just the percent.")}).setSaveConsumer((newValue) -> Config.bossHpLabel = newValue).build());
          secBossHp.add(entryBuilder.startIntField(Component.literal("Decimals"), Config.bossHpDecimals).setDefaultValue(1).setMin(0).setMax(3).setTooltip(new Component[]{Component.literal("0 shows 85%, 1 shows 85.3%.")}).setSaveConsumer((newValue) -> Config.bossHpDecimals = newValue).build());
          secBossHp.add(entryBuilder.startBooleanToggle(Component.literal("Colour By Health"), Config.bossHpColorByHealth).setDefaultValue(true).setTooltip(new Component[]{Component.literal("Green above 60%, yellow above 25%, red below."), Component.literal("Turn off to use the fixed colour below.")}).setSaveConsumer((newValue) -> Config.bossHpColorByHealth = newValue).build());
@@ -81,7 +81,7 @@ public class FavelaModMenu implements ModMenuApi {
 
 
          ConfigCategory livesplits = builder.getOrCreateCategory(Component.literal("Livesplits"));
-         livesplits.addEntry(entryBuilder.startBooleanToggle(Component.literal("Boss Splits"), Config.splits).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Times each boss and its phases like a speedrun."), Component.literal("A killed boss collapses into one line with its total."), Component.literal("Drag the panel with /fa editarHUD.")}).setSaveConsumer((newValue) -> Config.splits = newValue).build());
+         livesplits.addEntry(entryBuilder.startBooleanToggle(Component.literal("Boss Splits"), Config.splits).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Times each boss and its phases like a speedrun."), Component.literal("A killed boss collapses into one line with its total."), Component.literal("Drag the panel with /fa hud.")}).setSaveConsumer((newValue) -> Config.splits = newValue).build());
          livesplits.addEntry(entryBuilder.startBooleanToggle(Component.literal("Show Phases"), Config.splitsShowPhases).setDefaultValue(true).setTooltip(new Component[]{Component.literal("Lists the phases of the boss you are fighting.")}).setSaveConsumer((newValue) -> Config.splitsShowPhases = newValue).build());
          livesplits.addEntry(entryBuilder.startIntField(Component.literal("Panel Width"), Config.splitsWidth).setDefaultValue(300).setMin(60).setMax(600).setTooltip(new Component[]{Component.literal("Where the times line up on the right.")}).setSaveConsumer((newValue) -> Config.splitsWidth = newValue).build());
 

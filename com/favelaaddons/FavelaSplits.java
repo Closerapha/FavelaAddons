@@ -138,7 +138,6 @@ public class FavelaSplits {
             saveTable();
          }
 
-         System.out.println("[FA Splits] Loaded " + ROUTES.size() + " route(s) from splits.json");
       } catch (Exception e) {
          System.out.println("[FA Splits] Could not read splits.json: " + e.getMessage());
       }
@@ -437,6 +436,7 @@ public class FavelaSplits {
                return;
             }
          }
+
 
       }
    }

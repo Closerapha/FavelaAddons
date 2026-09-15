@@ -1,58 +1,45 @@
 # FavelaAddons
 
-Mod cliente para Fabric, Minecraft 26.1.2, feito para o servidor Telos Realms.
+A Fabric client mod for Minecraft 26.1.2, built for the Telos Realms server.
 
 ## Features
 
-**QOL**
+**Quality of life**
 
-- Alerts por palavra no chat, com texto e cor configuráveis
-- Medidor de DPS
-- Sons por gatilho de chat
-- Contador de traps
-- Calls de Ambush e Deathmark por porcentagem de vida do boss
-- Porcentagem de vida do boss na tela
+- Chat alerts on a keyword, with configurable text and colour
+- DPS meter
+- Sounds on a chat trigger
+- Trap counter
+- Ambush and Deathmark calls by boss health percentage
+- Boss health percentage on screen
 
 **Livesplits**
 
-Cronometragem de dungeons no estilo LiveSplit, com fases de boss como sub-splits.
+LiveSplit-style dungeon timing, with boss phases as sub-splits.
 
-- Início automático da run pelo portal, descontando o tempo já decorrido no contador do portal
-- Splits por mensagem de chat, por porcentagem de vida do boss ou por portal
-- Comparação com o personal best a cada checkpoint, com as cores do LiveSplit
-- Gold splits por segmento
-- Fases do boss recolhem quando ele morre
+- Runs start on their own when the portal shows up, discounting the time already burned off the portal's countdown
+- Segments close on a chat line, a boss health percentage, or another portal
+- Live comparison against your personal best at every checkpoint, using the LiveSplit colours
+- Gold splits per segment
+- Boss phases collapse once the boss is down
 
-Todos os elementos de tela são arrastáveis por `/fa editarHUD`.
+Every on-screen element is draggable through `/fa hud`.
 
-## Comandos
+## Commands
 
-| Comando | O que faz |
+| Command | What it does |
 | --- | --- |
-| `/fa` | Abre o menu de configuração |
-| `/fa help` | Lista os comandos |
-| `/fa editarHUD` | Move os textos na tela |
-| `/fa testar` | Testa o texto e o som do alerta |
-| `/fa som` | Testa o som do alerta |
-| `/fa split` | Fecha o segmento atual |
-| `/fa split delete` | Desfaz o último split |
-| `/fa split cancel` | Cancela a run atual |
-| `/fa split reset` | Apaga os personal bests |
-| `/fa split status` | Mostra o cue que o mod está esperando |
-| `/fa splits` | Recarrega e lista as rotas |
-| `/fa splits pb [dungeon]` | Mostra o personal best |
-| `/fa splits iniciar <dungeon>` | Inicia uma run manualmente |
+| `/fa` | Opens the config menu |
+| `/fa help` | Lists the commands |
+| `/fa hud` | Moves the on-screen texts |
+| `/fa test` | Tests the alert text and the sound |
+| `/fa sound` | Tests the alert sound |
+| `/fa split` | Closes the current segment |
+| `/fa split delete` | Undoes the last split |
+| `/fa split cancel` | Cancels the current run |
+| `/fa split reset` | Wipes every personal best |
+| `/fa split status` | Shows the cue the mod is waiting for |
+| `/fa splits` | Reloads and lists the routes |
+| `/fa splits pb [dungeon]` | Shows your personal best |
+| `/fa splits start <dungeon>` | Starts a run by hand |
 
-## Configuração
-
-Fica em `config/favelaaddons/`:
-
-- `favelaaddons.json` — opções do menu
-- `splits.json` — rotas, segmentos e cues do Livesplits
-- `pb.json` — personal bests e golds
-
-As rotas do Livesplits são editáveis: cada dungeon tem uma lista de segmentos, e cada segmento fecha por um cue de chat (`chat`), por um portal (`portal`), por porcentagem de vida (`hp`) ou pelo fim da boss bar (`bossKill`). Sub-splits vão no campo `children`.
-
-## Build
-
-Não usa Gradle. Compila com `javac --release 21` contra uma cópia do jar do Minecraft com o access widener aplicado, e é empacotado com `jar`.

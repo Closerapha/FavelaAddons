@@ -107,7 +107,7 @@ public class FavelaMod implements ClientModInitializer {
             return 1;
          });
          root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("help").executes((context) -> {
-            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Commands:\n§e/fa §7- Opens Mod Menu\n§e/fa help §7- Shows this help\n§e/fa editarHUD §7- Moves the on-screen texts\n§e/fa testar §7- Tests the alert text and the sound\n§e/fa som §7- Tests the alert sound§e/fa splits §7- Limpa e recarrega os splits\n§e/fa splits pb [dungeon] §7- Mostra o personal best\n§e/fa splits iniciar <dungeon> §7- Inicia a run manualmente\n§e/fa split §7- Fecha o segmento atual\n§e/fa split delete §7- Desfaz o ultimo split\n§e/fa split cancel §7- Cancela a run atual\n§e/fa split status §7- Mostra o cue que o mod esta esperando\n§e/fa split reset §7- Apaga todos os personal bests\n"));
+            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Commands:\n§e/fa §7- Opens Mod Menu\n§e/fa help §7- Shows this help\n§e/fa hud §7- Moves the on-screen texts\n§e/fa test §7- Tests the alert text and the sound\n§e/fa sound §7- Tests the alert sound\n§e/fa splits §7- Reloads the split routes\n§e/fa splits pb [dungeon] §7- Shows your personal best\n§e/fa splits start <dungeon> §7- Starts a run by hand\n§e/fa split §7- Closes the current segment\n§e/fa split delete §7- Undoes the last split\n§e/fa split cancel §7- Cancels the current run\n§e/fa split status §7- Shows the cue the mod is waiting for\n§e/fa split reset §7- Wipes every personal best\n"));
             return 1;
          }));
 
@@ -130,7 +130,7 @@ public class FavelaMod implements ClientModInitializer {
          root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("splits").executes((context) -> {
             FavelaSplits.reset();
             FavelaSplits.loadTable();
-            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Splits limpos, " + FavelaSplits.tableSize() + " dungeon(s) carregadas de config/favelaaddons/splits.json" + FavelaSplits.listRoutes()));
+            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Splits reloaded, " + FavelaSplits.tableSize() + " dungeon(s) loaded from config/favelaaddons/splits.json" + FavelaSplits.listRoutes()));
             return 1;
          }).then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("pb").executes((context) -> {
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] " + FavelaSplits.personalBests("")));
@@ -138,14 +138,14 @@ public class FavelaMod implements ClientModInitializer {
          }).then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("dungeon", StringArgumentType.greedyString()).executes((context) -> {
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] " + FavelaSplits.personalBests(StringArgumentType.getString(context, "dungeon"))));
             return 1;
-         }))).then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("iniciar").then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("dungeon", StringArgumentType.greedyString()).executes((context) -> {
+         }))).then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("start").then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("dungeon", StringArgumentType.greedyString()).executes((context) -> {
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] " + FavelaSplits.manualStart(StringArgumentType.getString(context, "dungeon"))));
             return 1;
          }))).then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("split").executes((context) -> {
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] " + FavelaSplits.forceSplit()));
             return 1;
          })));
-         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("som").executes((context) -> {
+         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("sound").executes((context) -> {
             File folder = new File(FabricLoader.getInstance().getConfigDir().toFile(), "favelaaddons");
             File file = new File(folder, "favela_alerta.wav");
             String state = file.exists() ? "§afound (" + file.length() / 1024L + " KB)" : "§cmissing";
@@ -159,7 +159,7 @@ public class FavelaMod implements ClientModInitializer {
             playExternalSound();
             return 1;
          }));
-         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("testar").executes((context) -> {
+         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("test").executes((context) -> {
             alertTimeRemaining = Config.alertTime;
             aliveOrDeadMessage = Config.alertText;
             aliveOrDeadColor = 0;
@@ -167,7 +167,7 @@ public class FavelaMod implements ClientModInitializer {
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Alert test activated - on-screen text and sound."));
             return 1;
          }));
-         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("editarHUD").executes((context) -> {
+         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("hud").executes((context) -> {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new AlertHudEditorScreen(Component.literal("HUD Editor"))));
             return 1;
          }));

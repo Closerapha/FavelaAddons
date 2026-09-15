@@ -303,7 +303,7 @@ public class FavelaSplits {
 
       for(Route route : ROUTES) {
          String portal = route.portal == null || route.portal.trim().isEmpty() ? "§c(auto: " + portalKey(route) + ")" : "§7portal=§f" + route.portal.trim();
-         portal = portal + (route.portalStart != null && route.portalStart > 0 ? " §8start=" + route.portalStart + "s" : " §8sem offset");
+         portal = portal + (route.portalStart != null && route.portalStart > 0 ? " §8start=" + route.portalStart + "s" : " §8no offset");
          text.append("\n§e").append(route.dungeon).append(" §8[").append(route.segments.length).append("] ").append(portal);
       }
 
@@ -313,17 +313,17 @@ public class FavelaSplits {
    public static String manualStart(String query) {
       Route route = find(query);
       if (route == null) {
-         return "§cNenhuma dungeon com esse nome." + listRoutes();
+         return "§cNo dungeon by that name." + listRoutes();
       } else {
          start(route);
-         return "§aRun iniciada: §e" + route.dungeon;
+         return "§aRun started: §e" + route.dungeon;
       }
    }
 
    public static String forceSplit() {
       Segment segment = current();
       if (active == null || segment == null) {
-         return "§cNenhuma run ativa.";
+         return "§cNo run in progress.";
       } else {
          closeSegment(segment);
          return "§aSplit: §e" + segment.name;
@@ -755,9 +755,9 @@ public class FavelaSplits {
 
    public static String deleteLastSplit() {
       if (active == null) {
-         return "§cNenhuma run ativa.";
+         return "§cNo run in progress.";
       } else if (segmentIndex <= 0) {
-         return "§cNenhum split para desfazer.";
+         return "§cNothing to undo.";
       } else {
          Step curr = (Step)steps.get(segmentIndex);
          if (curr.row != null) {
@@ -780,7 +780,7 @@ public class FavelaSplits {
          if (segmentIndex < 0) {
             segmentIndex = 0;
             openStep(System.currentTimeMillis());
-            return "§cNenhum split para desfazer.";
+            return "§cNothing to undo.";
          } else {
             Step prev = (Step)steps.get(segmentIndex);
             prev.armed = false;
@@ -798,15 +798,15 @@ public class FavelaSplits {
                }
             }
 
-            return "§aSplit desfeito, voltou para §e" + prev.name;
+            return "§aSplit undone, back to §e" + prev.name;
          }
       }
    }
 
    public static String status() {
       if (active == null) {
-         StringBuilder text = new StringBuilder("§cNenhuma run ativa.");
-         text.append("\n§7Portais que iniciam uma run:");
+         StringBuilder text = new StringBuilder("§cNo run in progress.");
+         text.append("\n§7Portals that start a run:");
 
          for(Route route : ROUTES) {
             text.append("\n §e").append(route.dungeon).append(" §7<- §f").append(portalKey(route));
@@ -818,25 +818,25 @@ public class FavelaSplits {
          text.append("§7Run: §e").append(active.dungeon).append(" §f").append(formatTime(System.currentTimeMillis() - runStart));
          Step step = segmentIndex < steps.size() ? (Step)steps.get(segmentIndex) : null;
          if (step == null) {
-            return text.append("\n§7Sem segmento atual.").toString();
+            return text.append("\n§7No current segment.").toString();
          } else {
-            text.append("\n§7Segmento: §e").append(step.key);
+            text.append("\n§7Segment: §e").append(step.key);
             Segment segment = step.segment;
             if (segment != null) {
                if (segment.chatArm != null && !segment.chatArm.trim().isEmpty()) {
-                  text.append("\n§7Pre-requisito: §f").append(segment.chatArm).append(step.armed ? " §a[ja veio]" : " §c[aguardando]");
+                  text.append("\n§7Requires first: §f").append(segment.chatArm).append(step.armed ? " §a[seen]" : " §c[waiting]");
                }
 
                if (segment.chat != null && !segment.chat.trim().isEmpty()) {
-                  text.append("\n§7Esperando chat: §f").append(segment.chat);
+                  text.append("\n§7Waiting for chat: §f").append(segment.chat);
                }
 
                if (segment.portal != null && !segment.portal.trim().isEmpty()) {
-                  text.append("\n§7Esperando portal: §f").append(segment.portal);
+                  text.append("\n§7Waiting for portal: §f").append(segment.portal);
                }
 
                if ((segment.chat == null || segment.chat.trim().isEmpty()) && (segment.portal == null || segment.portal.trim().isEmpty())) {
-                  text.append("\n§cEste segmento nao tem cue nenhum.");
+                  text.append("\n§cThis segment has no cue at all.");
                }
             }
 
@@ -847,11 +847,11 @@ public class FavelaSplits {
 
    public static String cancelRun() {
       if (active == null) {
-         return "§cNenhuma run ativa.";
+         return "§cNo run in progress.";
       } else {
          String dungeon = active.dungeon;
          stop();
-         return "§aRun cancelada: §e" + dungeon;
+         return "§aRun cancelled: §e" + dungeon;
       }
    }
 
@@ -867,12 +867,12 @@ public class FavelaSplits {
       } catch (Exception var3) {
       }
 
-      return "§a" + count + " personal best(s) apagados.";
+      return "§a" + count + " personal best(s) wiped.";
    }
 
    public static String personalBests(String query) {
       if (bests.isEmpty()) {
-         return "§7Nenhum personal best ainda.";
+         return "§7No personal bests yet.";
       } else {
          String needle = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
          StringBuilder text = new StringBuilder();
@@ -883,7 +883,7 @@ public class FavelaSplits {
                text.append("\n §e").append(entry.getKey()).append(" §f").append(formatTime(((Best)entry.getValue()).total));
             }
 
-            text.append("\n§8Use /fa splits pb <dungeon> para ver os segmentos.");
+            text.append("\n§8Use /fa splits pb <dungeon> to see the segments.");
          } else {
             for(Map.Entry<String, Best> entry : bests.entrySet()) {
                if (((String)entry.getKey()).toLowerCase(Locale.ROOT).contains(needle)) {
@@ -904,7 +904,7 @@ public class FavelaSplits {
                }
             }
 
-            return "§cNenhum personal best para essa dungeon.";
+            return "§cNo personal best for that dungeon.";
          }
 
          return text.toString();

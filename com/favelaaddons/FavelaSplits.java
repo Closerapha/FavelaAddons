@@ -333,6 +333,86 @@ public class FavelaSplits {
       }
    }
 
+   public static int routeCount() {
+      return ROUTES.size();
+   }
+
+   public static String routeName(int route) {
+      return route >= 0 && route < ROUTES.size() ? ((Route)ROUTES.get(route)).dungeon : "";
+   }
+
+   private static Segment[] segmentsOf(int route) {
+      if (route >= 0 && route < ROUTES.size()) {
+         Segment[] segments = ((Route)ROUTES.get(route)).segments;
+         if (segments != null) {
+            return segments;
+         }
+      }
+
+      return new Segment[0];
+   }
+
+   private static Segment[] childrenOf(int route, int segment) {
+      Segment[] segments = segmentsOf(route);
+      if (segment >= 0 && segment < segments.length) {
+         Segment[] children = segments[segment].children;
+         if (children != null) {
+            return children;
+         }
+      }
+
+      return new Segment[0];
+   }
+
+   public static int segmentCount(int route) {
+      return segmentsOf(route).length;
+   }
+
+   public static String segmentName(int route, int segment) {
+      Segment[] segments = segmentsOf(route);
+      return segment >= 0 && segment < segments.length ? String.valueOf(segments[segment].name) : "";
+   }
+
+   public static void setSegmentName(int route, int segment, String name) {
+      Segment[] segments = segmentsOf(route);
+      if (segment >= 0 && segment < segments.length && name != null && !name.trim().isEmpty()) {
+         segments[segment].name = name.trim();
+      }
+
+   }
+
+   public static int childCount(int route, int segment) {
+      return childrenOf(route, segment).length;
+   }
+
+   public static String childName(int route, int segment, int child) {
+      Segment[] children = childrenOf(route, segment);
+      return child >= 0 && child < children.length ? String.valueOf(children[child].name) : "";
+   }
+
+   public static void setChildName(int route, int segment, int child, String name) {
+      Segment[] children = childrenOf(route, segment);
+      if (child >= 0 && child < children.length && name != null && !name.trim().isEmpty()) {
+         children[child].name = name.trim();
+      }
+
+   }
+
+   public static void applyNames() {
+      saveTable();
+      if (active != null) {
+         for(Step step : steps) {
+            if (step.segment != null) {
+               step.name = step.segment.name;
+               if (step.row != null) {
+                  step.row.rename(step.segment.name);
+               }
+            }
+         }
+      }
+
+   }
+
    public static String listRoutes() {
       StringBuilder text = new StringBuilder();
 
@@ -1288,7 +1368,7 @@ public class FavelaSplits {
    }
 
    private static class Split {
-      final String name;
+      String name;
       String key = "";
       boolean hidden;
       long delta = Long.MIN_VALUE;
@@ -1311,6 +1391,10 @@ public class FavelaSplits {
          this.start = System.currentTimeMillis();
          this.duration = duration;
          this.total = total;
+      }
+
+      void rename(String newName) {
+         this.name = newName;
       }
 
       void finish(long duration, long total) {

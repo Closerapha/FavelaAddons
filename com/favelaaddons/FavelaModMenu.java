@@ -20,6 +20,30 @@ import net.minecraft.network.chat.Component;
 public class FavelaModMenu implements ModMenuApi {
 
 
+   private static final class NameBinding {
+      final int route;
+      final int segment;
+      final int child;
+      final StringListEntry entry;
+
+      NameBinding(int route, int segment, int child, StringListEntry entry) {
+         this.route = route;
+         this.segment = segment;
+         this.child = child;
+         this.entry = entry;
+      }
+
+      void apply() {
+         String value = (String)this.entry.getValue();
+         if (this.child < 0) {
+            FavelaSplits.setSegmentName(this.route, this.segment, value);
+         } else {
+            FavelaSplits.setChildName(this.route, this.segment, this.child, value);
+         }
+
+      }
+   }
+
 
 
    public ConfigScreenFactory<?> getModConfigScreenFactory() {
@@ -86,9 +110,46 @@ public class FavelaModMenu implements ModMenuApi {
          livesplits.addEntry(entryBuilder.startBooleanToggle(Component.literal("Show Phases"), Config.splitsShowPhases).setDefaultValue(true).setTooltip(new Component[]{Component.literal("Lists the phases of the boss you are fighting.")}).setSaveConsumer((newValue) -> Config.splitsShowPhases = newValue).build());
          livesplits.addEntry(entryBuilder.startIntField(Component.literal("Panel Width"), Config.splitsWidth).setDefaultValue(300).setMin(60).setMax(600).setTooltip(new Component[]{Component.literal("Where the times line up on the right.")}).setSaveConsumer((newValue) -> Config.splitsWidth = newValue).build());
 
+         List<NameBinding> nameBindings = new ArrayList();
+         List<AbstractConfigListEntry> secNames = new ArrayList();
+
+         for(int r = 0; r < FavelaSplits.routeCount(); ++r) {
+            List<AbstractConfigListEntry> dungeon = new ArrayList();
+
+            for(int s = 0; s < FavelaSplits.segmentCount(r); ++s) {
+               int children = FavelaSplits.childCount(r, s);
+               StringListEntry segmentEntry = entryBuilder.startStrField(Component.literal(children > 0 ? "Boss" : "Split " + (s + 1)), FavelaSplits.segmentName(r, s)).setDefaultValue(FavelaSplits.segmentName(r, s)).build();
+               nameBindings.add(new NameBinding(r, s, -1, segmentEntry));
+               if (children > 0) {
+                  List<AbstractConfigListEntry> phases = new ArrayList();
+                  phases.add(segmentEntry);
+
+                  for(int c = 0; c < children; ++c) {
+                     StringListEntry phase = entryBuilder.startStrField(Component.literal("Phase " + (c + 1)), FavelaSplits.childName(r, s, c)).setDefaultValue(FavelaSplits.childName(r, s, c)).build();
+                     nameBindings.add(new NameBinding(r, s, c, phase));
+                     phases.add(phase);
+                  }
+
+                  dungeon.add(entryBuilder.startSubCategory(Component.literal(FavelaSplits.segmentName(r, s)), phases).setExpanded(false).build());
+               } else {
+                  dungeon.add(segmentEntry);
+               }
+            }
+
+            secNames.add(entryBuilder.startSubCategory(Component.literal(FavelaSplits.routeName(r)), dungeon).setExpanded(false).build());
+         }
+
+         livesplits.addEntry(entryBuilder.startSubCategory(Component.literal("Split Names"), secNames).setExpanded(false).build());
+
 
 
          builder.setSavingRunnable(() -> {
+            for(NameBinding binding : nameBindings) {
+               binding.apply();
+            }
+
+            FavelaSplits.applyNames();
+
             Config.save();
          });
          return builder.build();

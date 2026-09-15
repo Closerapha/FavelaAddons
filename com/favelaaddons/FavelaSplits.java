@@ -409,7 +409,7 @@ public class FavelaSplits {
          for(Route route : ROUTES) {
             String key = portalKey(route);
             if (!key.isEmpty() && tail.equals(key)) {
-               if (active != route) {
+               if (active != route || endMillis > 0L) {
                   start(route, portalOffset(route, seconds));
                }
 
@@ -522,6 +522,8 @@ public class FavelaSplits {
 
    private static void start(Route route, long offset) {
       long now = System.currentTimeMillis() - offset;
+      endMillis = 0L;
+      finished.clear();
       active = route;
       runStart = now;
       segmentStart = now;

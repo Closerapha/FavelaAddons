@@ -9,7 +9,7 @@ Mod cliente para Fabric, Minecraft 26.1.2, feito para o servidor Telos Realms.
 - Alerts por palavra no chat, com texto e cor configuráveis
 - Medidor de DPS
 - Sons por gatilho de chat
-- Contador de traps, com bloqueio do clique direito no limite
+- Contador de traps
 - Calls de Ambush e Deathmark por porcentagem de vida do boss
 - Porcentagem de vida do boss na tela
 

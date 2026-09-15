@@ -47,7 +47,6 @@ public class FavelaModMenu implements ModMenuApi {
 
          List<AbstractConfigListEntry> secTraps = new ArrayList();
          secTraps.add(entryBuilder.startBooleanToggle(Component.literal("Trap Counter"), Config.trapCounter).setDefaultValue(true).setTooltip(new Component[]{Component.literal("Counts how many traps of your ability are on the ground.")}).setSaveConsumer((newValue) -> Config.trapCounter = newValue).build());
-         secTraps.add(entryBuilder.startBooleanToggle(Component.literal("Block Use At Max"), Config.trapBlockAtMax).setDefaultValue(true).setTooltip(new Component[]{Component.literal("At max traps a new one destroys the oldest, so right"), Component.literal("click is blocked while you hold the trap ability."), Component.literal("Hold shift to use it anyway.")}).setSaveConsumer((newValue) -> Config.trapBlockAtMax = newValue).build());
          secTraps.add(entryBuilder.startBooleanToggle(Component.literal("Hide When Empty"), Config.trapCounterHideEmpty).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Hides the counter while no trap is on the ground.")}).setSaveConsumer((newValue) -> Config.trapCounterHideEmpty = newValue).build());
 
          qol.addEntry(entryBuilder.startSubCategory(Component.literal("Traps"), secTraps).setExpanded(false).build());

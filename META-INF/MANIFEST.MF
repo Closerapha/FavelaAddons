@@ -12,5 +12,5 @@ Fabric-Loom-Client-Only-Entries: com/favelaaddons/AlertHudEditorScreen
  addons/FavelaSplits$Step.class;com/favelaaddons/FavelaSplits.class;co
  m/favelaaddons/FavelaTrapCounter.class;com/favelaaddons/client/mixin/
  FavelaAudioMixin.class;com/favelaaddons/client/mixin/FavelaBossBarAcc
- essor.class;com/favelaaddons/client/mixin/FavelaTrapBlockMixin.class
+ essor.class
 

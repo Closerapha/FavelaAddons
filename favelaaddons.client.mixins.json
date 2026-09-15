@@ -4,8 +4,7 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"FavelaAudioMixin",
-		"FavelaBossBarAccessor",
-		"FavelaTrapBlockMixin"
+		"FavelaBossBarAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

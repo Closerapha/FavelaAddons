@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.LerpingBossEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public class FavelaSplits {
@@ -351,7 +350,7 @@ public class FavelaSplits {
       }
 
       LerpingBossEvent bar = FavelaBossHp.activeBar();
-      String name = bar == null ? "" : FavelaAutoClicker.sanitize(bar.getName().getString());
+      String name = bar == null ? "" : FavelaDisplays.sanitize(bar.getName().getString());
       float progress = bar == null ? -1.0F : bar.getProgress();
       if (!name.equals(barName)) {
          if (!barName.isEmpty()) {
@@ -421,12 +420,7 @@ public class FavelaSplits {
          }
 
          if (unmatched.add(tail)) {
-            Minecraft client = Minecraft.getInstance();
-            if (client.player != null) {
-               client.player.sendSystemMessage(Component.literal("§e[FavelaClient] Portal sem rota: §f" + tail + (seconds >= 0 ? " §7contador=§f" + seconds + "s" : " §7sem contador") + (where == null ? "" : " §7" + where)));
-            }
-
-            System.out.println("[FA Splits] Portal without a route: " + model);
+            System.out.println("[FA Splits] Portal without a route: " + model + " (" + seconds + "s" + (where == null ? "" : ", " + where) + ")");
          }
 
       }

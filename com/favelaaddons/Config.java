@@ -42,22 +42,8 @@ public class Config {
    public static float dpsHudScale = 1.5F;
    public static int dpsHudColor = 16777215;
    public static boolean hideDamageNumbers = false;
-   public static boolean primedLimiter = true;
-   public static int primedIntervalMs = 4100;
-   public static boolean debuggerEnabled = true;
-   public static int debuggerKey = 72;
-   public static int debuggerRadius = 20;
-   public static boolean debuggerCrosshair = false;
-   public static boolean debuggerComponents = false;
    public static int portalRange = 64;
    public static String portalModels = "telos:mob/portal";
-   public static boolean boneEsp = true;
-   public static boolean carrotStickEsp = true;
-   public static boolean stickEsp = true;
-   public static boolean armorStandEsp = true;
-   public static boolean interactionEsp = true;
-   public static boolean autoWalls = true;
-   public static boolean autoWallsTracer = true;
    public static boolean splits = false;
    public static boolean splitsShowPhases = true;
    public static int splitsMaxRows = 8;
@@ -84,11 +70,6 @@ public class Config {
    public static int callX = 10;
    public static int callY = 80;
    public static float callScale = 2.0F;
-   public static boolean traitDetector = true;
-   public static boolean traitHud = true;
-   public static int traitHudX = 10;
-   public static int traitHudY = 60;
-   public static float traitHudScale = 1.2F;
    public static boolean trapCounter = true;
    public static boolean trapBlockAtMax = true;
    public static String trapCounterModels = "trap_n6b";
@@ -100,20 +81,7 @@ public class Config {
    public static float trapCounterScale = 1.5F;
    public static String trapCounterLabel = "Trap:";
    public static boolean trapCounterHideEmpty = false;
-   public static boolean armorSwapEnabled = true;
-   public static List<ArmorSetup> armorSetups = defaultSetups();
-   public static boolean armorSwapReturn = true;
-   public static String autoWallsModels = "ophanim_projectile6";
-   public static String autoWallsBossModels = "modelengine:ophanim";
-   public static String[] parsedAutoWallsBossModels = new String[0];
-   public static int autoWallsBossRange = 50;
-   public static int autoWallsBossClearance = 8;
-   public static boolean autoWallsIgnoreCentre = true;
-   public static String[] parsedAutoWallsModels = new String[0];
    public static String[] parsedPortalModels = new String[0];
-   public static boolean autoWallsTurn = false;
-   public static int autoWallsTurnSpeed = 20;
-   public static int espRange = 48;
    public static String[] parsedSoundTriggers = new String[0];
    public static String[] parsedTextTriggers = new String[0];
    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
@@ -121,92 +89,7 @@ public class Config {
    private static final File FILE;
 
 
-   public static class ArmorSetup {
-      @SerializedName("nome")
-      public String name;
-      @SerializedName("ativo")
-      public boolean enabled;
-      @SerializedName("tecla")
-      public int key;
-      @SerializedName("slot1")
-      public int slot1;
-      @SerializedName("slot2")
-      public int slot2;
-      @SerializedName("slot3")
-      public int slot3;
-      @SerializedName("slot4")
-      public int slot4;
-      @SerializedName("cooldown")
-      public int cooldownTicks;
 
-      public ArmorSetup(String name, boolean enabled, int key, int slot1, int slot2, int slot3, int slot4, int cooldownTicks) {
-         this.name = name;
-         this.enabled = enabled;
-         this.key = key;
-         this.slot1 = slot1;
-         this.slot2 = slot2;
-         this.slot3 = slot3;
-         this.slot4 = slot4;
-         this.cooldownTicks = cooldownTicks;
-      }
-
-      public int[] slots() {
-         return new int[]{this.slot1, this.slot2, this.slot3, this.slot4};
-      }
-   }
-
-
-   public static void resizeSetups(int count) {
-      int target = Math.max(1, Math.min(20, count));
-
-      while(armorSetups.size() > target) {
-         armorSetups.remove(armorSetups.size() - 1);
-      }
-
-      while(armorSetups.size() < target) {
-         armorSetups.add(new ArmorSetup("Setup " + (armorSetups.size() + 1), false, 0, 0, 0, 0, 0, 2));
-      }
-
-   }
-
-   public static List<ArmorSetup> defaultSetups() {
-      List<ArmorSetup> setups = new ArrayList();
-      setups.add(new ArmorSetup("Setup 1", true, 82, 6, 7, 8, 9, 2));
-      return setups;
-   }
-
-   private static List<ArmorSetup> normalizeSetups(List<ArmorSetup> loaded) {
-      List<ArmorSetup> setups = new ArrayList();
-
-      for(int i = 0; i < loaded.size(); ++i) {
-         ArmorSetup setup = (ArmorSetup)loaded.get(i);
-         if (setup != null) {
-            if (setup.name == null || setup.name.isEmpty()) {
-               setup.name = "Setup " + (i + 1);
-            }
-
-            if (setup.cooldownTicks <= 0) {
-               setup.cooldownTicks = 2;
-            }
-
-            setups.add(setup);
-         }
-      }
-
-      return setups;
-   }
-
-   private static List<ArmorSetup> migrateSetups(FavelaData data) {
-      List<ArmorSetup> setups = defaultSetups();
-      ArmorSetup first = (ArmorSetup)setups.get(0);
-      first.key = data.armorSwapKey != 0 ? data.armorSwapKey : 82;
-      first.slot1 = data.armorSwapSlot1 != null ? data.armorSwapSlot1 : 6;
-      first.slot2 = data.armorSwapSlot2 != null ? data.armorSwapSlot2 : 7;
-      first.slot3 = data.armorSwapSlot3 != null ? data.armorSwapSlot3 : 8;
-      first.slot4 = data.armorSwapSlot4 != null ? data.armorSwapSlot4 : 9;
-      first.cooldownTicks = data.armorSwapDelay != 0 ? data.armorSwapDelay : 2;
-      return setups;
-   }
    public static void updateParsedTriggers() {
       if (soundTriggers != null && !soundTriggers.isEmpty()) {
          parsedSoundTriggers = soundTriggers.split(",");
@@ -228,26 +111,6 @@ public class Config {
          parsedTrapCounterModels = new String[0];
       }
 
-      if (autoWallsBossModels != null && !autoWallsBossModels.isEmpty()) {
-         parsedAutoWallsBossModels = autoWallsBossModels.split(",");
-
-         for(int i = 0; i < parsedAutoWallsBossModels.length; ++i) {
-            parsedAutoWallsBossModels[i] = parsedAutoWallsBossModels[i].trim();
-         }
-      } else {
-         parsedAutoWallsBossModels = new String[0];
-      }
-
-      if (autoWallsModels != null && !autoWallsModels.isEmpty()) {
-         parsedAutoWallsModels = autoWallsModels.split(",");
-
-         for(int i = 0; i < parsedAutoWallsModels.length; ++i) {
-            parsedAutoWallsModels[i] = parsedAutoWallsModels[i].trim();
-         }
-      } else {
-         parsedAutoWallsModels = new String[0];
-      }
-
       if (portalModels != null && !portalModels.isEmpty()) {
          parsedPortalModels = portalModels.split(",");
 
@@ -256,16 +119,6 @@ public class Config {
          }
       } else {
          parsedPortalModels = new String[0];
-      }
-
-      if (triggerText != null && !triggerText.isEmpty()) {
-         parsedTextTriggers = triggerText.split(",");
-
-         for(int i = 0; i < parsedTextTriggers.length; ++i) {
-            parsedTextTriggers[i] = parsedTextTriggers[i].trim();
-         }
-      } else {
-         parsedTextTriggers = new String[0];
       }
 
    }
@@ -309,28 +162,8 @@ public class Config {
                dpsHudScale = data.dpsHudScale != 0.0F ? data.dpsHudScale : 1.5F;
                dpsHudColor = data.dpsHudColor != 0 ? data.dpsHudColor : 16777215;
                hideDamageNumbers = data.hideDamageNumbers;
-               primedLimiter = data.primedLimiter != null ? data.primedLimiter : true;
-               primedIntervalMs = data.primedIntervalMs != 0 ? data.primedIntervalMs : 4100;
-               debuggerEnabled = data.debuggerEnabled != null ? data.debuggerEnabled : true;
-               debuggerKey = data.debuggerKey != 0 ? data.debuggerKey : 72;
-               debuggerRadius = data.debuggerRadius != 0 ? data.debuggerRadius : 20;
-               debuggerCrosshair = data.debuggerCrosshair;
-               debuggerComponents = data.debuggerComponents;
                portalRange = data.portalRange != null ? data.portalRange : 64;
                portalModels = data.portalModels != null ? data.portalModels : "telos:mob/portal";
-               boneEsp = data.boneEsp != null ? data.boneEsp : true;
-               carrotStickEsp = data.carrotStickEsp != null ? data.carrotStickEsp : true;
-               stickEsp = data.stickEsp != null ? data.stickEsp : true;
-               armorStandEsp = data.armorStandEsp != null ? data.armorStandEsp : true;
-               interactionEsp = data.interactionEsp != null ? data.interactionEsp : true;
-               if (data.autoWallsTracer != null) {
-                  autoWalls = data.autoWalls != null ? data.autoWalls : true;
-                  autoWallsTracer = data.autoWallsTracer;
-               } else {
-                  autoWalls = true;
-                  autoWallsTracer = data.autoWalls == null || data.autoWalls;
-               }
-
                splits = data.splits != null ? data.splits : false;
                splitsShowPhases = data.splitsShowPhases != null ? data.splitsShowPhases : true;
                splitsMaxRows = data.splitsMaxRows != 0 ? data.splitsMaxRows : 8;
@@ -366,11 +199,6 @@ public class Config {
                callX = data.callX != 0 ? data.callX : 10;
                callY = data.callY != 0 ? data.callY : 80;
                callScale = data.callScale != 0.0F ? data.callScale : 2.0F;
-               traitDetector = data.traitDetector != null ? data.traitDetector : true;
-               traitHud = data.traitHud != null ? data.traitHud : true;
-               traitHudX = data.traitHudX != 0 ? data.traitHudX : 10;
-               traitHudY = data.traitHudY != 0 ? data.traitHudY : 60;
-               traitHudScale = data.traitHudScale != 0.0F ? data.traitHudScale : 1.2F;
                trapCounter = data.trapCounter != null ? data.trapCounter : true;
                trapBlockAtMax = data.trapBlockAtMax != null ? data.trapBlockAtMax : true;
                if (data.trapCounterModels != null) {
@@ -387,25 +215,8 @@ public class Config {
                }
 
                trapCounterHideEmpty = data.trapCounterHideEmpty != null ? data.trapCounterHideEmpty : false;
-               armorSwapEnabled = data.armorSwapEnabled != null ? data.armorSwapEnabled : true;
-               armorSetups = data.armorSetups != null && !data.armorSetups.isEmpty() ? normalizeSetups(data.armorSetups) : migrateSetups(data);
-               armorSwapReturn = data.armorSwapReturn != null ? data.armorSwapReturn : true;
-               if (data.autoWallsModels != null) {
-                  autoWallsModels = data.autoWallsModels.trim().equalsIgnoreCase("ophanim_projectile") ? "ophanim_projectile6" : data.autoWallsModels;
-               }
 
-               if (data.autoWallsBossModels != null) {
-                  autoWallsBossModels = data.autoWallsBossModels;
-               }
 
-               autoWallsBossRange = data.autoWallsBossRange != 0 ? data.autoWallsBossRange : 50;
-               autoWallsBossClearance = data.autoWallsBossClearance != 0 ? data.autoWallsBossClearance : 8;
-               autoWallsIgnoreCentre = data.autoWallsIgnoreCentre != null ? data.autoWallsIgnoreCentre : true;
-
-               autoWallsTurn = data.autoWallsTurn != null ? data.autoWallsTurn : false;
-               autoWallsTurnSpeed = data.autoWallsTurnSpeed != 0 ? data.autoWallsTurnSpeed : 20;
-
-               espRange = data.espRange != 0 ? data.espRange : 48;
             } catch (Throwable var4) {
                try {
                   reader.close();
@@ -441,9 +252,9 @@ public class Config {
             try {
                if (in != null) {
                   Files.copy(in, soundFile.toPath(), new CopyOption[]{StandardCopyOption.REPLACE_EXISTING});
-                  System.out.println("[FavelaClient] Default favela_alerta.wav file extracted successfully.");
+                  System.out.println("[FavelaAddons] Default favela_alerta.wav file extracted successfully.");
                } else {
-                  System.out.println("[FavelaClient] Warning: favela_alerta.wav not found inside mod resources.");
+                  System.out.println("[FavelaAddons] Warning: favela_alerta.wav not found inside mod resources.");
                }
             } catch (Throwable var5) {
                if (in != null) {
@@ -461,7 +272,7 @@ public class Config {
                in.close();
             }
          } catch (IOException e) {
-            System.out.println("[FavelaClient] Error extracting default favela_alerta.wav: " + e.getMessage());
+            System.out.println("[FavelaAddons] Error extracting default favela_alerta.wav: " + e.getMessage());
          }
       }
 
@@ -477,7 +288,7 @@ public class Config {
          OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8);
 
          try {
-            FavelaData data = new FavelaData(active, minCroaks, maxCroaks, devMode, triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, primedLimiter, primedIntervalMs, debuggerEnabled, debuggerKey, debuggerRadius, debuggerCrosshair, debuggerComponents, boneEsp, carrotStickEsp, stickEsp, armorStandEsp, interactionEsp, autoWalls, autoWallsTracer, autoWallsModels, autoWallsBossModels, autoWallsBossRange, autoWallsBossClearance, autoWallsIgnoreCentre, autoWallsTurn, autoWallsTurnSpeed, armorSwapEnabled, armorSetups, armorSwapReturn, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, callColor, callStayTicks, callSound, callX, callY, callScale, traitDetector, traitHud, traitHudX, traitHudY, traitHudScale, trapCounter, trapBlockAtMax, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, espRange, portalRange, portalModels);
+            FavelaData data = new FavelaData(active, minCroaks, maxCroaks, devMode, triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, callColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapBlockAtMax, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
             GSON.toJson(data, writer);
          } catch (Throwable var4) {
             try {
@@ -547,46 +358,6 @@ public class Config {
       int dpsHudColor;
       @SerializedName("ocultarDanoTexto")
       boolean hideDamageNumbers;
-      @SerializedName("limitadorPrimed")
-      Boolean primedLimiter;
-      @SerializedName("primedIntervalo")
-      int primedIntervalMs;
-      @SerializedName("debugAtivo")
-      Boolean debuggerEnabled;
-      @SerializedName("debugTecla")
-      int debuggerKey;
-      @SerializedName("debugComponentes")
-      boolean debuggerComponents;
-      @SerializedName("debugMira")
-      boolean debuggerCrosshair;
-      @SerializedName("espOssoAtivo")
-      Boolean boneEsp;
-      @SerializedName("espCenouraAtivo")
-      Boolean carrotStickEsp;
-      @SerializedName("espGravetoAtivo")
-      Boolean stickEsp;
-      @SerializedName("espArmorStandAtivo")
-      Boolean armorStandEsp;
-      @SerializedName("espInteracaoAtivo")
-      Boolean interactionEsp;
-      @SerializedName("autoWallsGiroAtivo")
-      Boolean autoWallsTurn;
-      @SerializedName("autoWallsGiroVelocidade")
-      int autoWallsTurnSpeed;
-      @SerializedName("autoWallsBossModelos")
-      String autoWallsBossModels;
-      @SerializedName("autoWallsBossDistanciaMin")
-      int autoWallsBossClearance;
-      @SerializedName("autoWallsIgnorarCentro")
-      Boolean autoWallsIgnoreCentre;
-      @SerializedName("autoWallsBossAlcance")
-      int autoWallsBossRange;
-      @SerializedName("autoWallsTracer")
-      Boolean autoWallsTracer;
-      @SerializedName("autoWallsModelos")
-      String autoWallsModels;
-      @SerializedName("autoWalls")
-      Boolean autoWalls;
       @SerializedName("splitsAtivo")
       Boolean splits;
       @SerializedName("splitsFases")
@@ -639,16 +410,6 @@ public class Config {
       int callY;
       @SerializedName("chamadaEscala")
       float callScale;
-      @SerializedName("traitDetector")
-      Boolean traitDetector;
-      @SerializedName("traitHud")
-      Boolean traitHud;
-      @SerializedName("traitHudX")
-      int traitHudX;
-      @SerializedName("traitHudY")
-      int traitHudY;
-      @SerializedName("traitHudEscala")
-      float traitHudScale;
       @SerializedName("trapContador")
       Boolean trapCounter;
       @SerializedName("trapBloquearNoMaximo")
@@ -669,34 +430,12 @@ public class Config {
       String trapCounterLabel;
       @SerializedName("trapOcultarVazio")
       Boolean trapCounterHideEmpty;
-      @SerializedName("trocaArmaduraAtivo")
-      Boolean armorSwapEnabled;
-      @SerializedName("trocaArmaduraSetups")
-      List<ArmorSetup> armorSetups;
-      @SerializedName("trocaArmaduraTecla")
-      int armorSwapKey;
-      @SerializedName("trocaArmaduraSlot1")
-      Integer armorSwapSlot1;
-      @SerializedName("trocaArmaduraSlot2")
-      Integer armorSwapSlot2;
-      @SerializedName("trocaArmaduraSlot3")
-      Integer armorSwapSlot3;
-      @SerializedName("trocaArmaduraSlot4")
-      Integer armorSwapSlot4;
-      @SerializedName("trocaArmaduraDelay")
-      int armorSwapDelay;
-      @SerializedName("trocaArmaduraVoltar")
-      Boolean armorSwapReturn;
-      @SerializedName("espAlcance")
-      int espRange;
-      @SerializedName("debugRaio")
-      int debuggerRadius;
       @SerializedName("portalAlcance")
       Integer portalRange;
       @SerializedName("portalModelos")
       String portalModels;
 
-      FavelaData(boolean active, int minCroaks, int maxCroaks, boolean devMode, String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean primedLimiter, int primedIntervalMs, boolean debuggerEnabled, int debuggerKey, int debuggerRadius, boolean debuggerCrosshair, boolean debuggerComponents, boolean boneEsp, boolean carrotStickEsp, boolean stickEsp, boolean armorStandEsp, boolean interactionEsp, boolean autoWalls, boolean autoWallsTracer, String autoWallsModels, String autoWallsBossModels, int autoWallsBossRange, int autoWallsBossClearance, boolean autoWallsIgnoreCentre, boolean autoWallsTurn, int autoWallsTurnSpeed, boolean armorSwapEnabled, List<ArmorSetup> armorSetups, boolean armorSwapReturn, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int callColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean traitDetector, boolean traitHud, int traitHudX, int traitHudY, float traitHudScale, boolean trapCounter, boolean trapBlockAtMax, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int espRange, int portalRange, String portalModels) {
+      FavelaData(boolean active, int minCroaks, int maxCroaks, boolean devMode, String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int callColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, boolean trapBlockAtMax, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
          this.active = active;
          this.minCroaks = minCroaks;
          this.maxCroaks = maxCroaks;
@@ -720,32 +459,8 @@ public class Config {
          this.dpsHudScale = dpsHudScale;
          this.dpsHudColor = dpsHudColor;
          this.hideDamageNumbers = hideDamageNumbers;
-         this.primedLimiter = primedLimiter;
-         this.primedIntervalMs = primedIntervalMs;
-         this.debuggerEnabled = debuggerEnabled;
-         this.debuggerKey = debuggerKey;
-         this.debuggerRadius = debuggerRadius;
-         this.debuggerCrosshair = debuggerCrosshair;
-         this.debuggerComponents = debuggerComponents;
          this.portalRange = portalRange;
          this.portalModels = portalModels;
-         this.boneEsp = boneEsp;
-         this.carrotStickEsp = carrotStickEsp;
-         this.stickEsp = stickEsp;
-         this.armorStandEsp = armorStandEsp;
-         this.interactionEsp = interactionEsp;
-         this.autoWalls = autoWalls;
-         this.autoWallsTracer = autoWallsTracer;
-         this.autoWallsModels = autoWallsModels;
-         this.autoWallsBossModels = autoWallsBossModels;
-         this.autoWallsBossRange = autoWallsBossRange;
-         this.autoWallsBossClearance = autoWallsBossClearance;
-         this.autoWallsIgnoreCentre = autoWallsIgnoreCentre;
-         this.autoWallsTurn = autoWallsTurn;
-         this.autoWallsTurnSpeed = autoWallsTurnSpeed;
-         this.armorSwapEnabled = armorSwapEnabled;
-         this.armorSetups = armorSetups;
-         this.armorSwapReturn = armorSwapReturn;
          this.splits = splits;
          this.splitsShowPhases = splitsShowPhases;
          this.splitsMaxRows = splitsMaxRows;
@@ -772,11 +487,6 @@ public class Config {
          this.callX = callX;
          this.callY = callY;
          this.callScale = callScale;
-         this.traitDetector = traitDetector;
-         this.traitHud = traitHud;
-         this.traitHudX = traitHudX;
-         this.traitHudY = traitHudY;
-         this.traitHudScale = traitHudScale;
          this.trapCounter = trapCounter;
          this.trapBlockAtMax = trapBlockAtMax;
          this.trapCounterModels = trapCounterModels;
@@ -787,7 +497,6 @@ public class Config {
          this.trapCounterScale = trapCounterScale;
          this.trapCounterLabel = trapCounterLabel;
          this.trapCounterHideEmpty = trapCounterHideEmpty;
-         this.espRange = espRange;
       }
    }
 }

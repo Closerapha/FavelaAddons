@@ -2,8 +2,29 @@
 
 Mod cliente para Fabric, Minecraft 26.1.2, feito para o servidor Telos Realms.
 
-- **QOL** — Spacebar Spammer, Alerts, DPS, Sounds, Trap Counter, Ambush/Deathmark, Boss HP
-- **Livesplits** — cronometragem de dungeons e bosses no estilo LiveSplit
+## Features
+
+**QOL**
+
+- Spacebar Spammer
+- Alerts por palavra no chat, com texto e cor configuráveis
+- Medidor de DPS
+- Sons por gatilho de chat
+- Contador de traps, com bloqueio do clique direito no limite
+- Calls de Ambush e Deathmark por porcentagem de vida do boss
+- Porcentagem de vida do boss na tela
+
+**Livesplits**
+
+Cronometragem de dungeons no estilo LiveSplit, com fases de boss como sub-splits.
+
+- Início automático da run pelo portal, descontando o tempo já decorrido no contador do portal
+- Splits por mensagem de chat, por porcentagem de vida do boss ou por portal
+- Comparação com o personal best a cada checkpoint, com as cores do LiveSplit
+- Gold splits por segmento
+- Fases do boss recolhem quando ele morre
+
+Todos os elementos de tela são arrastáveis por `/fa editarHUD`.
 
 ## Comandos
 
@@ -12,6 +33,8 @@ Mod cliente para Fabric, Minecraft 26.1.2, feito para o servidor Telos Realms.
 | `/fa` | Abre o menu de configuração |
 | `/fa help` | Lista os comandos |
 | `/fa editarHUD` | Move os textos na tela |
+| `/fa testar` | Testa o texto e o som do alerta |
+| `/fa som` | Testa o som do alerta |
 | `/fa split` | Fecha o segmento atual |
 | `/fa split delete` | Desfaz o último split |
 | `/fa split cancel` | Cancela a run atual |
@@ -30,8 +53,8 @@ Fica em `config/favelaaddons/`:
 - `splits.json` — rotas, segmentos e cues do Livesplits
 - `pb.json` — personal bests e golds
 
+As rotas do Livesplits são editáveis: cada dungeon tem uma lista de segmentos, e cada segmento fecha por um cue de chat (`chat`), por um portal (`portal`), por porcentagem de vida (`hp`) ou pelo fim da boss bar (`bossKill`). Sub-splits vão no campo `children`.
+
 ## Build
 
 Não usa Gradle. Compila com `javac --release 21` contra uma cópia do jar do Minecraft com o access widener aplicado, e é empacotado com `jar`.
-
-A constante `com.favelaaddons.Build.FULL` separa as duas versões: com `false`, as abas Assists e DEV não são criadas e as features delas não são registradas.

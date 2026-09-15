@@ -12,7 +12,6 @@ public class AlertHudEditorScreen extends Screen {
    private boolean isDraggingAliveOrDead = false;
    private boolean isDraggingDps = false;
    private boolean isDraggingTrap = false;
-   private boolean isDraggingTrait = false;
    private boolean isDraggingCall = false;
    private boolean isDraggingBossHp = false;
    private boolean isDraggingSplits = false;
@@ -28,7 +27,7 @@ public class AlertHudEditorScreen extends Screen {
       graphics.fill(0, 0, this.width, this.height, -2013265920);
       graphics.text(this.font, "Drag the texts to move them. Use + and - to change the size of the text under the mouse.", 10, 10, -1, true);
       graphics.text(this.font, "Press ESC to save and exit. Texts will automatically snap to the center when dragged near it.", 10, 25, -5592406, true);
-      if (this.isDraggingAlert || this.isDraggingAliveOrDead || this.isDraggingDps || this.isDraggingTrap || this.isDraggingTrait || this.isDraggingCall || this.isDraggingBossHp || this.isDraggingSplits) {
+      if (this.isDraggingAlert || this.isDraggingAliveOrDead || this.isDraggingDps || this.isDraggingTrap || this.isDraggingCall || this.isDraggingBossHp || this.isDraggingSplits) {
          graphics.fill(this.width / 2, 0, this.width / 2 + 1, this.height, 1157627903);
       }
 
@@ -92,22 +91,6 @@ public class AlertHudEditorScreen extends Screen {
       }
 
 
-      if (Config.traitDetector && Config.traitHud) {
-         String traitText = this.traitPreview();
-         int traitWidth = this.font.width(traitText);
-         Objects.requireNonNull(this.font);
-         int traitHeight = 9;
-         graphics.pose().pushMatrix();
-         graphics.pose().translate((float)Config.traitHudX, (float)Config.traitHudY);
-         graphics.pose().scale(Config.traitHudScale, Config.traitHudScale);
-         graphics.text(this.font, traitText, 0, 0, -11141291, true);
-         if (this.isMouseOver((double)mouseX, (double)mouseY, Config.traitHudX, Config.traitHudY, traitWidth, traitHeight, Config.traitHudScale)) {
-            graphics.fill(-2, -2, traitWidth + 2, traitHeight + 2, 1157627903);
-         }
-
-         graphics.pose().popMatrix();
-      }
-
       if (Config.calls) {
          String callText = this.callPreview();
          int callWidth = this.font.width(callText);
@@ -165,10 +148,6 @@ public class AlertHudEditorScreen extends Screen {
    private String callPreview() {
       String text = Config.ambushText;
       return text != null && !text.trim().isEmpty() ? text.trim() : "AMBUSH";
-   }
-
-   private String traitPreview() {
-      return "Primed  Damage 80  Cooldown 2s";
    }
 
    private String trapPreview() {
@@ -232,19 +211,6 @@ public class AlertHudEditorScreen extends Screen {
                this.isDraggingCall = true;
                this.dragOffsetX = mouseX - (double)Config.callX;
                this.dragOffsetY = mouseY - (double)Config.callY;
-               return true;
-            }
-         }
-
-         if (Config.traitDetector && Config.traitHud) {
-            int traitX = Config.traitHudX;
-            int traitY = Config.traitHudY;
-            int traitW = this.font.width(this.traitPreview());
-            Objects.requireNonNull(this.font);
-            if (this.isMouseOver(mouseX, mouseY, traitX, traitY, traitW, 9, Config.traitHudScale)) {
-               this.isDraggingTrait = true;
-               this.dragOffsetX = mouseX - (double)Config.traitHudX;
-               this.dragOffsetY = mouseY - (double)Config.traitHudY;
                return true;
             }
          }
@@ -314,11 +280,6 @@ public class AlertHudEditorScreen extends Screen {
          Config.trapCounterX = this.snapX(proposedX, this.font.width(this.trapPreview()), Config.trapCounterScale);
          Config.trapCounterY = (int)(mouseY - this.dragOffsetY);
          return true;
-      } else if (this.isDraggingTrait) {
-         int proposedX = (int)(mouseX - this.dragOffsetX);
-         Config.traitHudX = this.snapX(proposedX, this.font.width(this.traitPreview()), Config.traitHudScale);
-         Config.traitHudY = (int)(mouseY - this.dragOffsetY);
-         return true;
       } else if (this.isDraggingCall) {
          int proposedX = (int)(mouseX - this.dragOffsetX);
          Config.callX = this.snapX(proposedX, this.font.width(this.callPreview()), Config.callScale);
@@ -344,14 +305,13 @@ public class AlertHudEditorScreen extends Screen {
    }
 
    public boolean mouseReleased(MouseButtonEvent event) {
-      if (!this.isDraggingAlert && !this.isDraggingAliveOrDead && !this.isDraggingDps && !this.isDraggingTrap && !this.isDraggingTrait && !this.isDraggingCall && !this.isDraggingBossHp && !this.isDraggingSplits) {
+      if (!this.isDraggingAlert && !this.isDraggingAliveOrDead && !this.isDraggingDps && !this.isDraggingTrap && !this.isDraggingCall && !this.isDraggingBossHp && !this.isDraggingSplits) {
          return super.mouseReleased(event);
       } else {
          this.isDraggingAlert = false;
          this.isDraggingAliveOrDead = false;
          this.isDraggingDps = false;
          this.isDraggingTrap = false;
-         this.isDraggingTrait = false;
          this.isDraggingCall = false;
          this.isDraggingBossHp = false;
          this.isDraggingSplits = false;

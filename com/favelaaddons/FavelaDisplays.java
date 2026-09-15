@@ -1,5 +1,7 @@
 package com.favelaaddons;
 
+import net.minecraft.ChatFormatting;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
@@ -66,5 +68,22 @@ public class FavelaDisplays {
       } else {
          return false;
       }
+   }
+   public static String sanitize(String rawName) {
+      String strippedName = ChatFormatting.stripFormatting(rawName);
+      if (strippedName == null) {
+         strippedName = rawName;
+      }
+
+      StringBuilder sb = new StringBuilder();
+
+      for(int i = 0; i < strippedName.length(); ++i) {
+         char c = strippedName.charAt(i);
+         if (c != '[' && c != ']' && (c < '\ue000' || c > '\uf8ff')) {
+            sb.append(c);
+         }
+      }
+
+      return sb.toString().trim().toLowerCase();
    }
 }

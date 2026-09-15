@@ -37,7 +37,7 @@ public class FavelaPortals {
 
       for(Entity entity : client.level.getEntities(portal, box)) {
          if (entity.hasCustomName()) {
-            int seconds = parseTimer(FavelaAutoClicker.sanitize(entity.getCustomName().getString()));
+            int seconds = parseTimer(FavelaDisplays.sanitize(entity.getCustomName().getString()));
             if (seconds >= 0) {
                return seconds;
             }

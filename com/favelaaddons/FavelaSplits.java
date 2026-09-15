@@ -219,8 +219,13 @@ public class FavelaSplits {
    }
 
    private static Route neoEden() {
-      Route route = route("Neo Eden", "", 57, new String[]{"Neo Eden Clear|start:twins", "Twins|kill:twins", "Cherubim|kill:cherubim"});
+      Route route = new Route();
+      route.dungeon = "Neo Eden";
+      route.portal = "";
       route.startChat = "A tear in reality reveals the entrance to a hidden sanctuary";
+      route.portalStart = 57;
+      route.world = "";
+      route.segments = new Segment[]{chatSeg("Neo Eden Clear", "That is sufficient to proceed"), hidden(chatSeg("Interlude", "The garden has guided you")), chatSeg("Twins", "It would have been disappointing if they ended this too early"), hidden(chatSeg("Interlude 2", "Enough performance|You have been observed")), group("Cherubim", new Segment[]{chatSeg("Phase 1", "You arrogant mortal"), chatSeg("Phase 2", "The garden does not exist in a single shape"), chatSeg("Phase 3", "I have already decided where you die"), chatSeg("Phase 4", "I will not be witnessed from within a failing construct"), chatSeg("Desperation", "Cherubim has been defeated|Cherubin has been defeated")})};
       return route;
    }
 

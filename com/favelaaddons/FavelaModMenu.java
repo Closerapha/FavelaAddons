@@ -24,7 +24,7 @@ public class FavelaModMenu implements ModMenuApi {
 
    public ConfigScreenFactory<?> getModConfigScreenFactory() {
       return (parent) -> {
-         ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(Component.literal("FavelaAddons"));
+         ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(Component.literal("FavelaClient"));
          ConfigEntryBuilder entryBuilder = builder.entryBuilder();
          ConfigCategory qol = builder.getOrCreateCategory(Component.literal("QOL"));
 

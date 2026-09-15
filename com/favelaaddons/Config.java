@@ -219,7 +219,7 @@ public class Config {
 
             reader.close();
          } catch (IOException var5) {
-            System.out.println("Error loading FavelaAddons configurations.");
+            System.out.println("Error loading FavelaClient configurations.");
          }
       } else {
          save();
@@ -292,7 +292,7 @@ public class Config {
 
          writer.close();
       } catch (IOException var5) {
-         System.out.println("Error saving FavelaAddons configurations.");
+         System.out.println("Error saving FavelaClient configurations.");
       }
 
    }

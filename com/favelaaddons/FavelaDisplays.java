@@ -79,7 +79,7 @@ public class FavelaDisplays {
 
       for(int i = 0; i < strippedName.length(); ++i) {
          char c = strippedName.charAt(i);
-         if (c != '[' && c != ']' && (c < '\ue000' || c > '\uf8ff')) {
+         if (c != '[' && c != ']' && !Character.isSurrogate(c) && (c < '\ue000' || c > '\uf8ff')) {
             sb.append(c);
          }
       }

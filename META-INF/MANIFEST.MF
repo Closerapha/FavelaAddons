@@ -2,16 +2,15 @@ Manifest-Version: 1.0
 Fabric-Loom-Client-Only-Entries: com/favelaaddons/AlertHudEditorScreen
  .class;com/favelaaddons/Config$FavelaData.class;com/favelaaddons/Conf
  ig.class;com/favelaaddons/FavelaBossHp.class;com/favelaaddons/FavelaC
- alls.class;com/favelaaddons/FavelaCroak.class;com/favelaaddons/Favela
- DPS$DamageHit.class;com/favelaaddons/FavelaDPS.class;com/favelaaddons
- /FavelaDisplays.class;com/favelaaddons/FavelaGear.class;com/favelaadd
- ons/FavelaMod.class;com/favelaaddons/FavelaModMenu.class;com/favelaad
- dons/FavelaPortals.class;com/favelaaddons/FavelaSplits$1.class;com/fa
- velaaddons/FavelaSplits$Best.class;com/favelaaddons/FavelaSplits$Rout
- e.class;com/favelaaddons/FavelaSplits$Segment.class;com/favelaaddons/
- FavelaSplits$Split.class;com/favelaaddons/FavelaSplits$Step.class;com
- /favelaaddons/FavelaSplits.class;com/favelaaddons/FavelaTrapCounter.c
- lass;com/favelaaddons/client/mixin/FavelaAudioMixin.class;com/favelaa
- ddons/client/mixin/FavelaBossBarAccessor.class;com/favelaaddons/clien
- t/mixin/FavelaTrapBlockMixin.class
+ alls.class;com/favelaaddons/FavelaDPS$DamageHit.class;com/favelaaddon
+ s/FavelaDPS.class;com/favelaaddons/FavelaDisplays.class;com/favelaadd
+ ons/FavelaGear.class;com/favelaaddons/FavelaMod.class;com/favelaaddon
+ s/FavelaModMenu.class;com/favelaaddons/FavelaPortals.class;com/favela
+ addons/FavelaSplits$1.class;com/favelaaddons/FavelaSplits$Best.class;
+ com/favelaaddons/FavelaSplits$Route.class;com/favelaaddons/FavelaSpli
+ ts$Segment.class;com/favelaaddons/FavelaSplits$Split.class;com/favela
+ addons/FavelaSplits$Step.class;com/favelaaddons/FavelaSplits.class;co
+ m/favelaaddons/FavelaTrapCounter.class;com/favelaaddons/client/mixin/
+ FavelaAudioMixin.class;com/favelaaddons/client/mixin/FavelaBossBarAcc
+ essor.class;com/favelaaddons/client/mixin/FavelaTrapBlockMixin.class
 

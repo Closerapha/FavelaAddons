@@ -6,7 +6,6 @@ Mod cliente para Fabric, Minecraft 26.1.2, feito para o servidor Telos Realms.
 
 **QOL**
 
-- Spacebar Spammer
 - Alerts por palavra no chat, com texto e cor configuráveis
 - Medidor de DPS
 - Sons por gatilho de chat

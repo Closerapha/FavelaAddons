@@ -20,7 +20,7 @@ public class FavelaDPS {
    private static long lastDpsUpdateTime = 0L;
 
    public static void onTick(Minecraft client) {
-      if (Config.active && Config.dpsHudEnabled && client.level != null && client.player != null) {
+      if (Config.dpsHudEnabled && client.level != null && client.player != null) {
          if (client.level.getGameTime() % 100L == 0L) {
             processedEntities.removeIf((id) -> client.level.getEntity(id) == null);
          }

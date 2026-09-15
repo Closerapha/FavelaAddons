@@ -27,11 +27,6 @@ public class FavelaModMenu implements ModMenuApi {
          ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(Component.literal("FavelaAddons"));
          ConfigEntryBuilder entryBuilder = builder.entryBuilder();
          ConfigCategory qol = builder.getOrCreateCategory(Component.literal("QOL"));
-         List<AbstractConfigListEntry> secSpacebar = new ArrayList();
-         secSpacebar.add(entryBuilder.startBooleanToggle(Component.literal("Jump Active"), Config.active).setDefaultValue(true).setSaveConsumer((newValue) -> Config.active = newValue).build());
-         secSpacebar.add(entryBuilder.startIntField(Component.literal("Min (CPS)"), Config.minCroaks).setDefaultValue(8).setMin(1).setMax(30).setSaveConsumer((newValue) -> Config.minCroaks = newValue).build());
-         secSpacebar.add(entryBuilder.startIntField(Component.literal("Max (CPS)"), Config.maxCroaks).setDefaultValue(14).setMin(1).setMax(30).setSaveConsumer((newValue) -> Config.maxCroaks = newValue).build());
-         qol.addEntry(entryBuilder.startSubCategory(Component.literal("Spacebar Spammer"), secSpacebar).setExpanded(false).build());
 
          List<AbstractConfigListEntry> secAlerts = new ArrayList();
          secAlerts.add(entryBuilder.startStrField(Component.literal("Trigger Text(s)"), Config.triggerText).setDefaultValue("").setTooltip(new Component[]{Component.literal("Messages that trigger the on-screen alert."), Component.literal("Separate several with commas.")}).setSaveConsumer((newValue) -> Config.triggerText = newValue).build());

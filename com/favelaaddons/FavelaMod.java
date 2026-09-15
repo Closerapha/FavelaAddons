@@ -31,7 +31,6 @@ public class FavelaMod implements ClientModInitializer {
 
    public void onInitializeClient() {
       Config.load();
-      FavelaCroak.registrar();
 
       FavelaTrapCounter.registrar();
       FavelaCalls.registrar();
@@ -62,7 +61,7 @@ public class FavelaMod implements ClientModInitializer {
             graphics.pose().popMatrix();
          }
 
-         if (Config.dpsHudEnabled && Config.active) {
+         if (Config.dpsHudEnabled) {
             double dps = FavelaDPS.getCurrentDPS();
             Object[] var10001 = new Object[]{dps};
             String dpsText = "DPS: " + String.format("%.1f", var10001);

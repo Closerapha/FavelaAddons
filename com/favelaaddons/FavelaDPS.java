@@ -47,24 +47,11 @@ public class FavelaDPS {
 
                if (rawText != null && !rawText.equals("empty") && !plainText.trim().isEmpty()) {
                   processedEntities.add(entity.getId());
-                  if (Config.devMode) {
-                     StringBuilder hex = new StringBuilder();
-
-                     for(char c : plainText.toCharArray()) {
-                        hex.append(String.format("\\u%04X ", (int)c));
-                     }
-
-                     System.out.println("[FA DPS Debug] New Entity Text: " + plainText);
-                     System.out.println("[FA DPS Debug] Hex: " + hex.toString().trim());
-                  }
 
                   if (!plainText.contains("/") && !plainText.contains("%") && !plainText.contains("❤") && !plainText.contains("❤")) {
                      double damage = parseTelosDamage(plainText);
                      if (damage > (double)0.0F && damage < (double)1000000.0F) {
                         registerDamage(damage);
-                        if (Config.devMode) {
-                           System.out.println("[FA DPS Debug] Parsed Custom Damage: " + damage);
-                        }
 
                         if (Config.hideDamageNumbers) {
                            entity.discard();
@@ -90,9 +77,6 @@ public class FavelaDPS {
                                  double normalDamage = Double.parseDouble(numStr);
                                  if (normalDamage > (double)0.0F && normalDamage < (double)1000000.0F) {
                                     registerDamage(normalDamage);
-                                    if (Config.devMode) {
-                                       System.out.println("[FA DPS Debug] Parsed Normal Damage: " + normalDamage);
-                                    }
 
                                     if (Config.hideDamageNumbers) {
                                        entity.discard();

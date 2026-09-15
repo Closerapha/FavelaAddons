@@ -49,7 +49,6 @@ public class FavelaSplits {
    private static final List<Split> done = new ArrayList();
    private static final List<Step> steps = new ArrayList();
    private static final Map<String, Best> bests = new java.util.LinkedHashMap();
-   private static final java.util.Set<String> unmatched = new java.util.HashSet();
    private static Route active = null;
    private static int segmentIndex = 0;
    private static long runStart = 0L;
@@ -66,7 +65,6 @@ public class FavelaSplits {
    }
 
    public static void reset() {
-      unmatched.clear();
       finished.clear();
       done.clear();
       active = null;
@@ -419,10 +417,6 @@ public class FavelaSplits {
             }
          }
 
-         if (unmatched.add(tail)) {
-            System.out.println("[FA Splits] Portal without a route: " + model + " (" + seconds + "s" + (where == null ? "" : ", " + where) + ")");
-         }
-
       }
    }
 
@@ -433,9 +427,6 @@ public class FavelaSplits {
             elapsed = 0L;
          }
 
-         if (Config.devMode) {
-            System.out.println("[FA Splits] Portal at " + seconds + "s of " + route.portalStart + " -> run starts " + formatTime(elapsed) + " in");
-         }
 
          return elapsed;
       } else {
@@ -538,9 +529,6 @@ public class FavelaSplits {
       buildSteps(route);
       segmentIndex = 0;
       openStep(now);
-      if (Config.devMode) {
-         System.out.println("[FA Splits] Run started: " + route.dungeon);
-      }
 
    }
    private static void stop() {
@@ -578,47 +566,11 @@ public class FavelaSplits {
       }
    }
 
-   public static void logChat(String text) {
-      if (Config.devMode) {
-         String plain = normalize(text);
-         if (!plain.isEmpty()) {
-            try {
-               File folder = new File(FabricLoader.getInstance().getConfigDir().toFile(), "favelaaddons/debug");
-               if (!folder.exists()) {
-                  folder.mkdirs();
-               }
-
-               OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(folder, "chat.txt"), true), StandardCharsets.UTF_8);
-
-               try {
-                  writer.write(plain);
-                  writer.write(System.lineSeparator());
-               } catch (Throwable var6) {
-                  try {
-                     writer.close();
-                  } catch (Throwable var5) {
-                     var6.addSuppressed(var5);
-                  }
-
-                  throw var6;
-               }
-
-               writer.close();
-            } catch (Exception var7) {
-            }
-
-         }
-      }
-   }
-
    public static void onChat(String text) {
       if (Config.splits && active != null) {
          Segment segment = current();
          if (segment != null) {
             String message = normalize(text);
-            if (Config.devMode) {
-               System.out.println("[FA Splits] chat: " + message);
-            }
 
             Step step = (Step)steps.get(segmentIndex);
             if (segment.chatArm != null && !segment.chatArm.trim().isEmpty() && !step.armed) {
@@ -675,9 +627,6 @@ public class FavelaSplits {
       Step step = (Step)steps.get(segmentIndex);
       step.row.finish(now - step.startMillis, now - runStart);
       markSplit(step.row, step.key, now - step.startMillis, now - runStart);
-      if (Config.devMode) {
-         System.out.println("[FA Splits] " + step.name + " -> " + formatTime(now - runStart));
-      }
 
       if (step.parent >= 0) {
          boolean last = segmentIndex + 1 >= steps.size() || ((Step)steps.get(segmentIndex + 1)).parent != step.parent;

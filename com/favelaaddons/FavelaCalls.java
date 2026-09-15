@@ -32,9 +32,6 @@ public class FavelaCalls {
          Gui gui = Minecraft.getInstance().gui;
          return (Collection<LerpingBossEvent>)(gui == null ? List.of() : ((FavelaBossBarAccessor)gui.getBossOverlay()).favela$events().values());
       } catch (Throwable e) {
-         if (Config.devMode) {
-            System.out.println("[FA Boss] Could not read boss bars: " + e);
-         }
 
          return List.of();
       }
@@ -91,9 +88,6 @@ public class FavelaCalls {
             FavelaMod.playExternalSound();
          }
 
-         if (Config.devMode) {
-            System.out.println("[FA Calls] " + message + " at " + String.format("%.1f", progress * 100.0F) + "%");
-         }
 
       }
    }

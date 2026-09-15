@@ -19,7 +19,6 @@ import java.util.List;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Config {
-   public static boolean devMode = false;
    public static String triggerText = "";
    public static String alertText = "CAUTION!";
    public static int alertX = 100;
@@ -126,7 +125,6 @@ public class Config {
 
             try {
                FavelaData data = (FavelaData)GSON.fromJson(reader, FavelaData.class);
-               devMode = data.devMode;
                if (data.triggerText != null) {
                   triggerText = data.triggerText;
                }
@@ -280,7 +278,7 @@ public class Config {
          OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8);
 
          try {
-            FavelaData data = new FavelaData(devMode, triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, callColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
+            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, callColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
             GSON.toJson(data, writer);
          } catch (Throwable var4) {
             try {
@@ -304,8 +302,6 @@ public class Config {
    }
 
    private static class FavelaData {
-      @SerializedName("modoDev")
-      boolean devMode;
       @SerializedName("textoGatilho")
       String triggerText;
       @SerializedName("textoAlerta")
@@ -419,8 +415,7 @@ public class Config {
       @SerializedName("portalModelos")
       String portalModels;
 
-      FavelaData(boolean devMode, String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int callColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
-         this.devMode = devMode;
+      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int callColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
          this.triggerText = triggerText;
          this.alertText = alertText;
          this.alertX = alertX;

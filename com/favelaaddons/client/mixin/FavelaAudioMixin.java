@@ -31,9 +31,7 @@ public class FavelaAudioMixin {
                   FavelaMod.aliveOrDeadColor = 5592575;
                }
             }
-         } catch (Exception e) {
-            System.out.println("[FA Debug] Error getting sound: " + e.getMessage());
-            e.printStackTrace();
+         } catch (Exception var1) {
          }
 
       }

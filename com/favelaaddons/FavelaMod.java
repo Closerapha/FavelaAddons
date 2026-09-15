@@ -106,15 +106,8 @@ public class FavelaMod implements ClientModInitializer {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen((new FavelaModMenu()).getModConfigScreenFactory().create(Minecraft.getInstance().screen)));
             return 1;
          });
-         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("debug").executes((context) -> {
-            Config.devMode = !Config.devMode;
-            Config.save();
-            String state = Config.devMode ? "§2ON" : "§cOFF";
-            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("Â§a[FavelaAddons] Dev Mode: " + state));
-            return 1;
-         }));
          root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("help").executes((context) -> {
-            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Commands:\n§e/fa §7- Opens Mod Menu\n§e/fa help §7- Shows this help\n§e/fa editarHUD §7- Moves the on-screen texts\n§e/fa testar §7- Tests the alert text and the sound\n§e/fa som §7- Tests the alert sound§e/fa splits §7- Limpa e recarrega os splits\n§e/fa splits pb [dungeon] §7- Mostra o personal best\n§e/fa splits iniciar <dungeon> §7- Inicia a run manualmente\n§e/fa split §7- Fecha o segmento atual\n§e/fa split delete §7- Desfaz o ultimo split\n§e/fa split cancel §7- Cancela a run atual\n§e/fa split status §7- Mostra o cue que o mod esta esperando\n§e/fa split reset §7- Apaga todos os personal bests\n§e/fa debug §7- Toggles dev logs"));
+            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§a[FavelaAddons] Commands:\n§e/fa §7- Opens Mod Menu\n§e/fa help §7- Shows this help\n§e/fa editarHUD §7- Moves the on-screen texts\n§e/fa testar §7- Tests the alert text and the sound\n§e/fa som §7- Tests the alert sound§e/fa splits §7- Limpa e recarrega os splits\n§e/fa splits pb [dungeon] §7- Mostra o personal best\n§e/fa splits iniciar <dungeon> §7- Inicia a run manualmente\n§e/fa split §7- Fecha o segmento atual\n§e/fa split delete §7- Desfaz o ultimo split\n§e/fa split cancel §7- Cancela a run atual\n§e/fa split status §7- Mostra o cue que o mod esta esperando\n§e/fa split reset §7- Apaga todos os personal bests\n"));
             return 1;
          }));
 
@@ -183,16 +176,12 @@ public class FavelaMod implements ClientModInitializer {
    }
 
    private void handleChatMessage(String chatText) {
-      FavelaSplits.logChat(chatText);
       FavelaSplits.onChat(chatText);
       Minecraft client = Minecraft.getInstance();
       if (client.player != null) {
          String name = client.player.getName().getString();
       }
 
-      if (Config.devMode && Config.parsedSoundTriggers.length > 0) {
-         System.out.println("[FA Sound] Chat: \"" + chatText + "\"");
-      }
 
       if (Config.parsedSoundTriggers.length > 0) {
          String lowerChat = chatText.toLowerCase();
@@ -256,9 +245,6 @@ public class FavelaMod implements ClientModInitializer {
 
             });
             clip.start();
-            if (Config.devMode) {
-               System.out.println("[FA Sound] Playing " + soundFile.getName() + " at volume " + Config.soundVolume);
-            }
          } catch (javax.sound.sampled.UnsupportedAudioFileException e) {
             System.out.println("[FA Sound] Not a playable WAV file: " + (soundFile != null ? soundFile.getAbsolutePath() : "?") + " (" + e.getMessage() + ")");
          } catch (javax.sound.sampled.LineUnavailableException e) {

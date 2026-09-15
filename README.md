@@ -42,7 +42,6 @@ Todos os elementos de tela são arrastáveis por `/fa editarHUD`.
 | `/fa splits` | Recarrega e lista as rotas |
 | `/fa splits pb [dungeon]` | Mostra o personal best |
 | `/fa splits iniciar <dungeon>` | Inicia uma run manualmente |
-| `/fa debug` | Liga os logs de diagnóstico |
 
 ## Configuração
 

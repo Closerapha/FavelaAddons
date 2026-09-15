@@ -32,9 +32,6 @@ public class FavelaTrapCounter {
             try {
                trapCount = countTraps(client);
             } catch (Exception e) {
-               if (Config.devMode) {
-                  System.out.println("[FA Traps] Error counting: " + e.getMessage());
-               }
             }
          }
 

@@ -75,23 +75,6 @@ public class AlertHudEditorScreen extends Screen {
 
          graphics.pose().popMatrix();
       }
-      if (Config.trapCounter) {
-         String trapText = this.trapPreview();
-         int trapWidth = this.font.width(trapText);
-         Objects.requireNonNull(this.font);
-         int trapHeight = 9;
-         graphics.pose().pushMatrix();
-         graphics.pose().translate((float)Config.trapCounterX, (float)Config.trapCounterY);
-         graphics.pose().scale(Config.trapCounterScale, Config.trapCounterScale);
-         graphics.text(this.font, trapText, 0, 0, -11141291, true);
-         if (this.isMouseOver((double)mouseX, (double)mouseY, Config.trapCounterX, Config.trapCounterY, trapWidth, trapHeight, Config.trapCounterScale)) {
-            graphics.fill(-2, -2, trapWidth + 2, trapHeight + 2, 1157627903);
-         }
-
-         graphics.pose().popMatrix();
-      }
-
-
       if (Config.primedTimer) {
          String primedText = this.primedPreview();
          int primedWidth = this.font.width(primedText);
@@ -103,6 +86,23 @@ public class AlertHudEditorScreen extends Screen {
          graphics.text(this.font, primedText, 0, 0, -1551496, true);
          if (this.isMouseOver((double)mouseX, (double)mouseY, Config.primedTimerX, Config.primedTimerY, primedWidth, primedHeight, Config.primedTimerScale)) {
             graphics.fill(-2, -2, primedWidth + 2, primedHeight + 2, 1157627903);
+         }
+
+         graphics.pose().popMatrix();
+      }
+
+
+      if (Config.trapCounter) {
+         String trapText = this.trapPreview();
+         int trapWidth = this.font.width(trapText);
+         Objects.requireNonNull(this.font);
+         int trapHeight = 9;
+         graphics.pose().pushMatrix();
+         graphics.pose().translate((float)Config.trapCounterX, (float)Config.trapCounterY);
+         graphics.pose().scale(Config.trapCounterScale, Config.trapCounterScale);
+         graphics.text(this.font, trapText, 0, 0, -11141291, true);
+         if (this.isMouseOver((double)mouseX, (double)mouseY, Config.trapCounterX, Config.trapCounterY, trapWidth, trapHeight, Config.trapCounterScale)) {
+            graphics.fill(-2, -2, trapWidth + 2, trapHeight + 2, 1157627903);
          }
 
          graphics.pose().popMatrix();
@@ -311,15 +311,15 @@ public class AlertHudEditorScreen extends Screen {
          Config.dpsHudX = this.snapX(proposedX, this.font.width("DPS: 125.0"), Config.dpsHudScale);
          Config.dpsHudY = (int)(mouseY - this.dragOffsetY);
          return true;
-      } else if (this.isDraggingTrap) {
-         int proposedX = (int)(mouseX - this.dragOffsetX);
-         Config.trapCounterX = this.snapX(proposedX, this.font.width(this.trapPreview()), Config.trapCounterScale);
-         Config.trapCounterY = (int)(mouseY - this.dragOffsetY);
-         return true;
       } else if (this.isDraggingPrimed) {
          int proposedX = (int)(mouseX - this.dragOffsetX);
          Config.primedTimerX = this.snapX(proposedX, this.font.width(this.primedPreview()), Config.primedTimerScale);
          Config.primedTimerY = (int)(mouseY - this.dragOffsetY);
+         return true;
+      } else if (this.isDraggingTrap) {
+         int proposedX = (int)(mouseX - this.dragOffsetX);
+         Config.trapCounterX = this.snapX(proposedX, this.font.width(this.trapPreview()), Config.trapCounterScale);
+         Config.trapCounterY = (int)(mouseY - this.dragOffsetY);
          return true;
       } else if (this.isDraggingCall) {
          int proposedX = (int)(mouseX - this.dragOffsetX);

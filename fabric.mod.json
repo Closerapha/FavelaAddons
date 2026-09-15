@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "favelaaddons",
+	"version": "1.2.6",
+	"name": "FavelaAddons",
+	"description": "Have you seen this man?",
+	"authors": [
+		"Malandrex"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/sapo/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"com.sapo.SapoMod"
+		],
+		"modmenu": [
+			"com.sapo.SapoModMenu"
+		]
+	},
+	"mixins": [
+		"sapo.mixins.json",
+		{
+			"config": "sapo.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"accessWidener": "sapo.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

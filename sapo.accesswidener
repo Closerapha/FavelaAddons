@@ -1,0 +1,10 @@
+accessWidener v2 official
+
+accessible method net/minecraft/world/entity/Display$TextDisplay getText ()Lnet/minecraft/network/chat/Component;
+accessible method net/minecraft/world/entity/Display$ItemDisplay getItemStack ()Lnet/minecraft/world/item/ItemStack;
+accessible method net/minecraft/world/entity/Display$BlockDisplay getBlockState ()Lnet/minecraft/world/level/block/state/BlockState;
+accessible field net/minecraft/world/entity/Display DATA_TRANSLATION_ID Lnet/minecraft/network/syncher/EntityDataAccessor;
+accessible field net/minecraft/world/entity/Display DATA_SCALE_ID Lnet/minecraft/network/syncher/EntityDataAccessor;
+accessible method net/minecraft/world/entity/Interaction getWidth ()F
+accessible method net/minecraft/world/entity/Interaction getHeight ()F
+accessible method net/minecraft/world/entity/Interaction getResponse ()Z

@@ -1,0 +1,19 @@
+{
+	"required": true,
+	"package": "com.sapo.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"SapoAudioMixin",
+		"SapoAutoClickerMixin",
+		"SapoArmorSwapMixin",
+		"SapoBossBarAccessor",
+		"SapoTrapBlockMixin",
+		"SapoDebuggerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

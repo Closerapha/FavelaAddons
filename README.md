@@ -12,6 +12,7 @@ A Fabric client mod for Minecraft 26.1.2, built for the Telos Realms server.
 - Trap counter
 - Ambush and Deathmark calls by boss health percentage
 - Boss health percentage on screen
+- Primed timer: counts down to the moment the trait is ready again, on any weapon that carries it
 
 **Livesplits**
 

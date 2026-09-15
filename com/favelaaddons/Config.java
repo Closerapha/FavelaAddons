@@ -38,6 +38,12 @@ public class Config {
    public static float dpsHudScale = 1.5F;
    public static int dpsHudColor = 16777215;
    public static boolean hideDamageNumbers = false;
+   public static boolean primedTimer = false;
+   public static int primedTimerMs = 4100;
+   public static String primedTimerLabel = "Primed ";
+   public static int primedTimerX = 10;
+   public static int primedTimerY = 120;
+   public static float primedTimerScale = 1.5F;
    public static int portalRange = 64;
    public static String portalModels = "telos:mob/portal";
    public static boolean splits = false;
@@ -153,6 +159,12 @@ public class Config {
                dpsHudScale = data.dpsHudScale != 0.0F ? data.dpsHudScale : 1.5F;
                dpsHudColor = data.dpsHudColor != 0 ? data.dpsHudColor : 16777215;
                hideDamageNumbers = data.hideDamageNumbers;
+               primedTimer = data.primedTimer != null ? data.primedTimer : false;
+               primedTimerMs = data.primedTimerMs != 0 ? data.primedTimerMs : 4100;
+               primedTimerLabel = data.primedTimerLabel != null ? data.primedTimerLabel : "Primed ";
+               primedTimerX = data.primedTimerX != 0 ? data.primedTimerX : 10;
+               primedTimerY = data.primedTimerY != 0 ? data.primedTimerY : 120;
+               primedTimerScale = data.primedTimerScale != 0.0F ? data.primedTimerScale : 1.5F;
                portalRange = data.portalRange != null ? data.portalRange : 64;
                portalModels = data.portalModels != null ? data.portalModels : "telos:mob/portal";
                splits = data.splits != null ? data.splits : false;
@@ -278,7 +290,7 @@ public class Config {
          OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8);
 
          try {
-            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, callColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
+            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, primedTimer, primedTimerMs, primedTimerLabel, primedTimerX, primedTimerY, primedTimerScale, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, callColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
             GSON.toJson(data, writer);
          } catch (Throwable var4) {
             try {
@@ -340,6 +352,18 @@ public class Config {
       int dpsHudColor;
       @SerializedName("ocultarDanoTexto")
       boolean hideDamageNumbers;
+      @SerializedName("primedTimer")
+      Boolean primedTimer;
+      @SerializedName("primedTimerMs")
+      int primedTimerMs;
+      @SerializedName("primedTimerRotulo")
+      String primedTimerLabel;
+      @SerializedName("primedTimerX")
+      int primedTimerX;
+      @SerializedName("primedTimerY")
+      int primedTimerY;
+      @SerializedName("primedTimerEscala")
+      float primedTimerScale;
       @SerializedName("splitsAtivo")
       Boolean splits;
       @SerializedName("splitsFases")
@@ -415,7 +439,7 @@ public class Config {
       @SerializedName("portalModelos")
       String portalModels;
 
-      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int callColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
+      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean primedTimer, int primedTimerMs, String primedTimerLabel, int primedTimerX, int primedTimerY, float primedTimerScale, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int callColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
          this.triggerText = triggerText;
          this.alertText = alertText;
          this.alertX = alertX;
@@ -435,6 +459,12 @@ public class Config {
          this.dpsHudScale = dpsHudScale;
          this.dpsHudColor = dpsHudColor;
          this.hideDamageNumbers = hideDamageNumbers;
+         this.primedTimer = primedTimer;
+         this.primedTimerMs = primedTimerMs;
+         this.primedTimerLabel = primedTimerLabel;
+         this.primedTimerX = primedTimerX;
+         this.primedTimerY = primedTimerY;
+         this.primedTimerScale = primedTimerScale;
          this.portalRange = portalRange;
          this.portalModels = portalModels;
          this.splits = splits;

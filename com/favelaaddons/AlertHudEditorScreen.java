@@ -12,6 +12,7 @@ public class AlertHudEditorScreen extends Screen {
    private boolean isDraggingAliveOrDead = false;
    private boolean isDraggingDps = false;
    private boolean isDraggingTrap = false;
+   private boolean isDraggingPrimed = false;
    private boolean isDraggingCall = false;
    private boolean isDraggingBossHp = false;
    private boolean isDraggingSplits = false;
@@ -27,7 +28,7 @@ public class AlertHudEditorScreen extends Screen {
       graphics.fill(0, 0, this.width, this.height, -2013265920);
       graphics.text(this.font, "Drag the texts to move them. Use + and - to change the size of the text under the mouse.", 10, 10, -1, true);
       graphics.text(this.font, "Press ESC to save and exit. Texts will automatically snap to the center when dragged near it.", 10, 25, -5592406, true);
-      if (this.isDraggingAlert || this.isDraggingAliveOrDead || this.isDraggingDps || this.isDraggingTrap || this.isDraggingCall || this.isDraggingBossHp || this.isDraggingSplits) {
+      if (this.isDraggingAlert || this.isDraggingAliveOrDead || this.isDraggingDps || this.isDraggingTrap || this.isDraggingPrimed || this.isDraggingCall || this.isDraggingBossHp || this.isDraggingSplits) {
          graphics.fill(this.width / 2, 0, this.width / 2 + 1, this.height, 1157627903);
       }
 
@@ -91,6 +92,23 @@ public class AlertHudEditorScreen extends Screen {
       }
 
 
+      if (Config.primedTimer) {
+         String primedText = this.primedPreview();
+         int primedWidth = this.font.width(primedText);
+         Objects.requireNonNull(this.font);
+         int primedHeight = 9;
+         graphics.pose().pushMatrix();
+         graphics.pose().translate((float)Config.primedTimerX, (float)Config.primedTimerY);
+         graphics.pose().scale(Config.primedTimerScale, Config.primedTimerScale);
+         graphics.text(this.font, primedText, 0, 0, -1551496, true);
+         if (this.isMouseOver((double)mouseX, (double)mouseY, Config.primedTimerX, Config.primedTimerY, primedWidth, primedHeight, Config.primedTimerScale)) {
+            graphics.fill(-2, -2, primedWidth + 2, primedHeight + 2, 1157627903);
+         }
+
+         graphics.pose().popMatrix();
+      }
+
+
       if (Config.calls) {
          String callText = this.callPreview();
          int callWidth = this.font.width(callText);
@@ -148,6 +166,10 @@ public class AlertHudEditorScreen extends Screen {
    private String callPreview() {
       String text = Config.ambushText;
       return text != null && !text.trim().isEmpty() ? text.trim() : "AMBUSH";
+   }
+
+   private String primedPreview() {
+      return Config.primedTimerLabel + "4.1";
    }
 
    private String trapPreview() {
@@ -215,6 +237,20 @@ public class AlertHudEditorScreen extends Screen {
             }
          }
 
+         if (Config.primedTimer) {
+            int primedX = Config.primedTimerX;
+            int primedY = Config.primedTimerY;
+            int primedW = this.font.width(this.primedPreview());
+            Objects.requireNonNull(this.font);
+            if (this.isMouseOver(mouseX, mouseY, primedX, primedY, primedW, 9, Config.primedTimerScale)) {
+               this.isDraggingPrimed = true;
+               this.dragOffsetX = mouseX - (double)Config.primedTimerX;
+               this.dragOffsetY = mouseY - (double)Config.primedTimerY;
+               return true;
+            }
+         }
+
+
          if (Config.trapCounter) {
             int trapX = Config.trapCounterX;
             int trapY = Config.trapCounterY;
@@ -280,6 +316,11 @@ public class AlertHudEditorScreen extends Screen {
          Config.trapCounterX = this.snapX(proposedX, this.font.width(this.trapPreview()), Config.trapCounterScale);
          Config.trapCounterY = (int)(mouseY - this.dragOffsetY);
          return true;
+      } else if (this.isDraggingPrimed) {
+         int proposedX = (int)(mouseX - this.dragOffsetX);
+         Config.primedTimerX = this.snapX(proposedX, this.font.width(this.primedPreview()), Config.primedTimerScale);
+         Config.primedTimerY = (int)(mouseY - this.dragOffsetY);
+         return true;
       } else if (this.isDraggingCall) {
          int proposedX = (int)(mouseX - this.dragOffsetX);
          Config.callX = this.snapX(proposedX, this.font.width(this.callPreview()), Config.callScale);
@@ -312,6 +353,7 @@ public class AlertHudEditorScreen extends Screen {
          this.isDraggingAliveOrDead = false;
          this.isDraggingDps = false;
          this.isDraggingTrap = false;
+         this.isDraggingPrimed = false;
          this.isDraggingCall = false;
          this.isDraggingBossHp = false;
          this.isDraggingSplits = false;

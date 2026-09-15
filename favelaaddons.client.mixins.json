@@ -1,0 +1,19 @@
+{
+	"required": true,
+	"package": "com.favelaaddons.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"FavelaAudioMixin",
+		"FavelaAutoClickerMixin",
+		"FavelaArmorSwapMixin",
+		"FavelaBossBarAccessor",
+		"FavelaTrapBlockMixin",
+		"FavelaDebuggerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

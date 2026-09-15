@@ -1,9 +1,11 @@
 Manifest-Version: 1.0
-Fabric-Loom-Client-Only-Entries: com/sapo/AlertHudEditorScreen.class;com
- /sapo/client/mixin/SapoAudioMixin.class;com/sapo/Config$SapoData.class;
- com/sapo/Config.class;com/sapo/Sapo.class;com/sapo/SapoDPS$DamageHit.cl
- ass;com/sapo/SapoDPS.class;com/sapo/SapoMod.class;com/sapo/SapoModMenu.
- class;com/sapo/SapoPuzzle.class;sapo.client.mixins.json
+Fabric-Loom-Client-Only-Entries: com/favelaaddons/AlertHudEditorScreen
+ .class;com/favelaaddons/client/mixin/FavelaAudioMixin.class;com/favel
+ aaddons/Config$FavelaData.class;com/favelaaddons/Config.class;com/fav
+ elaaddons/FavelaCroak.class;com/favelaaddons/FavelaDPS$DamageHit.clas
+ s;com/favelaaddons/FavelaDPS.class;com/favelaaddons/FavelaMod.class;c
+ om/favelaaddons/FavelaModMenu.class;com/favelaaddons/FavelaPuzzle.cla
+ ss;favelaaddons.client.mixins.json
 Fabric-Loom-Split-Environment: true
 Fabric-Mapping-Namespace: official
 Fabric-Gradle-Version: 9.5.1

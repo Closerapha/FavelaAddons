@@ -28,9 +28,9 @@ A versão completa, com as abas Assists e DEV, é o [FavelaClient](https://githu
 
 ## Configuração
 
-Fica em `config/sapo/`:
+Fica em `config/favelaaddons/`:
 
-- `sapo.json` — opções do menu
+- `favelaaddons.json` — opções do menu
 - `splits.json` — rotas, segmentos e cues do Livesplits
 - `pb.json` — personal bests e golds
 
@@ -38,4 +38,4 @@ Fica em `config/sapo/`:
 
 Não usa Gradle. Compila com `javac --release 21` contra uma cópia do jar do Minecraft com o access widener aplicado, e é empacotado com `jar`.
 
-A constante `com.sapo.Build.FULL` separa as duas versões: com `false`, as abas Assists e DEV não são criadas e as features delas não são registradas.
+A constante `com.favelaaddons.Build.FULL` separa as duas versões: com `false`, as abas Assists e DEV não são criadas e as features delas não são registradas.

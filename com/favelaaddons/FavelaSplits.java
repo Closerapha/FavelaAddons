@@ -219,8 +219,29 @@ public class FavelaSplits {
       return route;
    }
 
+   private static Route neoEden() {
+      Route route = route("Neo Eden", "", 57, new String[]{"Neo Eden Clear|start:twins", "Twins|kill:twins", "Cherubim|kill:cherubim"});
+      route.startChat = "A tear in reality reveals the entrance to a hidden sanctuary";
+      return route;
+   }
+
+   private static boolean startFromChat(String message) {
+      for(Route route : ROUTES) {
+         String cue = route.startChat;
+         if (cue != null && !cue.trim().isEmpty() && matchesCue(cue, message)) {
+            if (active != route || endMillis > 0L) {
+               start(route, 0L);
+            }
+
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    private static Route[] defaultRoutes() {
-      return new Route[]{raphsCastle(), rustbornKingdom(), route("Dawn of Creation", "hardmode_shatters", 28, new String[]{"True Ophanim|kill:ophan"}), celestialsProvince(), seraphsDomain(), route("Neo Eden", "", 57, new String[]{"Neo Eden Clear|start:twins", "Twins|kill:twins", "Cherubim|kill:cherubim"})};
+      return new Route[]{raphsCastle(), rustbornKingdom(), route("Dawn of Creation", "hardmode_shatters", 28, new String[]{"True Ophanim|kill:ophan"}), celestialsProvince(), seraphsDomain(), neoEden()};
    }
 
    private static Route route(String dungeon, String portal, int portalStart, String[] specs) {
@@ -569,10 +590,18 @@ public class FavelaSplits {
    }
 
    public static void onChat(String text) {
-      if (Config.splits && active != null) {
+      if (Config.splits) {
+         String message = normalize(text);
+         if (startFromChat(message)) {
+            return;
+         }
+
+         if (active == null) {
+            return;
+         }
+
          Segment segment = current();
          if (segment != null) {
-            String message = normalize(text);
 
             Step step = (Step)steps.get(segmentIndex);
             if (segment.chatArm != null && !segment.chatArm.trim().isEmpty() && !step.armed) {
@@ -1298,6 +1327,7 @@ public class FavelaSplits {
    private static class Route {
       String dungeon;
       String portal;
+      String startChat;
       Integer portalStart;
       String world;
       Segment[] segments;

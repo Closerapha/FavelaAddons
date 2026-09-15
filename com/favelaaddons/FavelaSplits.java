@@ -239,8 +239,18 @@ public class FavelaSplits {
       return false;
    }
 
+   private static Route dawnOfCreation() {
+      Route route = new Route();
+      route.dungeon = "Dawn of Creation";
+      route.portal = "hardmode_shatters";
+      route.portalStart = 28;
+      route.world = "";
+      route.segments = new Segment[]{group("True Ophanim", new Segment[]{chatSeg("Phase 1", "Your existence is unfamiliar. A glitch to even Celestials. But I know what you are"), chatSeg("Phase 2", "And I've sensed your spirit fading over and over"), chatSeg("Phase 3", "may not see you. But I see your sanctuary out there. Hehe, struck gold"), chatSeg("Phase 4", "YOU CANNOT FATHOM WHAT I'VE SEEN"), chatSeg("Desperation", "True Ophan has been defeated")})};
+      return route;
+   }
+
    private static Route[] defaultRoutes() {
-      return new Route[]{raphsCastle(), rustbornKingdom(), route("Dawn of Creation", "hardmode_shatters", 28, new String[]{"True Ophanim|kill:ophan"}), celestialsProvince(), seraphsDomain(), neoEden()};
+      return new Route[]{raphsCastle(), rustbornKingdom(), dawnOfCreation(), celestialsProvince(), seraphsDomain(), neoEden()};
    }
 
    private static Route route(String dungeon, String portal, int portalStart, String[] specs) {

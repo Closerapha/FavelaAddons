@@ -117,7 +117,7 @@ public class AlertHudEditorScreen extends Screen {
          graphics.pose().pushMatrix();
          graphics.pose().translate((float)Config.callX, (float)Config.callY);
          graphics.pose().scale(Config.callScale, Config.callScale);
-         graphics.text(this.font, callText, 0, 0, Config.callColor | -16777216, true);
+         graphics.text(this.font, callText, 0, 0, Config.ambushColor | -16777216, true);
          if (this.isMouseOver((double)mouseX, (double)mouseY, Config.callX, Config.callY, callWidth, callHeight, Config.callScale)) {
             graphics.fill(-2, -2, callWidth + 2, callHeight + 2, 1157627903);
          }

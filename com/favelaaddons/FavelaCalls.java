@@ -20,6 +20,7 @@ public class FavelaCalls {
    private static boolean ambushCalled = false;
    private static boolean deathmarkCalled = false;
    private static String message = "";
+   private static int color = 16755200;
    private static int ticksLeft = 0;
 
    public static void registrar() {
@@ -72,17 +73,18 @@ public class FavelaCalls {
       if (!deathmarkCalled && progress <= deathmarkAt) {
          deathmarkCalled = true;
          ambushCalled = true;
-         show(Config.deathmarkText);
+         show(Config.deathmarkText, Config.deathmarkColor);
       } else if (!ambushCalled && progress <= ambushAt) {
          ambushCalled = true;
-         show(Config.ambushText);
+         show(Config.ambushText, Config.ambushColor);
       }
 
    }
 
-   private static void show(String wording) {
+   private static void show(String wording, int wordingColor) {
       if (wording != null && !wording.trim().isEmpty()) {
          message = wording.trim();
+         color = wordingColor;
          ticksLeft = Math.max(1, Config.callStayTicks);
          if (Config.callSound) {
             FavelaMod.playExternalSound();
@@ -93,7 +95,7 @@ public class FavelaCalls {
    }
 
    public static void preview() {
-      show(Config.ambushText);
+      show(Config.ambushText, Config.ambushColor);
    }
 
    private static void forget() {
@@ -110,7 +112,7 @@ public class FavelaCalls {
          graphics.pose().pushMatrix();
          graphics.pose().translate((float)Config.callX, (float)Config.callY);
          graphics.pose().scale(Config.callScale, Config.callScale);
-         graphics.text(font, message, 0, 0, Config.callColor | -16777216, true);
+         graphics.text(font, message, 0, 0, color | -16777216, true);
          graphics.pose().popMatrix();
       }
 

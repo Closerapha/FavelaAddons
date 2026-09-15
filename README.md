@@ -2,12 +2,8 @@
 
 Mod cliente para Fabric, Minecraft 26.1.2, feito para o servidor Telos Realms.
 
-Versão reduzida, com duas abas de configuração:
-
 - **QOL** — Spacebar Spammer, Alerts, DPS, Sounds, Trap Counter, Ambush/Deathmark, Boss HP
 - **Livesplits** — cronometragem de dungeons e bosses no estilo LiveSplit
-
-A versão completa, com as abas Assists e DEV, é o [FavelaClient](https://github.com/Closerapha/FavelaClient).
 
 ## Comandos
 

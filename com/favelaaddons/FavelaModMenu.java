@@ -97,8 +97,6 @@ public class FavelaModMenu implements ModMenuApi {
          secVuln.add(entryBuilder.startColorField(Component.literal("Resistant Colour"), Config.vulnResistantColor).setDefaultValue(5627135).setSaveConsumer((newValue) -> Config.vulnResistantColor = newValue).build());
          secVuln.add(entryBuilder.startStrField(Component.literal("Invulnerable Text"), Config.vulnInvulnerableText).setDefaultValue("INVULNERABLE").setSaveConsumer((newValue) -> Config.vulnInvulnerableText = newValue).build());
          secVuln.add(entryBuilder.startColorField(Component.literal("Invulnerable Colour"), Config.vulnInvulnerableColor).setDefaultValue(11184810).setSaveConsumer((newValue) -> Config.vulnInvulnerableColor = newValue).build());
-         secVuln.add(entryBuilder.startIntField(Component.literal("Range (blocks)"), Config.vulnRange).setDefaultValue(64).setMin(8).setMax(128).setSaveConsumer((newValue) -> Config.vulnRange = newValue).build());
-         secVuln.add(entryBuilder.startIntField(Component.literal("Check Every (ticks)"), Config.vulnCheckTicks).setDefaultValue(1).setMin(1).setMax(20).setTooltip(new Component[]{Component.literal("20 ticks = 1 second. It only runs while a boss bar"), Component.literal("is on screen.")}).setSaveConsumer((newValue) -> Config.vulnCheckTicks = newValue).build());
          qol.addEntry(entryBuilder.startSubCategory(Component.literal("Boss Vulnerability"), secVuln).setExpanded(false).build());
 
          List<AbstractConfigListEntry> secPrimed = new ArrayList();

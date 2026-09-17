@@ -23,6 +23,8 @@ public class FavelaVuln {
    private static final int BLUE_MARGIN = 32;
    private static final int RED_MARGIN = 12;
    private static final String FILL_TEXTURE = "xikage/default/inner";
+   private static final int RANGE = 64;
+   private static final int CHECK_TICKS = 1;
    private static int state = VULNERABLE;
    private static int lastFill = NO_COLOUR;
    private static int ticksLeft = 0;
@@ -44,7 +46,7 @@ public class FavelaVuln {
       if (ticksLeft > 0) {
          --ticksLeft;
       } else if (Config.vulnHud && client.player != null && client.level != null && bossBarUp()) {
-         ticksLeft = Math.max(1, Config.vulnCheckTicks) - 1;
+         ticksLeft = CHECK_TICKS - 1;
          int fill = nearestFill(client.player);
          lastFill = fill;
          state = fill == NO_COLOUR ? VULNERABLE : classify(fill);
@@ -68,7 +70,7 @@ public class FavelaVuln {
    }
 
    public static int nearestFill(LocalPlayer player) {
-      double range = (double)Math.max(8, Config.vulnRange);
+      double range = (double)RANGE;
       double rangeSqr = range * range;
       double bestDistance = Double.MAX_VALUE;
       int bestColour = NO_COLOUR;
@@ -147,7 +149,7 @@ public class FavelaVuln {
       if (client.player == null || client.level == null) {
          return "(no level)";
       } else {
-         double range = (double)Math.max(8, Config.vulnRange);
+         double range = (double)RANGE;
          double rangeSqr = range * range;
          int displays = 0;
          int withFill = 0;

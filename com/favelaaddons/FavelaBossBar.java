@@ -1,65 +1,34 @@
 package com.favelaaddons;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
 import java.util.Optional;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 
 public class FavelaBossBar {
-   private static final Map<Component, Component> CACHE = new IdentityHashMap();
-   private static final int MAX_CACHE = 16;
-   private static int lastColour = 0;
    private static boolean hooked = false;
 
    public static boolean hooked() {
       return hooked;
    }
 
-   public static Component tint(Component name) {
+   public static int barTint() {
       hooked = true;
-      if (name == null || !Config.vulnHud) {
-         return name;
+      if (!Config.vulnHud) {
+         return 0;
       } else {
          int state = FavelaVuln.state();
          if (state == FavelaVuln.VULNERABLE) {
-            return name;
+            return 0;
          } else {
             int colour = state == FavelaVuln.RESISTANT ? Config.vulnResistantColor : Config.vulnInvulnerableColor;
-            if (colour != lastColour) {
-               lastColour = colour;
-               CACHE.clear();
-            }
-
-            Component cached = (Component)CACHE.get(name);
-            if (cached != null) {
-               return cached;
-            } else {
-               Component out = repaint(name, colour);
-               if (CACHE.size() >= MAX_CACHE) {
-                  CACHE.clear();
-               }
-
-               CACHE.put(name, out);
-               return out;
-            }
+            return colour | -16777216;
          }
       }
    }
 
-   private static Component repaint(Component name, int colour) {
-      MutableComponent out = Component.empty();
-      TextColor wanted = TextColor.fromRgb(colour);
-      name.visit((style, text) -> {
-         if (!text.isEmpty()) {
-            out.append(Component.literal(text).withStyle(style.withColor(wanted)));
-         }
-
-         return Optional.empty();
-      }, Style.EMPTY);
-      return out;
+   public static BossEvent.BossBarColor spriteColour(BossEvent.BossBarColor original) {
+      return barTint() == 0 ? original : BossEvent.BossBarColor.WHITE;
    }
 
    public static String describe(Component name) {

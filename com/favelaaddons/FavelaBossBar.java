@@ -2,6 +2,7 @@ package com.favelaaddons;
 
 import java.util.Optional;
 import net.minecraft.network.chat.Component;
+import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Style;
 
@@ -12,23 +13,39 @@ public class FavelaBossBar {
       return hooked;
    }
 
-   public static int barTint() {
-      hooked = true;
+   private static boolean paintCurrent = false;
+
+   private static boolean wanted() {
       if (!Config.vulnHud) {
-         return 0;
+         return false;
       } else {
          int state = FavelaVuln.state();
-         if (state == FavelaVuln.VULNERABLE) {
-            return 0;
-         } else {
-            int colour = state == FavelaVuln.RESISTANT ? Config.vulnResistantColor : Config.vulnInvulnerableColor;
-            return colour | -16777216;
-         }
+         return state != FavelaVuln.VULNERABLE;
       }
    }
 
-   public static BossEvent.BossBarColor spriteColour(BossEvent.BossBarColor original) {
-      return barTint() == 0 ? original : BossEvent.BossBarColor.WHITE;
+   private static int stateColour() {
+      int colour = FavelaVuln.state() == FavelaVuln.RESISTANT ? Config.vulnResistantColor : Config.vulnInvulnerableColor;
+      return colour | -16777216;
+   }
+
+   public static int barTint() {
+      return paintCurrent ? stateColour() : 0;
+   }
+
+   public static BossEvent.BossBarColor spriteColour(BossEvent event, BossEvent.BossBarColor original) {
+      hooked = true;
+      paintCurrent = wanted() && isTracked(event);
+      return paintCurrent ? BossEvent.BossBarColor.WHITE : original;
+   }
+
+   private static boolean isTracked(BossEvent event) {
+      try {
+         LerpingBossEvent tracked = FavelaBossHp.activeBar();
+         return tracked != null && event != null && tracked.getId().equals(event.getId());
+      } catch (Exception var2) {
+         return false;
+      }
    }
 
    public static String describe(Component name) {

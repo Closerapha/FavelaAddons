@@ -22,7 +22,7 @@ public class FavelaBossBarBarMixin {
    )
    private BossEvent.BossBarColor favela$neutralSprite(BossEvent event) {
       try {
-         return FavelaBossBar.spriteColour(event.getColor());
+         return FavelaBossBar.spriteColour(event, event.getColor());
       } catch (Exception var3) {
          return event.getColor();
       }

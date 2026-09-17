@@ -75,6 +75,7 @@ public class AlertHudEditorScreen extends Screen {
 
          graphics.pose().popMatrix();
       }
+
       if (Config.primedTimer) {
          String primedText = this.primedPreview();
          int primedWidth = this.font.width(primedText);
@@ -236,6 +237,7 @@ public class AlertHudEditorScreen extends Screen {
                return true;
             }
          }
+
 
          if (Config.primedTimer) {
             int primedX = Config.primedTimerX;

@@ -25,6 +25,7 @@ public class FavelaVuln {
    private static final String FILL_TEXTURE = "xikage/default/inner";
    private static final int RANGE = 64;
    private static final int CHECK_TICKS = 1;
+   private static final String HUB_WORLD = "telos:hub";
    private static int state = VULNERABLE;
    private static int lastFill = NO_COLOUR;
    private static int ticksLeft = 0;
@@ -45,7 +46,7 @@ public class FavelaVuln {
    private static void onTick(Minecraft client) {
       if (ticksLeft > 0) {
          --ticksLeft;
-      } else if (Config.vulnHud && client.player != null && client.level != null && bossBarUp()) {
+      } else if (Config.vulnHud && client.player != null && client.level != null && !inHub(client) && bossBarUp()) {
          ticksLeft = CHECK_TICKS - 1;
          int fill = nearestFill(client.player);
          lastFill = fill;
@@ -56,8 +57,21 @@ public class FavelaVuln {
       }
    }
 
+   public static boolean inHub(Minecraft client) {
+      try {
+         return client.level != null && HUB_WORLD.equals(String.valueOf(client.level.dimension().identifier()));
+      } catch (Exception var2) {
+         return false;
+      }
+   }
+
    public static boolean bossBarUp() {
       try {
+         Minecraft client = Minecraft.getInstance();
+         if (client.options != null && client.options.hideGui) {
+            return false;
+         }
+
          for(net.minecraft.client.gui.components.LerpingBossEvent bar : FavelaCalls.bossBars()) {
             if (bar != null) {
                return true;

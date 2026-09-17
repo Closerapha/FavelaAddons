@@ -50,5 +50,12 @@ public class FavelaBossBarBarMixin {
          graphics.blitSprite(pipeline, sprite, textureWidth, textureHeight, u, v, x, y, width, height, tint);
       }
 
+      try {
+         if (FavelaBossBar.onTop()) {
+            FavelaBossBar.record(pipeline, sprite, textureWidth, textureHeight, u, v, x, y, width, height, tint);
+         }
+      } catch (Exception var14) {
+      }
+
    }
 }

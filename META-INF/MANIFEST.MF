@@ -16,6 +16,6 @@ Fabric-Loom-Client-Only-Entries: com/favelaaddons/AlertHudEditorScreen
  /FavelaTrapCounter.class;com/favelaaddons/FavelaVuln.class;com/favela
  addons/client/mixin/FavelaAudioMixin.class;com/favelaaddons/client/mi
  xin/FavelaBossBarAccessor.class;com/favelaaddons/client/mixin/FavelaB
- ossBarNameMixin.class;com/favelaaddons/client/mixin/FavelaPrimedMixin
- .class
+ ossBarBarMixin.class;com/favelaaddons/client/mixin/FavelaBossBarTopMi
+ xin.class;com/favelaaddons/client/mixin/FavelaPrimedMixin.class
 

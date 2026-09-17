@@ -14,7 +14,8 @@ public class FavelaAudioMixin {
    @Inject(
       method = {"play"},
       at = {@At("RETURN")},
-      cancellable = true
+      cancellable = true,
+      require = 0
    )
    private void play(SoundInstance sound, CallbackInfoReturnable<Void> cir) {
       if (sound != null) {

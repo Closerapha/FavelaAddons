@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class FavelaPrimedMixin {
    @Inject(
       method = {"swing(Lnet/minecraft/world/InteractionHand;)V"},
-      at = {@At("HEAD")}
+      at = {@At("HEAD")},
+      require = 0
    )
    private void favela$trackPrimedSwing(InteractionHand hand, CallbackInfo ci) {
       try {

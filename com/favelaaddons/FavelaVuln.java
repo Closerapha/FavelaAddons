@@ -72,11 +72,7 @@ public class FavelaVuln {
             return false;
          }
 
-         for(net.minecraft.client.gui.components.LerpingBossEvent bar : FavelaCalls.bossBars()) {
-            if (bar != null) {
-               return true;
-            }
-         }
+         return FavelaBossHp.activeBar() != null;
       } catch (Exception var2) {
       }
 

@@ -36,6 +36,7 @@ public class FavelaMod implements ClientModInitializer {
       FavelaCalls.registrar();
       FavelaBossHp.registrar();
       FavelaPrimed.registrar();
+      FavelaVuln.registrar();
       FavelaSplits.registrar();
       FavelaPortals.registrar();
       ClientReceiveMessageEvents.GAME.register((ClientReceiveMessageEvents.Game)(message, overlay) -> this.handleChatMessage(message.getString()));

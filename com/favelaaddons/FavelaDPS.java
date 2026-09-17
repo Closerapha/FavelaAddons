@@ -24,6 +24,8 @@ public class FavelaDPS {
    private static final long REFRESH_MILLIS = 250L;
    private static final double MAX_HIT = 1000000.0;
    private static final char HEART = '❤';
+   private static final String SLASH = "slash";
+   private static final String MASTERY = "icon/mastery";
    private static final Set<Integer> processedEntities = new HashSet();
    private static final List<DamageHit> recentHits = new ArrayList();
    public static long lastHitTime = 0L;
@@ -102,24 +104,35 @@ public class FavelaDPS {
          return "";
       } else {
          StringBuilder out = new StringBuilder();
+         boolean[] ratio = new boolean[]{false};
          text.visit((style, content) -> {
             String font = FavelaFonts.fontName(style);
 
             for(int glyph : content.codePoints().toArray()) {
                String texture = FavelaFonts.texture(font, glyph);
                if (texture != null) {
-                  String name = texture.substring(texture.lastIndexOf(47) + 1).replace(".png", "").toLowerCase(Locale.ROOT);
-                  if (name.length() == 1 && name.charAt(0) >= '0' && name.charAt(0) <= '9') {
-                     out.append(name.charAt(0));
-                  } else if (name.equals("dot") || name.equals("period") || name.equals("comma")) {
-                     out.append('.');
+                  String clean = texture.endsWith(".png") ? texture.substring(0, texture.length() - 4) : texture;
+                  int cut = clean.lastIndexOf(47);
+                  String folder = cut < 0 ? "" : clean.substring(0, cut);
+                  String name = clean.substring(cut + 1).toLowerCase(Locale.ROOT);
+                  if (name.equals(SLASH)) {
+                     ratio[0] = true;
+                     return Optional.of(Boolean.TRUE);
+                  }
+
+                  if (!folder.endsWith(MASTERY)) {
+                     if (name.length() == 1 && name.charAt(0) >= '0' && name.charAt(0) <= '9') {
+                        out.append(name.charAt(0));
+                     } else if (name.equals("dot") || name.equals("period") || name.equals("comma")) {
+                        out.append('.');
+                     }
                   }
                }
             }
 
             return Optional.empty();
          }, Style.EMPTY);
-         return out.toString();
+         return ratio[0] ? "" : out.toString();
       }
    }
 
@@ -229,13 +242,7 @@ public class FavelaDPS {
                   sum += hit.amount;
                }
 
-               double combatDuration = (double)(now - combatStartTime) / 1000.0;
-               double window = Math.min((double)WINDOW_MILLIS / 1000.0, combatDuration);
-               if (window < 0.5) {
-                  window = 0.5;
-               }
-
-               displayDps = sum / window;
+               displayDps = sum / ((double)WINDOW_MILLIS / 1000.0);
             }
 
             lastDpsUpdateTime = now;

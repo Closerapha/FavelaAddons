@@ -13,6 +13,7 @@ public class AlertHudEditorScreen extends Screen {
    private boolean isDraggingDps = false;
    private boolean isDraggingTrap = false;
    private boolean isDraggingPrimed = false;
+   private boolean isDraggingVuln = false;
    private boolean isDraggingCall = false;
    private boolean isDraggingBossHp = false;
    private boolean isDraggingSplits = false;
@@ -28,7 +29,7 @@ public class AlertHudEditorScreen extends Screen {
       graphics.fill(0, 0, this.width, this.height, -2013265920);
       graphics.text(this.font, "Drag the texts to move them. Use + and - to change the size of the text under the mouse.", 10, 10, -1, true);
       graphics.text(this.font, "Press ESC to save and exit. Texts will automatically snap to the center when dragged near it.", 10, 25, -5592406, true);
-      if (this.isDraggingAlert || this.isDraggingAliveOrDead || this.isDraggingDps || this.isDraggingTrap || this.isDraggingPrimed || this.isDraggingCall || this.isDraggingBossHp || this.isDraggingSplits) {
+      if (this.isDraggingAlert || this.isDraggingAliveOrDead || this.isDraggingDps || this.isDraggingTrap || this.isDraggingPrimed || this.isDraggingVuln || this.isDraggingCall || this.isDraggingBossHp || this.isDraggingSplits) {
          graphics.fill(this.width / 2, 0, this.width / 2 + 1, this.height, 1157627903);
       }
 
@@ -75,6 +76,22 @@ public class AlertHudEditorScreen extends Screen {
 
          graphics.pose().popMatrix();
       }
+      if (Config.vulnHud) {
+         String vulnText = this.vulnPreview();
+         int vulnWidth = this.font.width(vulnText);
+         Objects.requireNonNull(this.font);
+         int vulnHeight = 9;
+         graphics.pose().pushMatrix();
+         graphics.pose().translate((float)Config.vulnX, (float)Config.vulnY);
+         graphics.pose().scale(Config.vulnScale, Config.vulnScale);
+         graphics.text(this.font, vulnText, 0, 0, Config.vulnInvulnerableColor | -16777216, true);
+         if (this.isMouseOver((double)mouseX, (double)mouseY, Config.vulnX, Config.vulnY, vulnWidth, vulnHeight, Config.vulnScale)) {
+            graphics.fill(-2, -2, vulnWidth + 2, vulnHeight + 2, 1157627903);
+         }
+
+         graphics.pose().popMatrix();
+      }
+
 
       if (Config.primedTimer) {
          String primedText = this.primedPreview();
@@ -169,6 +186,10 @@ public class AlertHudEditorScreen extends Screen {
       return text != null && !text.trim().isEmpty() ? text.trim() : "AMBUSH";
    }
 
+   private String vulnPreview() {
+      return Config.vulnInvulnerableText == null || Config.vulnInvulnerableText.trim().isEmpty() ? "INVULNERABLE" : Config.vulnInvulnerableText.trim();
+   }
+
    private String primedPreview() {
       return Config.primedTimerLabel + "4.1";
    }
@@ -234,6 +255,19 @@ public class AlertHudEditorScreen extends Screen {
                this.isDraggingCall = true;
                this.dragOffsetX = mouseX - (double)Config.callX;
                this.dragOffsetY = mouseY - (double)Config.callY;
+               return true;
+            }
+         }
+
+         if (Config.vulnHud) {
+            int vulnX = Config.vulnX;
+            int vulnY = Config.vulnY;
+            int vulnW = this.font.width(this.vulnPreview());
+            Objects.requireNonNull(this.font);
+            if (this.isMouseOver(mouseX, mouseY, vulnX, vulnY, vulnW, 9, Config.vulnScale)) {
+               this.isDraggingVuln = true;
+               this.dragOffsetX = mouseX - (double)Config.vulnX;
+               this.dragOffsetY = mouseY - (double)Config.vulnY;
                return true;
             }
          }
@@ -313,6 +347,11 @@ public class AlertHudEditorScreen extends Screen {
          Config.dpsHudX = this.snapX(proposedX, this.font.width("DPS: 125.0"), Config.dpsHudScale);
          Config.dpsHudY = (int)(mouseY - this.dragOffsetY);
          return true;
+      } else if (this.isDraggingVuln) {
+         int proposedX = (int)(mouseX - this.dragOffsetX);
+         Config.vulnX = this.snapX(proposedX, this.font.width(this.vulnPreview()), Config.vulnScale);
+         Config.vulnY = (int)(mouseY - this.dragOffsetY);
+         return true;
       } else if (this.isDraggingPrimed) {
          int proposedX = (int)(mouseX - this.dragOffsetX);
          Config.primedTimerX = this.snapX(proposedX, this.font.width(this.primedPreview()), Config.primedTimerScale);
@@ -356,6 +395,7 @@ public class AlertHudEditorScreen extends Screen {
          this.isDraggingDps = false;
          this.isDraggingTrap = false;
          this.isDraggingPrimed = false;
+         this.isDraggingVuln = false;
          this.isDraggingCall = false;
          this.isDraggingBossHp = false;
          this.isDraggingSplits = false;

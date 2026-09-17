@@ -14,46 +14,6 @@ public class FavelaBossBar {
    }
 
    private static boolean paintCurrent = false;
-   private static final int MAX_BLITS = 4;
-   private static final Object[] SPRITES = new Object[MAX_BLITS];
-   private static final Object[] PIPELINES = new Object[MAX_BLITS];
-   private static final int[][] GEOMETRY = new int[MAX_BLITS][9];
-   private static int blits = 0;
-
-   public static void forgetBlits() {
-      blits = 0;
-   }
-
-   public static void record(Object pipeline, Object sprite, int textureWidth, int textureHeight, int u, int v, int x, int y, int width, int height, int tint) {
-      if (blits < MAX_BLITS) {
-         PIPELINES[blits] = pipeline;
-         SPRITES[blits] = sprite;
-         GEOMETRY[blits] = new int[]{textureWidth, textureHeight, u, v, x, y, width, height, tint};
-         ++blits;
-      }
-
-   }
-
-   public static int recorded() {
-      return blits;
-   }
-
-   public static Object pipelineAt(int i) {
-      return PIPELINES[i];
-   }
-
-   public static Object spriteAt(int i) {
-      return SPRITES[i];
-   }
-
-   public static int[] geometryAt(int i) {
-      return GEOMETRY[i];
-   }
-
-   public static boolean onTop() {
-      return Config.bossBarOnTop;
-   }
-
    private static boolean wanted() {
       if (!Config.vulnHud) {
          return false;

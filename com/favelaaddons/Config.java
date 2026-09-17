@@ -83,7 +83,6 @@ public class Config {
    public static float trapCounterScale = 1.5F;
    public static String trapCounterLabel = "Trap:";
    public static boolean trapCounterHideEmpty = false;
-   public static boolean bossBarOnTop = false;
    public static boolean vulnHud = false;
    public static String vulnResistantText = "RESISTANT";
    public static String vulnInvulnerableText = "INVULNERABLE";
@@ -228,7 +227,6 @@ public class Config {
                }
 
                trapCounterHideEmpty = data.trapCounterHideEmpty != null ? data.trapCounterHideEmpty : false;
-               bossBarOnTop = data.bossBarOnTop != null ? data.bossBarOnTop : false;
                vulnHud = data.vulnHud != null ? data.vulnHud : false;
                vulnResistantText = data.vulnResistantText != null ? data.vulnResistantText : "RESISTANT";
                vulnInvulnerableText = data.vulnInvulnerableText != null ? data.vulnInvulnerableText : "INVULNERABLE";
@@ -309,7 +307,7 @@ public class Config {
          OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8);
 
          try {
-            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, primedTimer, primedTimerMs, primedTimerLabel, primedTimerX, primedTimerY, primedTimerScale, bossBarOnTop, vulnHud, vulnResistantText, vulnInvulnerableText, vulnResistantColor, vulnInvulnerableColor, vulnX, vulnY, vulnScale, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, ambushColor, deathmarkColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
+            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, primedTimer, primedTimerMs, primedTimerLabel, primedTimerX, primedTimerY, primedTimerScale, vulnHud, vulnResistantText, vulnInvulnerableText, vulnResistantColor, vulnInvulnerableColor, vulnX, vulnY, vulnScale, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, ambushColor, deathmarkColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, portalRange, portalModels);
             GSON.toJson(data, writer);
          } catch (Throwable var4) {
             try {
@@ -383,8 +381,6 @@ public class Config {
       int primedTimerY;
       @SerializedName("primedTimerEscala")
       float primedTimerScale;
-      @SerializedName("bossBarPorCima")
-      Boolean bossBarOnTop;
       @SerializedName("vulnHud")
       Boolean vulnHud;
       @SerializedName("vulnResistenteTexto")
@@ -478,7 +474,7 @@ public class Config {
       @SerializedName("portalModelos")
       String portalModels;
 
-      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean primedTimer, int primedTimerMs, String primedTimerLabel, int primedTimerX, int primedTimerY, float primedTimerScale, boolean bossBarOnTop, boolean vulnHud, String vulnResistantText, String vulnInvulnerableText, int vulnResistantColor, int vulnInvulnerableColor, int vulnX, int vulnY, float vulnScale, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int ambushColor, int deathmarkColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
+      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean primedTimer, int primedTimerMs, String primedTimerLabel, int primedTimerX, int primedTimerY, float primedTimerScale, boolean vulnHud, String vulnResistantText, String vulnInvulnerableText, int vulnResistantColor, int vulnInvulnerableColor, int vulnX, int vulnY, float vulnScale, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int ambushColor, int deathmarkColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, int portalRange, String portalModels) {
          this.triggerText = triggerText;
          this.alertText = alertText;
          this.alertX = alertX;
@@ -506,7 +502,6 @@ public class Config {
          this.primedTimerScale = primedTimerScale;
          this.portalRange = portalRange;
          this.portalModels = portalModels;
-         this.bossBarOnTop = bossBarOnTop;
          this.vulnHud = vulnHud;
          this.vulnResistantText = vulnResistantText;
          this.vulnInvulnerableText = vulnInvulnerableText;

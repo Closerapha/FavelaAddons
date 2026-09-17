@@ -87,10 +87,6 @@ public class FavelaModMenu implements ModMenuApi {
          secCalls.add(entryBuilder.startBooleanToggle(Component.literal("Play Sound On A Call"), Config.callSound).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Uses the same favela_alerta.wav as the Sounds section.")}).setSaveConsumer((newValue) -> Config.callSound = newValue).build());
          qol.addEntry(entryBuilder.startSubCategory(Component.literal("Ambush and Deathmark"), secCalls).setExpanded(false).build());
 
-         List<AbstractConfigListEntry> secBossBarTop = new ArrayList();
-         secBossBarTop.add(entryBuilder.startBooleanToggle(Component.literal("Bar Over The Art"), Config.bossBarOnTop).setDefaultValue(false).setTooltip(new Component[]{Component.literal("The server draws its frame over the health bar, which"), Component.literal("can bury it. This paints the bar again afterwards, so"), Component.literal("it sits on top and stays readable.")}).setSaveConsumer((newValue) -> Config.bossBarOnTop = newValue).build());
-         qol.addEntry(entryBuilder.startSubCategory(Component.literal("Boss Bar"), secBossBarTop).setExpanded(false).build());
-
          List<AbstractConfigListEntry> secVuln = new ArrayList();
          secVuln.add(entryBuilder.startBooleanToggle(Component.literal("Boss Vulnerability"), Config.vulnHud).setDefaultValue(false).setTooltip(new Component[]{Component.literal("Reads the colour of the health bar floating over the"), Component.literal("boss and says on screen when it is taking reduced"), Component.literal("damage or none at all. Nothing shows while it is"), Component.literal("hittable.")}).setSaveConsumer((newValue) -> Config.vulnHud = newValue).build());
          secVuln.add(entryBuilder.startStrField(Component.literal("Resistant Text"), Config.vulnResistantText).setDefaultValue("RESISTANT").setSaveConsumer((newValue) -> Config.vulnResistantText = newValue).build());

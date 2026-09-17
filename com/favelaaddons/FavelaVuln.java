@@ -22,6 +22,7 @@ public class FavelaVuln {
    private static final int MAX_DISPLAYS = 256;
    private static final int BLUE_MARGIN = 32;
    private static final int RED_MARGIN = 12;
+   private static final String FILL_TEXTURE = "xikage/default/inner";
    private static int state = VULNERABLE;
    private static int lastFill = NO_COLOUR;
    private static int ticksLeft = 0;
@@ -42,7 +43,7 @@ public class FavelaVuln {
    private static void onTick(Minecraft client) {
       if (ticksLeft > 0) {
          --ticksLeft;
-      } else if (Config.vulnHud && client.player != null && client.level != null) {
+      } else if (Config.vulnHud && client.player != null && client.level != null && bossBarUp()) {
          ticksLeft = Math.max(1, Config.vulnCheckTicks) - 1;
          int fill = nearestFill(client.player);
          lastFill = fill;
@@ -51,6 +52,19 @@ public class FavelaVuln {
          state = VULNERABLE;
          lastFill = NO_COLOUR;
       }
+   }
+
+   public static boolean bossBarUp() {
+      try {
+         for(net.minecraft.client.gui.components.LerpingBossEvent bar : FavelaCalls.bossBars()) {
+            if (bar != null) {
+               return true;
+            }
+         }
+      } catch (Exception var2) {
+      }
+
+      return false;
    }
 
    public static int nearestFill(LocalPlayer player) {
@@ -95,10 +109,8 @@ public class FavelaVuln {
       if (text == null) {
          return NO_COLOUR;
       } else {
-         String wanted = Config.vulnFillTexture == null ? "" : Config.vulnFillTexture.trim();
-         if (wanted.isEmpty()) {
-            return NO_COLOUR;
-         } else {
+         {
+            String wanted = FILL_TEXTURE;
             int[] found = new int[]{NO_COLOUR};
             text.visit((style, content) -> {
                String font = FavelaFonts.fontName(style);

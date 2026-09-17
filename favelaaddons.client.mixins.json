@@ -5,6 +5,7 @@
 	"client": [
 		"FavelaAudioMixin",
 		"FavelaPrimedMixin",
+		"FavelaBossBarNameMixin",
 		"FavelaBossBarAccessor"
 	],
 	"injectors": {

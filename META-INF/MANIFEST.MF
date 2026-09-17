@@ -1,19 +1,21 @@
 Manifest-Version: 1.0
 Fabric-Loom-Client-Only-Entries: com/favelaaddons/AlertHudEditorScreen
  .class;com/favelaaddons/Config$FavelaData.class;com/favelaaddons/Conf
- ig.class;com/favelaaddons/FavelaBossHp.class;com/favelaaddons/FavelaC
- alls.class;com/favelaaddons/FavelaDPS$DamageHit.class;com/favelaaddon
- s/FavelaDPS.class;com/favelaaddons/FavelaDisplays.class;com/favelaadd
- ons/FavelaFonts.class;com/favelaaddons/FavelaGear.class;com/favelaadd
- ons/FavelaMod.class;com/favelaaddons/FavelaModMenu$NameBinding.class;
- com/favelaaddons/FavelaModMenu.class;com/favelaaddons/FavelaPortals.c
- lass;com/favelaaddons/FavelaPrimed.class;com/favelaaddons/FavelaSplit
- s$1.class;com/favelaaddons/FavelaSplits$Best.class;com/favelaaddons/F
- avelaSplits$Route.class;com/favelaaddons/FavelaSplits$Segment.class;c
- om/favelaaddons/FavelaSplits$Split.class;com/favelaaddons/FavelaSplit
- s$Step.class;com/favelaaddons/FavelaSplits.class;com/favelaaddons/Fav
- elaTraits.class;com/favelaaddons/FavelaTrapCounter.class;com/favelaad
- dons/FavelaVuln.class;com/favelaaddons/client/mixin/FavelaAudioMixin.
- class;com/favelaaddons/client/mixin/FavelaBossBarAccessor.class;com/f
- avelaaddons/client/mixin/FavelaPrimedMixin.class
+ ig.class;com/favelaaddons/FavelaBossBar.class;com/favelaaddons/Favela
+ BossHp.class;com/favelaaddons/FavelaCalls.class;com/favelaaddons/Fave
+ laDPS$DamageHit.class;com/favelaaddons/FavelaDPS.class;com/favelaaddo
+ ns/FavelaDisplays.class;com/favelaaddons/FavelaFonts.class;com/favela
+ addons/FavelaGear.class;com/favelaaddons/FavelaMod.class;com/favelaad
+ dons/FavelaModMenu$NameBinding.class;com/favelaaddons/FavelaModMenu.c
+ lass;com/favelaaddons/FavelaPortals.class;com/favelaaddons/FavelaPrim
+ ed.class;com/favelaaddons/FavelaSplits$1.class;com/favelaaddons/Favel
+ aSplits$Best.class;com/favelaaddons/FavelaSplits$Route.class;com/fave
+ laaddons/FavelaSplits$Segment.class;com/favelaaddons/FavelaSplits$Spl
+ it.class;com/favelaaddons/FavelaSplits$Step.class;com/favelaaddons/Fa
+ velaSplits.class;com/favelaaddons/FavelaTraits.class;com/favelaaddons
+ /FavelaTrapCounter.class;com/favelaaddons/FavelaVuln.class;com/favela
+ addons/client/mixin/FavelaAudioMixin.class;com/favelaaddons/client/mi
+ xin/FavelaBossBarAccessor.class;com/favelaaddons/client/mixin/FavelaB
+ ossBarNameMixin.class;com/favelaaddons/client/mixin/FavelaPrimedMixin
+ .class
 

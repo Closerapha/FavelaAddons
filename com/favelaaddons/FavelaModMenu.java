@@ -126,14 +126,17 @@ public class FavelaModMenu implements ModMenuApi {
 
             for(int s = 0; s < FavelaSplits.segmentCount(r); ++s) {
                int children = FavelaSplits.childCount(r, s);
-               StringListEntry segmentEntry = entryBuilder.startStrField(Component.literal(children > 0 ? "Boss" : "Split " + (s + 1)), FavelaSplits.segmentName(r, s)).setDefaultValue(FavelaSplits.segmentName(r, s)).build();
+               int routeIndex = r;
+               int segmentIndex = s;
+               StringListEntry segmentEntry = entryBuilder.startStrField(Component.literal(children > 0 ? "Boss" : "Split " + (s + 1)), FavelaSplits.segmentName(r, s)).setDefaultValue(FavelaSplits.segmentName(r, s)).setSaveConsumer((newValue) -> FavelaSplits.setSegmentName(routeIndex, segmentIndex, newValue)).build();
                nameBindings.add(new NameBinding(r, s, -1, segmentEntry));
                if (children > 0) {
                   List<AbstractConfigListEntry> phases = new ArrayList();
                   phases.add(segmentEntry);
 
                   for(int c = 0; c < children; ++c) {
-                     StringListEntry phase = entryBuilder.startStrField(Component.literal("Phase " + (c + 1)), FavelaSplits.childName(r, s, c)).setDefaultValue(FavelaSplits.childName(r, s, c)).build();
+                     int childIndex = c;
+                     StringListEntry phase = entryBuilder.startStrField(Component.literal("Phase " + (c + 1)), FavelaSplits.childName(r, s, c)).setDefaultValue(FavelaSplits.childName(r, s, c)).setSaveConsumer((newValue) -> FavelaSplits.setChildName(routeIndex, segmentIndex, childIndex, newValue)).build();
                      nameBindings.add(new NameBinding(r, s, c, phase));
                      phases.add(phase);
                   }

@@ -145,6 +145,8 @@ public class FavelaSplits {
             saveTable();
          }
 
+         refreshDelays();
+
       } catch (Exception e) {
          System.out.println("[FA Splits] Could not read splits.json: " + e.getMessage());
       }
@@ -302,6 +304,18 @@ public class FavelaSplits {
       return route;
    }
 
+
+   private static void refreshDelays() {
+      for(Route stored : ROUTES) {
+         for(Route fresh : defaultRoutes()) {
+            if (stored.dungeon != null && stored.dungeon.equals(fresh.dungeon)) {
+               stored.startDelay = fresh.startDelay;
+               break;
+            }
+         }
+      }
+
+   }
 
    public static void saveTable() {
       try {

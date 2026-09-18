@@ -38,8 +38,6 @@ public class FavelaSplits {
    private static final int BEHIND_LOSING = 0xFF9E1B1B;
    private static final int BEHIND_GAINING = 0xFFE87878;
    private static final int GOLD_SPLIT = 0xFFD4AF37;
-   private static final int BOSS_ROW = 0xFFAAAAAA;
-   private static final int SUB_ROW = 0xFF7FC4FF;
    private static final int SPLIT_TIMER = 0xFFFFFFFF;
    private static final int RUN_TIMER = 0xFF13A10E;
    private static final int LIVE_DELTA = 0xFFFFFFFF;
@@ -1184,7 +1182,6 @@ public class FavelaSplits {
 
                      String total = running ? formatTime(now - runStart) : formatTime(split.total);
                      String delta = !running && split.runDelta != Long.MIN_VALUE ? formatDelta(split.runDelta) : "";
-                     outline(graphics, -2, y - 1, width + 2, y + ROW_HEIGHT - 1, rowColor(split.depth));
                      splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, y, running ? TITLE_COLOR : PAST_COLOR);
                      y += ROW_HEIGHT;
                   }
@@ -1193,7 +1190,6 @@ public class FavelaSplits {
                for(int next = segmentIndex + 1; next < steps.size(); ++next) {
                   Step step = (Step)steps.get(next);
                   if (step.depth <= 0 || step.key.startsWith(openGroup)) {
-                     outline(graphics, -2, y - 1, width + 2, y + ROW_HEIGHT - 1, rowColor(step.depth));
                      splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), y, PENDING_COLOR);
                      y += ROW_HEIGHT;
                   }
@@ -1307,17 +1303,6 @@ public class FavelaSplits {
       }
 
       graphics.text(font, middle, middleX, y, color, true);
-   }
-
-   private static void outline(GuiGraphicsExtractor graphics, int left, int top, int right, int bottom, int color) {
-      graphics.fill(left, top, right, top + 1, color);
-      graphics.fill(left, bottom - 1, right, bottom, color);
-      graphics.fill(left, top + 1, left + 1, bottom - 1, color);
-      graphics.fill(right - 1, top + 1, right, bottom - 1, color);
-   }
-
-   private static int rowColor(int depth) {
-      return depth > 0 ? SUB_ROW : BOSS_ROW;
    }
 
    private static Split runningSplit() {

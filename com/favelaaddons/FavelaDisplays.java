@@ -10,6 +10,29 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
 
 public class FavelaDisplays {
+   public static double renderedRadius(Entity entity) {
+      if (!(entity instanceof Display)) {
+         return 0.15;
+      } else {
+         try {
+            Vector3fc scale = (Vector3fc)entity.getEntityData().get(Display.DATA_SCALE_ID);
+            if (scale == null) {
+               return 0.15;
+            } else {
+               double biggest = Math.max(Math.abs((double)scale.x()), Math.max(Math.abs((double)scale.y()), Math.abs((double)scale.z())));
+               double half = biggest * 0.5;
+               if (half < 0.05) {
+                  half = 0.05;
+               }
+
+               return half > 1.5 ? 1.5 : half;
+            }
+         } catch (Exception e) {
+            return 0.15;
+         }
+      }
+   }
+
    public static Vec3 renderedPosition(Entity entity) {
       if (!(entity instanceof Display)) {
          return entity.position();

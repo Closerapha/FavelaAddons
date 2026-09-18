@@ -38,6 +38,11 @@ public class FavelaSplits {
    private static final int BEHIND_LOSING = 0xFF9E1B1B;
    private static final int BEHIND_GAINING = 0xFFE87878;
    private static final int GOLD_SPLIT = 0xFFD4AF37;
+   private static final int BOSS_ROW = 0xFFAAAAAA;
+   private static final int SUB_ROW = 0xFF7FC4FF;
+   private static final int SPLIT_TIMER = 0xFFFFFFFF;
+   private static final int RUN_TIMER = 0xFF13A10E;
+   private static final int LIVE_DELTA = 0xFFFFFFFF;
    private static final long FINISHED_TTL = 15000L;
    private static final long FREEZE_TTL = 15000L;
    private static final String[] HUB_WORLDS = new String[]{"telos:realm", "telos:hub"};
@@ -1071,33 +1076,6 @@ public class FavelaSplits {
       }
    }
 
-   private static int paceColor(long now) {
-      if (active == null) {
-         return TITLE_COLOR;
-      } else {
-         Best best = (Best)bests.get(active.dungeon);
-         if (best == null) {
-            return TITLE_COLOR;
-         } else {
-            if (segmentIndex < steps.size()) {
-               Long target = (Long)best.cum.get(((Step)steps.get(segmentIndex)).key);
-               if (target != null && now - runStart > target) {
-                  return BEHIND_GAINING;
-               }
-            }
-
-            for(int i = done.size() - 1; i >= 0; --i) {
-               Split split = (Split)done.get(i);
-               if (split.duration >= 0L && split.runDelta != Long.MIN_VALUE) {
-                  return split.runDelta < 0L ? AHEAD_LOSING : BEHIND_GAINING;
-               }
-            }
-
-            return TITLE_COLOR;
-         }
-      }
-   }
-
    private static int deltaColor(Split row) {
       if (row.gold) {
          return GOLD_SPLIT;
@@ -1181,7 +1159,7 @@ public class FavelaSplits {
                      String total = running ? formatTime(now - runStart) : formatTime(split.total);
                      String segment = running ? pbSegmentTime(split.key) : formatTime(split.duration);
                      String delta = !running && split.runDelta != Long.MIN_VALUE ? formatDelta(split.runDelta) : "";
-                     splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, segment, y, running ? TITLE_COLOR : PAST_COLOR);
+                     splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, segment, y, rowColor(split.depth));
                      y += ROW_HEIGHT;
                   }
                }
@@ -1189,7 +1167,7 @@ public class FavelaSplits {
                for(int next = segmentIndex + 1; next < steps.size(); ++next) {
                   Step step = (Step)steps.get(next);
                   if (step.depth <= 0 || step.key.startsWith(openGroup)) {
-                     splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), pbSegmentTime(step.key), y, PENDING_COLOR);
+                     splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), pbSegmentTime(step.key), y, rowColor(step.depth));
                      y += ROW_HEIGHT;
                   }
                }
@@ -1197,19 +1175,26 @@ public class FavelaSplits {
 
             y += 9;
             String big = formatTime(now - runStart);
-            String side = formatTime(now - segmentStart);
-            graphics.pose().pushMatrix();
-            graphics.pose().translate(0.0F, (float)y + 4.0F);
-            graphics.pose().scale(1.1F, 1.1F);
-            graphics.text(font, side, 0, 0, PAST_COLOR, true);
-            graphics.pose().popMatrix();
             graphics.pose().pushMatrix();
             graphics.pose().translate((float)width - (float)font.width(big) * 1.6F, (float)y);
             graphics.pose().scale(1.6F, 1.6F);
-            graphics.text(font, big, 0, 0, paceColor(now), true);
+            graphics.text(font, big, 0, 0, RUN_TIMER, true);
             graphics.pose().popMatrix();
             y += 16;
-            footer(graphics, font, "Previous Segment", previousSegment(), y, width);
+            String side = formatTime(now - segmentStart);
+            graphics.text(font, side, 0, y, SPLIT_TIMER, true);
+            String bestSide = currentBest();
+            if (!bestSide.isEmpty()) {
+               graphics.text(font, bestSide, font.width(side) + 6, y, PAST_COLOR, true);
+            }
+
+            y += ROW_HEIGHT + 2;
+            int[] tone = new int[]{PAST_COLOR};
+            String previous = segmentDelta(false, now, tone);
+            footerColored(graphics, font, "Previous Segment", previous, tone[0], y, width);
+            y += ROW_HEIGHT;
+            String previousBest = segmentDelta(true, now, tone);
+            footerColored(graphics, font, "Previous Segment (Best)", previousBest, tone[0], y, width);
             y += ROW_HEIGHT;
             footer(graphics, font, "Sum of Best", sumOfBest(), y, width);
             y += ROW_HEIGHT;
@@ -1247,17 +1232,6 @@ public class FavelaSplits {
             return cumulative == null ? "-" : formatTime(cumulative);
          }
       }
-   }
-
-   private static String previousSegment() {
-      for(int i = done.size() - 1; i >= 0; --i) {
-         Split split = (Split)done.get(i);
-         if (split.duration >= 0L && split.delta != Long.MIN_VALUE) {
-            return formatDelta(split.delta);
-         }
-      }
-
-      return "-";
    }
 
    private static String sumOfBest() {
@@ -1324,6 +1298,77 @@ public class FavelaSplits {
 
       graphics.text(font, middle, middleX, y, color, true);
       graphics.text(font, right, rightX, y, color, true);
+   }
+
+   private static int rowColor(int depth) {
+      return depth > 0 ? SUB_ROW : BOSS_ROW;
+   }
+
+   private static Split runningSplit() {
+      for(int i = done.size() - 1; i >= 0; --i) {
+         Split split = (Split)done.get(i);
+         if (split.duration < 0L) {
+            return split;
+         }
+      }
+
+      return null;
+   }
+
+   private static long referenceFor(String key, boolean gold) {
+      if (active == null) {
+         return Long.MIN_VALUE;
+      } else {
+         Best best = (Best)bests.get(active.dungeon);
+         if (best == null) {
+            return Long.MIN_VALUE;
+         } else {
+            Long value = (Long)(gold ? best.golds : best.run).get(key);
+            return value == null ? Long.MIN_VALUE : value;
+         }
+      }
+   }
+
+   private static String currentBest() {
+      Split running = runningSplit();
+      if (running == null) {
+         return "";
+      } else {
+         long reference = referenceFor(running.key, true);
+         return reference == Long.MIN_VALUE ? "" : formatTime(reference);
+      }
+   }
+
+   private static String segmentDelta(boolean gold, long now, int[] tone) {
+      Split running = runningSplit();
+      if (running != null) {
+         long reference = referenceFor(running.key, gold);
+         long elapsed = now - segmentStart;
+         if (reference != Long.MIN_VALUE && elapsed > reference) {
+            tone[0] = LIVE_DELTA;
+            return formatDelta(elapsed - reference);
+         }
+      }
+
+      for(int i = done.size() - 1; i >= 0; --i) {
+         Split split = (Split)done.get(i);
+         if (split.duration >= 0L) {
+            long reference = referenceFor(split.key, gold);
+            if (reference != Long.MIN_VALUE) {
+               long value = split.duration - reference;
+               tone[0] = gold ? (value < 0L ? GOLD_SPLIT : BEHIND_LOSING) : deltaColor(split);
+               return formatDelta(value);
+            }
+         }
+      }
+
+      tone[0] = PAST_COLOR;
+      return "-";
+   }
+
+   private static void footerColored(GuiGraphicsExtractor graphics, Font font, String label, String value, int color, int y, int width) {
+      graphics.text(font, label, 0, y, PAST_COLOR, true);
+      graphics.text(font, value, width - font.width(value), y, color, true);
    }
 
    private static void footer(GuiGraphicsExtractor graphics, Font font, String label, String value, int y, int width) {

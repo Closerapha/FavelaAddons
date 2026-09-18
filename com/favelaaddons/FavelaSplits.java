@@ -58,6 +58,8 @@ public class FavelaSplits {
    private static int segmentIndex = 0;
    private static long runStart = 0L;
    private static long segmentStart = 0L;
+   private static Route pendingRoute = null;
+   private static long pendingStart = 0L;
    private static String barName = "";
    private static float barProgress = -1.0F;
    private static String lastWorld = "";
@@ -70,6 +72,8 @@ public class FavelaSplits {
    }
 
    public static void reset() {
+      pendingRoute = null;
+      pendingStart = 0L;
       finished.clear();
       done.clear();
       active = null;
@@ -228,6 +232,7 @@ public class FavelaSplits {
       route.dungeon = "Neo Eden";
       route.portal = "";
       route.startChat = "A tear in reality reveals the entrance to a hidden sanctuary";
+      route.startDelay = 4000L;
       route.portalStart = 57;
       route.world = "";
       route.segments = new Segment[]{chatSeg("Neo Eden Clear", "That is sufficient to proceed"), hidden(chatSeg("Interlude", "The garden has guided you")), chatSeg("Twins", "It would have been disappointing if they ended this too early"), hidden(chatSeg("Interlude 2", "Enough performance|You have been observed")), group("Cherubim", new Segment[]{chatSeg("Phase 1", "You arrogant mortal"), chatSeg("Phase 2", "The garden does not exist in a single shape"), chatSeg("Phase 3", "I have already decided where you die"), chatSeg("Phase 4", "I will not be witnessed from within a failing construct"), chatSeg("Desperation", "Cherubim has been defeated|Cherubin has been defeated")})};
@@ -239,7 +244,12 @@ public class FavelaSplits {
          String cue = route.startChat;
          if (cue != null && !cue.trim().isEmpty() && matchesCue(cue, message)) {
             if (active != route || endMillis > 0L) {
-               start(route, 0L);
+               if (route.startDelay > 0L) {
+                  pendingRoute = route;
+                  pendingStart = System.currentTimeMillis() + route.startDelay;
+               } else {
+                  start(route, 0L);
+               }
             }
 
             return true;
@@ -455,6 +465,13 @@ public class FavelaSplits {
       }
 
       long stamp = System.currentTimeMillis();
+      if (pendingRoute != null && stamp >= pendingStart) {
+         Route armed = pendingRoute;
+         pendingRoute = null;
+         pendingStart = 0L;
+         start(armed, 0L);
+      }
+
       finished.removeIf((run) -> stamp - run.start > FINISHED_TTL);
       if (endMillis > 0L && stamp - endMillis > FREEZE_TTL) {
          stop();
@@ -978,9 +995,18 @@ public class FavelaSplits {
 
    public static String cancelRun() {
       if (active == null) {
-         return "§cNo run in progress.";
+         if (pendingRoute == null) {
+            return "§cNo run in progress.";
+         } else {
+            String armed = pendingRoute.dungeon;
+            pendingRoute = null;
+            pendingStart = 0L;
+            return "§aRun cancelled: §e" + armed;
+         }
       } else {
          String dungeon = active.dungeon;
+         pendingRoute = null;
+         pendingStart = 0L;
          stop();
          return "§aRun cancelled: §e" + dungeon;
       }
@@ -1462,6 +1488,7 @@ public class FavelaSplits {
       String dungeon;
       String portal;
       String startChat;
+      long startDelay;
       Integer portalStart;
       String world;
       Segment[] segments;

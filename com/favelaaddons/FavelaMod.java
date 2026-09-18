@@ -1,5 +1,6 @@
 package com.favelaaddons;
 
+import java.util.ArrayList;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;

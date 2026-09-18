@@ -90,12 +90,17 @@ public class FavelaDPS {
    }
 
    public static double readDamage(Component text, String plain) {
-      double fromFont = parseNumber(decodeGlyphs(text));
-      if (fromFont > 0.0) {
-         return fromFont;
+      String digits = decodeGlyphs(text);
+      if (digits == null) {
+         return 0.0;
       } else {
-         double fromRanges = parseNumber(parseTelosDamage(plain));
-         return fromRanges > 0.0 ? fromRanges : parseNumber(plain.trim());
+         double fromFont = parseNumber(digits);
+         if (fromFont > 0.0) {
+            return fromFont;
+         } else {
+            double fromRanges = parseNumber(parseTelosDamage(plain));
+            return fromRanges > 0.0 ? fromRanges : parseNumber(plain.trim());
+         }
       }
    }
 
@@ -132,7 +137,7 @@ public class FavelaDPS {
 
             return Optional.empty();
          }, Style.EMPTY);
-         return ratio[0] ? "" : out.toString();
+         return ratio[0] ? null : out.toString();
       }
    }
 
@@ -171,6 +176,10 @@ public class FavelaDPS {
          char c = plainText.charAt(i);
          if (c == '\ud818' && i + 1 < plainText.length()) {
             char next = plainText.charAt(i + 1);
+            if (next == '\udc49' || next == '\udc23') {
+               return "";
+            }
+
             if (next >= '\udc25' && next <= '\udc2e') {
                sb.append((char)(48 + (next - '\udc25')));
             } else if (next >= '\udc00' && next <= '\udc03') {

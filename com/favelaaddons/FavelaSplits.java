@@ -1157,9 +1157,9 @@ public class FavelaSplits {
                      }
 
                      String total = running ? formatTime(now - runStart) : formatTime(split.total);
-                     String segment = running ? pbSegmentTime(split.key) : formatTime(split.duration);
                      String delta = !running && split.runDelta != Long.MIN_VALUE ? formatDelta(split.runDelta) : "";
-                     splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, segment, y, rowColor(split.depth));
+                     outline(graphics, -2, y - 1, width + 2, y + ROW_HEIGHT - 1, rowColor(split.depth));
+                     splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, y, running ? TITLE_COLOR : PAST_COLOR);
                      y += ROW_HEIGHT;
                   }
                }
@@ -1167,7 +1167,8 @@ public class FavelaSplits {
                for(int next = segmentIndex + 1; next < steps.size(); ++next) {
                   Step step = (Step)steps.get(next);
                   if (step.depth <= 0 || step.key.startsWith(openGroup)) {
-                     splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), pbSegmentTime(step.key), y, rowColor(step.depth));
+                     outline(graphics, -2, y - 1, width + 2, y + ROW_HEIGHT - 1, rowColor(step.depth));
+                     splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), y, PENDING_COLOR);
                      y += ROW_HEIGHT;
                   }
                }
@@ -1182,10 +1183,10 @@ public class FavelaSplits {
             graphics.pose().popMatrix();
             y += 16;
             String side = formatTime(now - segmentStart);
-            graphics.text(font, side, 0, y, SPLIT_TIMER, true);
+            graphics.text(font, side, width - font.width(side), y, SPLIT_TIMER, true);
             String bestSide = currentBest();
             if (!bestSide.isEmpty()) {
-               graphics.text(font, bestSide, font.width(side) + 6, y, PAST_COLOR, true);
+               graphics.text(font, "Best: " + bestSide, 0, y, PAST_COLOR, true);
             }
 
             y += ROW_HEIGHT + 2;
@@ -1204,20 +1205,6 @@ public class FavelaSplits {
          graphics.pose().popMatrix();
       }
 
-   }
-
-   private static String pbSegmentTime(String key) {
-      if (active == null) {
-         return "-";
-      } else {
-         Best best = (Best)bests.get(active.dungeon);
-         if (best == null) {
-            return "-";
-         } else {
-            Long duration = (Long)best.run.get(key);
-            return duration == null ? "-" : formatTime(duration);
-         }
-      }
    }
 
    private static String pbCumulativeTime(String key) {
@@ -1284,11 +1271,8 @@ public class FavelaSplits {
       return depth > 0 ? "  " : "";
    }
 
-   private static void splitRow(GuiGraphicsExtractor graphics, Font font, String name, String delta, int deltaColor, String middle, String right, int y, int color) {
-      int rightWidth = font.width(right);
-      int middleWidth = font.width(middle);
-      int rightX = Config.splitsWidth - rightWidth;
-      int middleX = rightX - 3 - middleWidth;
+   private static void splitRow(GuiGraphicsExtractor graphics, Font font, String name, String delta, int deltaColor, String middle, int y, int color) {
+      int middleX = Config.splitsWidth - font.width(middle);
       int deltaX = middleX - 3 - font.width(delta);
       int available = Math.max(10, (delta.isEmpty() ? middleX : deltaX) - 2);
       graphics.text(font, fit(font, name, available), 0, y, color, true);
@@ -1297,7 +1281,13 @@ public class FavelaSplits {
       }
 
       graphics.text(font, middle, middleX, y, color, true);
-      graphics.text(font, right, rightX, y, color, true);
+   }
+
+   private static void outline(GuiGraphicsExtractor graphics, int left, int top, int right, int bottom, int color) {
+      graphics.fill(left, top, right, top + 1, color);
+      graphics.fill(left, bottom - 1, right, bottom, color);
+      graphics.fill(left, top + 1, left + 1, bottom - 1, color);
+      graphics.fill(right - 1, top + 1, right, bottom - 1, color);
    }
 
    private static int rowColor(int depth) {

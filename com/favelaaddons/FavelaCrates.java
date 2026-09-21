@@ -53,7 +53,8 @@ public class FavelaCrates {
    private static final int CRATE_SLOTS = 90;
    private static final int MAX_REMEMBERED = 2048;
    private static final long PRIZE_TIMEOUT = 6000L;
-   private static final long PRIZE_STILL = 600L;
+   private static final long STILL_FLOOR = 1300L;
+   private static final long STILL_CAP = 3200L;
    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
    private static final Map<String, List<ItemStack>> POOLS = new HashMap();
    private static Entity pendingPrize = null;
@@ -61,16 +62,32 @@ public class FavelaCrates {
    private static String pendingCrate = "";
    private static long pendingAt = 0L;
    private static long pendingChanged = 0L;
+   private static long pendingGap = 0L;
    private static String pendingName = "";
    private static Entity pendingLabel = null;
    private static String labelText = "";
    private static long labelChanged = 0L;
+   private static long labelGap = 0L;
+   private static boolean labelLanded = false;
    private static long labelUntil = 0L;
    private static String labelCrateKey = "";
    private static final Set<Integer> seenDisplays = new HashSet();
    private static ClientLevel lastLevel = null;
    private static Screen lastScreen = null;
    private static String lastSignature = "";
+
+   private static long settleAfter(long gap) {
+      long wait = gap * 2L + 400L;
+      if (wait < STILL_FLOOR) {
+         wait = STILL_FLOOR;
+      }
+
+      if (wait > STILL_CAP) {
+         wait = STILL_CAP;
+      }
+
+      return wait;
+   }
 
    private static boolean loaded = false;
    private static List<ItemStack> lastPool = new ArrayList();
@@ -506,6 +523,8 @@ public class FavelaCrates {
                if (matchByName(pool, first) == null) {
                } else {
                   pendingLabel = bestLabel;
+                  labelLanded = false;
+                  labelGap = 0L;
                   labelCrateKey = key;
                   FavelaCrateReel.begin(pool, FavelaCrateReel.cellFor(key));
                   labelText = "";
@@ -520,32 +539,56 @@ public class FavelaCrates {
          if (pendingLabel != null) {
             long now = System.currentTimeMillis();
             boolean gone = true;
+            boolean moved = false;
 
             try {
                gone = pendingLabel.isRemoved() || client.level.getEntity(pendingLabel.getId()) == null;
                Component text = ((Display.TextDisplay)pendingLabel).getText();
                String seen = text == null ? "" : FavelaDisplays.sanitize(text.getString()).trim();
                if (!seen.isEmpty() && !seen.equals(labelText)) {
+                  if (labelChanged > 0L) {
+                     long gap = now - labelChanged;
+                     if (gap > labelGap) {
+                        labelGap = gap;
+                     }
+                  }
+
                   labelText = seen;
                   labelChanged = now;
+                  moved = true;
                }
             } catch (Exception var14) {
             }
 
-            boolean still = labelChanged > 0L && now - labelChanged >= PRIZE_STILL;
-            if (gone || still || now >= labelUntil) {
-               pendingLabel = null;
-               if (!labelText.isEmpty()) {
-                  List<ItemStack> pool = poolFor(labelCrateKey);
-                  ItemStack winner = matchByName(pool, labelText);
-
-                  if (winner != null) {
-                     FavelaCrateReel.land(winner.copy());
+            boolean over = gone || now >= labelUntil;
+            if (labelLanded) {
+               if (moved) {
+                  ItemStack late = matchByName(poolFor(labelCrateKey), labelText);
+                  if (late != null) {
+                     boolean fixed = FavelaCrateReel.correct(late.copy());
                   }
                }
+            } else {
+               boolean still = labelChanged > 0L && now - labelChanged >= settleAfter(labelGap);
+               if (over || still) {
+                  labelLanded = true;
+                  if (!labelText.isEmpty()) {
+                     List<ItemStack> pool = poolFor(labelCrateKey);
+                     ItemStack winner = matchByName(pool, labelText);
 
+                     if (winner != null) {
+                        FavelaCrateReel.land(winner.copy());
+                     }
+                  }
+               }
+            }
+
+            if (over) {
+               pendingLabel = null;
+               labelLanded = false;
                labelText = "";
                labelChanged = 0L;
+               labelGap = 0L;
             }
 
             return;
@@ -561,6 +604,13 @@ public class FavelaCrates {
                if (live != null && !live.isEmpty()) {
                   String name = FavelaDisplays.sanitize(live.getHoverName().getString());
                   if (!name.equals(pendingName)) {
+                     if (pendingChanged > 0L) {
+                        long gap = now - pendingChanged;
+                        if (gap > pendingGap) {
+                           pendingGap = gap;
+                        }
+                     }
+
                      pendingName = name;
                      pendingChanged = now;
                   }
@@ -570,7 +620,7 @@ public class FavelaCrates {
             } catch (Exception var10) {
             }
 
-            boolean still = pendingChanged > 0L && now - pendingChanged >= PRIZE_STILL;
+            boolean still = pendingChanged > 0L && now - pendingChanged >= settleAfter(pendingGap);
             if (gone || still || now >= pendingAt) {
                pendingPrize = null;
                if (!pendingStack.isEmpty()) {
@@ -580,6 +630,7 @@ public class FavelaCrates {
                pendingStack = ItemStack.EMPTY;
                pendingName = "";
                pendingChanged = 0L;
+               pendingGap = 0L;
             }
          } else if (!crates.isEmpty() && !prizes.isEmpty() && !FavelaCrateReel.spinning()) {
             Entity chosen = null;
@@ -606,6 +657,7 @@ public class FavelaCrates {
                pendingStack = ItemStack.EMPTY;
                pendingName = "";
                pendingChanged = 0L;
+               pendingGap = 0L;
             }
 
          }

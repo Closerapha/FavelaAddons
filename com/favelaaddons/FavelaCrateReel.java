@@ -50,6 +50,7 @@ public class FavelaCrateReel {
    private static long landMillis = 0L;
    private static float landFrom = 0.0F;
    private static float landTo = 0.0F;
+   private static int landIndex = -1;
    private static String prize = "";
    private static Identifier cell = null;
 
@@ -114,6 +115,7 @@ public class FavelaCrateReel {
          }
 
          reel.set(target, winner);
+         landIndex = target;
          landFrom = here;
          landTo = (float)(target * PITCH);
          long fitted = Math.round(3.0 * (double)(landTo - landFrom) / (double)FREE_SPEED);
@@ -121,6 +123,24 @@ public class FavelaCrateReel {
          prize = FavelaDisplays.sanitize(winner.getHoverName().getString()).trim();
          phase = LANDING;
          landStart = System.currentTimeMillis();
+      }
+   }
+
+   public static boolean correct(ItemStack winner) {
+      if (phase != LANDING) {
+         return false;
+      } else if (landIndex < 0 || landIndex >= reel.size()) {
+         return false;
+      } else if (winner != null && !winner.isEmpty()) {
+         if (System.currentTimeMillis() - landStart >= landMillis) {
+            return false;
+         } else {
+            reel.set(landIndex, winner);
+            prize = FavelaDisplays.sanitize(winner.getHoverName().getString()).trim();
+            return true;
+         }
+      } else {
+         return false;
       }
    }
 

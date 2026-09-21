@@ -36,6 +36,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class FavelaCrates {
@@ -211,6 +212,19 @@ public class FavelaCrates {
       if (!loaded && client.level != null) {
          loaded = true;
          loadPools();
+      }
+
+      if (client.screen == null) {
+         try {
+            if (client.crosshairPickEntity != null) {
+               touchedPos = client.crosshairPickEntity.position();
+               touchedAt = System.currentTimeMillis();
+            } else if (client.hitResult != null && client.hitResult.getType() != HitResult.Type.MISS) {
+               touchedPos = client.hitResult.getLocation();
+               touchedAt = System.currentTimeMillis();
+            }
+         } catch (Exception var2) {
+         }
       }
 
       readScreen(client);

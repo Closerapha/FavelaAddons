@@ -484,7 +484,7 @@ public class FavelaCrates {
             if (bestLabel != null && pendingLabel == null) {
                pendingLabel = bestLabel;
                labelCrateKey = crateKey(FavelaDisplays.modelId(labelCrate));
-               FavelaCrateReel.begin(poolFor(labelCrateKey));
+               FavelaCrateReel.begin(poolFor(labelCrateKey), FavelaCrateReel.cellFor(labelCrateKey));
                labelText = "";
                labelChanged = 0L;
                labelUntil = System.currentTimeMillis() + PRIZE_TIMEOUT;
@@ -550,7 +550,7 @@ public class FavelaCrates {
             if (gone || still || now >= pendingAt) {
                pendingPrize = null;
                if (!pendingStack.isEmpty()) {
-                  FavelaCrateReel.spin(poolFor(pendingCrate), pendingStack);
+                  FavelaCrateReel.spin(poolFor(pendingCrate), pendingStack, FavelaCrateReel.cellFor(pendingCrate));
                }
 
                pendingStack = ItemStack.EMPTY;

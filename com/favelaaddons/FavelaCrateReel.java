@@ -8,10 +8,15 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public class FavelaCrateReel {
+   private static final Identifier GREEN_CELL = Identifier.parse("favelaaddons:textures/gui/crate_cell_green.png");
+   private static final String[] GREEN_CRATES = new String[]{"uncommon_crate", "strange_pet", "strange_mount"};
+   private static final int CELL = 28;
    private static final int STRIP = 512;
    private static final int PITCH = 24;
    private static final float FREE_SPEED = 0.34F;
@@ -36,6 +41,7 @@ public class FavelaCrateReel {
    private static float landFrom = 0.0F;
    private static float landTo = 0.0F;
    private static String prize = "";
+   private static Identifier cell = null;
 
    public static void registrar() {
       HudElementRegistry.addLast(Identifier.parse("favelaaddons:crate_reel"), FavelaCrateReel::render);
@@ -43,6 +49,23 @@ public class FavelaCrateReel {
 
    public static boolean spinning() {
       return phase != IDLE;
+   }
+
+   public static Identifier cellFor(String crate) {
+      if (crate != null) {
+         for(String green : GREEN_CRATES) {
+            if (green.equals(crate)) {
+               return GREEN_CELL;
+            }
+         }
+      }
+
+      return null;
+   }
+
+   public static void begin(List<ItemStack> pool, Identifier art) {
+      cell = art;
+      begin(pool);
    }
 
    public static void begin(List<ItemStack> pool) {
@@ -85,7 +108,11 @@ public class FavelaCrateReel {
    }
 
    public static void spin(List<ItemStack> pool, ItemStack winner) {
-      begin(pool);
+      land(winner);
+   }
+
+   public static void spin(List<ItemStack> pool, ItemStack winner, Identifier art) {
+      begin(pool, art);
       land(winner);
    }
 
@@ -123,9 +150,12 @@ public class FavelaCrateReel {
             int centre = width / 2;
             int top = graphics.guiHeight() / 2 - ROW_HEIGHT;
             float scroll = offset();
-            graphics.fill(0, top, width, top + ROW_HEIGHT, BACKDROP);
-            graphics.fill(0, top, width, top + 1, EDGE);
-            graphics.fill(0, top + ROW_HEIGHT - 1, width, top + ROW_HEIGHT, EDGE);
+            if (cell == null) {
+               graphics.fill(0, top, width, top + ROW_HEIGHT, BACKDROP);
+               graphics.fill(0, top, width, top + 1, EDGE);
+               graphics.fill(0, top + ROW_HEIGHT - 1, width, top + ROW_HEIGHT, EDGE);
+            }
+
             graphics.pose().pushMatrix();
             graphics.pose().translate((float)centre, (float)(top + ROW_HEIGHT / 2));
             graphics.pose().scale(SCALE, SCALE);
@@ -134,7 +164,12 @@ public class FavelaCrateReel {
 
             for(int i = first; i <= last; ++i) {
                float x = (float)(i * PITCH) - scroll;
-               graphics.item(reel.get(i), Math.round(x) - 8, -8);
+               int at = Math.round(x);
+               if (cell != null) {
+                  graphics.blit(RenderPipelines.GUI_TEXTURED, cell, at - CELL / 2, -CELL / 2, 0.0F, 0.0F, CELL, CELL, CELL, CELL);
+               }
+
+               graphics.item(reel.get(i), at - 8, -8);
             }
 
             graphics.pose().popMatrix();

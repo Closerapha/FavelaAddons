@@ -322,7 +322,7 @@ public class FavelaCrates {
 
             if (!crate.isEmpty()) {
                List<ItemStack> known = (List)POOLS.get(crate);
-               boolean better = known == null || !guessed && known.size() < pool.size();
+               boolean better = known == null || known.size() < pool.size();
                if (better) {
                   POOLS.put(crate, pool);
                   savePools();

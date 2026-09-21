@@ -34,6 +34,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class FavelaCrates {
    private static final String CRATE_MODEL = "/furniture/";
@@ -43,7 +44,7 @@ public class FavelaCrates {
    private static final String[] CRATE_NAMES = new String[]{"common", "uncommon", "rare", "epic", "legendary", "seasonal", "usual", "strange", "fabled", "exotic"};
    private static final double CRATE_RANGE = 6.0;
    private static final double PRIZE_RANGE = 5.0;
-   private static final double TOUCH_RANGE = 5.0;
+   private static final double TOUCH_RANGE = 9.0;
    private static final int CRATE_SLOTS = 90;
    private static final int MAX_REMEMBERED = 2048;
    private static final long PRIZE_DELAY = 700L;
@@ -196,13 +197,14 @@ public class FavelaCrates {
       double bestDistance = reach * reach;
 
       try {
-         AABB box = client.player.getBoundingBox().inflate(reach);
+         AABB box = client.player.getBoundingBox().inflate(reach + 4.0);
+         Vec3 eye = client.player.getEyePosition();
 
          for(Entity entity : client.level.getEntities(client.player, box)) {
             if (entity instanceof Display.ItemDisplay) {
                String key = crateKey(FavelaDisplays.modelId(entity));
                if (!key.isEmpty() && (rarity.isEmpty() || crateOf(key).equals(rarity))) {
-                  double distance = entity.distanceToSqr(client.player);
+                  double distance = FavelaDisplays.renderedPosition(entity).distanceToSqr(eye);
                   if (distance < bestDistance) {
                      bestDistance = distance;
                      best = key;
@@ -210,7 +212,8 @@ public class FavelaCrates {
                }
             }
          }
-      } catch (Exception var11) {
+
+      } catch (Exception var12) {
       }
 
       return best;

@@ -482,14 +482,27 @@ public class FavelaCrates {
             }
 
             if (bestLabel != null && pendingLabel == null) {
-               pendingLabel = bestLabel;
-               labelCrateKey = crateKey(FavelaDisplays.modelId(labelCrate));
-               FavelaCrateReel.begin(poolFor(labelCrateKey), FavelaCrateReel.cellFor(labelCrateKey));
-               labelText = "";
-               labelChanged = 0L;
-               labelUntil = System.currentTimeMillis() + PRIZE_TIMEOUT;
-               pendingPrize = null;
-               pendingStack = ItemStack.EMPTY;
+               String key = crateKey(FavelaDisplays.modelId(labelCrate));
+               String first = "";
+
+               try {
+                  Component text = ((Display.TextDisplay)bestLabel).getText();
+                  first = text == null ? "" : FavelaDisplays.sanitize(text.getString()).trim();
+               } catch (Exception var15) {
+               }
+
+               List<ItemStack> pool = poolFor(key);
+               if (matchByName(pool, first) == null) {
+               } else {
+                  pendingLabel = bestLabel;
+                  labelCrateKey = key;
+                  FavelaCrateReel.begin(pool, FavelaCrateReel.cellFor(key));
+                  labelText = "";
+                  labelChanged = 0L;
+                  labelUntil = System.currentTimeMillis() + PRIZE_TIMEOUT;
+                  pendingPrize = null;
+                  pendingStack = ItemStack.EMPTY;
+               }
             }
          }
 

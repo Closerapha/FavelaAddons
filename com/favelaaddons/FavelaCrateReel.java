@@ -18,7 +18,7 @@ public class FavelaCrateReel {
    private static final String[] GREEN_CRATES = new String[]{"uncommon_crate", "strange_pet", "strange_mount"};
    private static final int CELL = 28;
    private static final int STRIP = 512;
-   private static final int PITCH = 24;
+   private static final int PITCH = 34;
    private static final float FREE_SPEED = 0.34F;
    private static final long LAND_MILLIS = 1200L;
    private static final long HOLD_MILLIS = 2500L;
@@ -47,6 +47,11 @@ public class FavelaCrateReel {
       HudElementRegistry.addLast(Identifier.parse("favelaaddons:crate_reel"), FavelaCrateReel::render);
    }
 
+   private static boolean drawable(ItemStack stack) {
+      String model = FavelaDisplays.modelId(stack);
+      return model == null || !model.endsWith(":air");
+   }
+
    public static boolean spinning() {
       return phase != IDLE;
    }
@@ -72,7 +77,7 @@ public class FavelaCrateReel {
       List<ItemStack> filler = new ArrayList();
 
       for(ItemStack stack : pool) {
-         if (stack != null && !stack.isEmpty()) {
+         if (stack != null && !stack.isEmpty() && drawable(stack)) {
             filler.add(stack);
          }
       }

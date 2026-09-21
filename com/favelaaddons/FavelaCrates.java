@@ -43,7 +43,8 @@ public class FavelaCrates {
    private static final String[] CRATE_NAMES = new String[]{"common", "uncommon", "rare", "epic", "legendary", "seasonal", "usual", "strange", "fabled", "exotic"};
    private static final double CRATE_RANGE = 6.0;
    private static final double PRIZE_RANGE = 5.0;
-   private static final double TOUCH_RANGE = 4.0;
+   private static final double TOUCH_RANGE = 5.0;
+   private static final int CRATE_SLOTS = 90;
    private static final int MAX_REMEMBERED = 2048;
    private static final long PRIZE_DELAY = 700L;
    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
@@ -296,8 +297,11 @@ public class FavelaCrates {
 
          List<ItemStack> pool = new ArrayList();
          StringBuilder signature = new StringBuilder();
+         int slotCount = 0;
 
          try {
+            slotCount = ((AbstractContainerScreen)screen).getMenu().slots.size();
+
             for(Slot slot : ((AbstractContainerScreen)screen).getMenu().slots) {
                ItemStack stack = slot.getItem();
                if (stack != null && !stack.isEmpty() && slot.container != client.player.getInventory()) {
@@ -316,8 +320,12 @@ public class FavelaCrates {
             String crate = rarity.isEmpty() ? "" : nearestCrateKey(client, rarity, CRATE_RANGE * 2.0);
             boolean guessed = false;
             if (crate.isEmpty()) {
-               crate = rarity.isEmpty() ? nearestCrateKey(client, "", TOUCH_RANGE) : rarity;
                guessed = true;
+               if (!rarity.isEmpty()) {
+                  crate = rarity;
+               } else if (slotCount >= CRATE_SLOTS) {
+                  crate = nearestCrateKey(client, "", TOUCH_RANGE);
+               }
             }
 
             if (!crate.isEmpty()) {

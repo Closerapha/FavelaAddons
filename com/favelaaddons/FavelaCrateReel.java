@@ -34,7 +34,7 @@ public class FavelaCrateReel {
    private static final long FREE_LIMIT = 20000L;
    private static final int MIN_AHEAD = 3;
    private static final long FADE_IN = 300L;
-   private static final long FADE_OUT = 500L;
+   private static final long FADE_OUT = 700L;
    private static final long REEL_FADE = 350L;
    private static final long BLIND_LIMIT = 8000L;
    private static final float SCALE = 2.0F;
@@ -227,6 +227,12 @@ public class FavelaCrateReel {
          } else if (phase == LANDING && now - landStart > landMillis + HOLD_MILLIS + REEL_FADE + FADE_OUT) {
             phase = IDLE;
             reel.clear();
+         } else if (tail(now) >= REEL_FADE) {
+            int fade = Math.round(shade(now) * 255.0F);
+            if (fade > 0) {
+               graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), fade << 24);
+            }
+
          } else {
             int width = graphics.guiWidth();
             int height = graphics.guiHeight();

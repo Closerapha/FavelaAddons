@@ -47,6 +47,7 @@ public class FavelaCrates {
    private static final String[] CRATE_NAMES = new String[]{"common", "uncommon", "rare", "epic", "legendary", "seasonal", "usual", "strange", "fabled", "exotic"};
    private static final double CRATE_RANGE = 6.0;
    private static final double PRIZE_RANGE = 5.0;
+   private static final double LABEL_RANGE = 10.0;
    private static final double TOUCH_RANGE = 9.0;
    private static final int CRATE_SLOTS = 90;
    private static final int MAX_REMEMBERED = 2048;
@@ -468,7 +469,8 @@ public class FavelaCrates {
             double labelDistance = Double.MAX_VALUE;
 
             for(Entity label : labels) {
-               Entity crate = nearest(crates, label);
+               Entity crate = nearest(crates, label, LABEL_RANGE);
+
                if (crate != null) {
                   double distance = FavelaDisplays.renderedPosition(crate).distanceToSqr(FavelaDisplays.renderedPosition(label));
                   if (distance < labelDistance) {
@@ -586,11 +588,16 @@ public class FavelaCrates {
    }
 
    private static Entity nearest(List<Entity> crates, Entity prize) {
+      return nearest(crates, prize, PRIZE_RANGE);
+   }
+
+   private static Entity nearest(List<Entity> crates, Entity prize, double reach) {
       Entity best = null;
-      double bestDistance = PRIZE_RANGE * PRIZE_RANGE;
+      double bestDistance = reach * reach;
+      net.minecraft.world.phys.Vec3 at = FavelaDisplays.renderedPosition(prize);
 
       for(Entity crate : crates) {
-         double distance = crate.distanceToSqr(prize);
+         double distance = FavelaDisplays.renderedPosition(crate).distanceToSqr(at);
          if (distance < bestDistance) {
             bestDistance = distance;
             best = crate;

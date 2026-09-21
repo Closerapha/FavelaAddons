@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.world.InteractionResult;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -60,9 +62,50 @@ public class FavelaCrates {
    private static String lastSignature = "";
 
    private static boolean loaded = false;
+   private static final long TOUCH_WINDOW = 4000L;
+   private static final double TOUCH_SPREAD = 4.0;
+   private static Vec3 touchedPos = null;
+   private static long touchedAt = 0L;
 
    public static void registrar() {
       ClientTickEvents.END_CLIENT_TICK.register(FavelaCrates::onTick);
+      UseEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
+         try {
+            if (level.isClientSide() && entity != null) {
+               touchedPos = entity.position();
+               touchedAt = System.currentTimeMillis();
+            }
+         } catch (Exception var7) {
+         }
+
+         return InteractionResult.PASS;
+      });
+   }
+
+   private static String crateNearPoint(Minecraft client, Vec3 point, double reach) {
+      String best = "";
+      double bestDistance = reach * reach;
+
+      try {
+         AABB box = new AABB(point.x - reach, point.y - reach, point.z - reach, point.x + reach, point.y + reach, point.z + reach);
+
+         for(Entity entity : client.level.getEntities((Entity)null, box)) {
+            if (entity instanceof Display.ItemDisplay) {
+               String key = crateKey(FavelaDisplays.modelId(entity));
+               if (!key.isEmpty()) {
+                  double distance = FavelaDisplays.renderedPosition(entity).distanceToSqr(point);
+                  if (distance < bestDistance) {
+                     bestDistance = distance;
+                     best = key;
+                  }
+               }
+            }
+         }
+
+      } catch (Exception var12) {
+      }
+
+      return best;
    }
 
    private static File poolFile() {
@@ -327,7 +370,14 @@ public class FavelaCrates {
                if (!rarity.isEmpty()) {
                   crate = rarity;
                } else if (slotCount >= CRATE_SLOTS) {
-                  crate = nearestCrateKey(client, "", TOUCH_RANGE);
+                  if (touchedPos != null && System.currentTimeMillis() - touchedAt < TOUCH_WINDOW) {
+                     crate = crateNearPoint(client, touchedPos, TOUCH_SPREAD);
+                  }
+
+                  if (crate.isEmpty()) {
+                     crate = nearestCrateKey(client, "", TOUCH_RANGE);
+                  }
+
                }
             }
 

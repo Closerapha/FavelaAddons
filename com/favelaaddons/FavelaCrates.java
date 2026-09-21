@@ -484,6 +484,7 @@ public class FavelaCrates {
             if (bestLabel != null && pendingLabel == null) {
                pendingLabel = bestLabel;
                labelCrateKey = crateKey(FavelaDisplays.modelId(labelCrate));
+               FavelaCrateReel.begin(poolFor(labelCrateKey));
                labelText = "";
                labelChanged = 0L;
                labelUntil = System.currentTimeMillis() + PRIZE_TIMEOUT;
@@ -515,7 +516,7 @@ public class FavelaCrates {
                   ItemStack winner = matchByName(pool, labelText);
 
                   if (winner != null) {
-                     FavelaCrateReel.spin(pool, winner.copy());
+                     FavelaCrateReel.land(winner.copy());
                   }
                }
 

@@ -15,10 +15,10 @@ public class FavelaCrateReel {
    private static final int STRIP = 512;
    private static final int PITCH = 24;
    private static final float FREE_SPEED = 0.34F;
-   private static final long LAND_MILLIS = 3200L;
-   private static final long HOLD_MILLIS = 2600L;
+   private static final long LAND_MILLIS = 1200L;
+   private static final long HOLD_MILLIS = 2500L;
    private static final long FREE_LIMIT = 20000L;
-   private static final int MIN_AHEAD = 14;
+   private static final int MIN_AHEAD = 6;
    private static final float SCALE = 2.0F;
    private static final int ROW_HEIGHT = 34;
    private static final int BACKDROP = -1777726976;

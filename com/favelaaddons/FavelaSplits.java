@@ -1158,88 +1158,91 @@ public class FavelaSplits {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      Minecraft client = Minecraft.getInstance();
-      if (Config.splits && client.player != null && (!finished.isEmpty() || active != null)) {
-         Font font = client.font;
-         long now = endMillis > 0L ? endMillis : System.currentTimeMillis();
-         int width = Config.splitsWidth;
-         graphics.pose().pushMatrix();
-         graphics.pose().translate((float)Config.splitsX, (float)Config.splitsY);
-         graphics.pose().scale(Config.splitsScale, Config.splitsScale);
-         int y = 0;
-
-         for(Split run : finished) {
-            if (endMillis > 0L || now - run.start > FINISHED_TTL) {
-               continue;
-            }
-
-            boolean record = "PB".equals(run.key);
-            graphics.text(font, run.name + (record ? " PB" : ""), 0, y, record ? GOLD_COLOR : DONE_COLOR, true);
-            String total = formatTime(run.total);
-            graphics.text(font, total, width - font.width(total), y, record ? GOLD_COLOR : DONE_COLOR, true);
-            y += ROW_HEIGHT;
-         }
-
-         if (active != null) {
-            graphics.fill(-2, y - 1, width + 2, y + ROW_HEIGHT - 1, TITLE_BG);
-            graphics.text(font, active.dungeon, 0, y, TITLE_COLOR, true);
-            y += ROW_HEIGHT + 1;
-            if (Config.splitsShowPhases) {
-               String openGroup = activeGroup();
-
-               for(Split split : done) {
-                  boolean running = split.duration < 0L;
-                  if ((!split.hidden || running) && (split.depth <= 0 || split.key.startsWith(openGroup))) {
-                     if (running) {
-                        graphics.fill(-2, y - 1, width + 2, y + ROW_HEIGHT - 1, CURRENT_BG);
-                     }
-
-                     String total = running ? formatTime(now - runStart) : formatTime(split.total);
-                     String delta = !running && split.runDelta != Long.MIN_VALUE ? formatDelta(split.runDelta) : "";
-                     splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, y, running ? TITLE_COLOR : PAST_COLOR);
-                     y += ROW_HEIGHT;
-                  }
-               }
-
-               for(int next = segmentIndex + 1; next < steps.size(); ++next) {
-                  Step step = (Step)steps.get(next);
-                  if (step.depth <= 0 || step.key.startsWith(openGroup)) {
-                     splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), y, PENDING_COLOR);
-                     y += ROW_HEIGHT;
-                  }
-               }
-            }
-
-            y += 9;
-            String big = formatTime(now - runStart);
+      if (!FavelaCrateReel.spinning()) {
+         Minecraft client = Minecraft.getInstance();
+         if (Config.splits && client.player != null && (!finished.isEmpty() || active != null)) {
+            Font font = client.font;
+            long now = endMillis > 0L ? endMillis : System.currentTimeMillis();
+            int width = Config.splitsWidth;
             graphics.pose().pushMatrix();
-            graphics.pose().translate((float)width - (float)font.width(big) * 1.6F, (float)y);
-            graphics.pose().scale(1.6F, 1.6F);
-            graphics.text(font, big, 0, 0, RUN_TIMER, true);
-            graphics.pose().popMatrix();
-            y += 16;
-            String side = formatTime(now - segmentStart);
-            graphics.text(font, side, width - font.width(side), y, SPLIT_TIMER, true);
-            String bestSide = currentBest();
-            if (!bestSide.isEmpty()) {
-               graphics.text(font, "Best: " + bestSide, 0, y, PAST_COLOR, true);
+            graphics.pose().translate((float)Config.splitsX, (float)Config.splitsY);
+            graphics.pose().scale(Config.splitsScale, Config.splitsScale);
+            int y = 0;
+
+            for(Split run : finished) {
+               if (endMillis > 0L || now - run.start > FINISHED_TTL) {
+                  continue;
+               }
+
+               boolean record = "PB".equals(run.key);
+               graphics.text(font, run.name + (record ? " PB" : ""), 0, y, record ? GOLD_COLOR : DONE_COLOR, true);
+               String total = formatTime(run.total);
+               graphics.text(font, total, width - font.width(total), y, record ? GOLD_COLOR : DONE_COLOR, true);
+               y += ROW_HEIGHT;
             }
 
-            y += ROW_HEIGHT + 2;
-            int[] tone = new int[]{PAST_COLOR};
-            String previous = segmentDelta(false, now, tone);
-            footerColored(graphics, font, "Previous Segment", previous, tone[0], y, width);
-            y += ROW_HEIGHT;
-            String previousBest = segmentDelta(true, now, tone);
-            footerColored(graphics, font, "Previous Segment (Best)", previousBest, tone[0], y, width);
-            y += ROW_HEIGHT;
-            footer(graphics, font, "Sum of Best", sumOfBest(), y, width);
-            y += ROW_HEIGHT;
-            footer(graphics, font, "Personal Best", personalBestTotal(), y, width);
+            if (active != null) {
+               graphics.fill(-2, y - 1, width + 2, y + ROW_HEIGHT - 1, TITLE_BG);
+               graphics.text(font, active.dungeon, 0, y, TITLE_COLOR, true);
+               y += ROW_HEIGHT + 1;
+               if (Config.splitsShowPhases) {
+                  String openGroup = activeGroup();
+
+                  for(Split split : done) {
+                     boolean running = split.duration < 0L;
+                     if ((!split.hidden || running) && (split.depth <= 0 || split.key.startsWith(openGroup))) {
+                        if (running) {
+                           graphics.fill(-2, y - 1, width + 2, y + ROW_HEIGHT - 1, CURRENT_BG);
+                        }
+
+                        String total = running ? formatTime(now - runStart) : formatTime(split.total);
+                        String delta = !running && split.runDelta != Long.MIN_VALUE ? formatDelta(split.runDelta) : "";
+                        splitRow(graphics, font, indent(split.depth) + split.name, delta, deltaColor(split), total, y, running ? TITLE_COLOR : PAST_COLOR);
+                        y += ROW_HEIGHT;
+                     }
+                  }
+
+                  for(int next = segmentIndex + 1; next < steps.size(); ++next) {
+                     Step step = (Step)steps.get(next);
+                     if (step.depth <= 0 || step.key.startsWith(openGroup)) {
+                        splitRow(graphics, font, indent(step.depth) + step.name, "", PENDING_COLOR, pbCumulativeTime(step.key), y, PENDING_COLOR);
+                        y += ROW_HEIGHT;
+                     }
+                  }
+               }
+
+               y += 9;
+               String big = formatTime(now - runStart);
+               graphics.pose().pushMatrix();
+               graphics.pose().translate((float)width - (float)font.width(big) * 1.6F, (float)y);
+               graphics.pose().scale(1.6F, 1.6F);
+               graphics.text(font, big, 0, 0, RUN_TIMER, true);
+               graphics.pose().popMatrix();
+               y += 16;
+               String side = formatTime(now - segmentStart);
+               graphics.text(font, side, width - font.width(side), y, SPLIT_TIMER, true);
+               String bestSide = currentBest();
+               if (!bestSide.isEmpty()) {
+                  graphics.text(font, "Best: " + bestSide, 0, y, PAST_COLOR, true);
+               }
+
+               y += ROW_HEIGHT + 2;
+               int[] tone = new int[]{PAST_COLOR};
+               String previous = segmentDelta(false, now, tone);
+               footerColored(graphics, font, "Previous Segment", previous, tone[0], y, width);
+               y += ROW_HEIGHT;
+               String previousBest = segmentDelta(true, now, tone);
+               footerColored(graphics, font, "Previous Segment (Best)", previousBest, tone[0], y, width);
+               y += ROW_HEIGHT;
+               footer(graphics, font, "Sum of Best", sumOfBest(), y, width);
+               y += ROW_HEIGHT;
+               footer(graphics, font, "Personal Best", personalBestTotal(), y, width);
+            }
+
+            graphics.pose().popMatrix();
          }
 
-         graphics.pose().popMatrix();
-      }
+            }
 
    }
 

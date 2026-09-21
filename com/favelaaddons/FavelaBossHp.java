@@ -93,23 +93,26 @@ public class FavelaBossHp {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      Minecraft client = Minecraft.getInstance();
-      if (Config.bossHp && client.player != null) {
-         float progress = progress();
-         boolean dying = progress <= ZERO && deathTicks > 0;
-         if (progress > ZERO || dying) {
-            if (dying) {
-               progress = 0.0F;
+      if (!FavelaCrateReel.spinning()) {
+         Minecraft client = Minecraft.getInstance();
+         if (Config.bossHp && client.player != null) {
+            float progress = progress();
+            boolean dying = progress <= ZERO && deathTicks > 0;
+            if (progress > ZERO || dying) {
+               if (dying) {
+                  progress = 0.0F;
+               }
+
+               Font font = client.font;
+               graphics.pose().pushMatrix();
+               graphics.pose().translate((float)Config.bossHpX, (float)Config.bossHpY);
+               graphics.pose().scale(Config.bossHpScale, Config.bossHpScale);
+               graphics.text(font, format(progress), 0, 0, colorFor(progress) | -16777216, true);
+               graphics.pose().popMatrix();
             }
 
-            Font font = client.font;
-            graphics.pose().pushMatrix();
-            graphics.pose().translate((float)Config.bossHpX, (float)Config.bossHpY);
-            graphics.pose().scale(Config.bossHpScale, Config.bossHpScale);
-            graphics.text(font, format(progress), 0, 0, colorFor(progress) | -16777216, true);
-            graphics.pose().popMatrix();
          }
+            }
 
-      }
    }
 }

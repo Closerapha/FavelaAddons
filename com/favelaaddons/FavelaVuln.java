@@ -212,18 +212,21 @@ public class FavelaVuln {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      Minecraft client = Minecraft.getInstance();
-      if (Config.vulnHud && state != VULNERABLE && client.player != null) {
-         String text = wording();
-         if (text != null && !text.trim().isEmpty()) {
-            Font font = client.font;
-            graphics.pose().pushMatrix();
-            graphics.pose().translate((float)Config.vulnX, (float)Config.vulnY);
-            graphics.pose().scale(Config.vulnScale, Config.vulnScale);
-            graphics.text(font, text.trim(), 0, 0, colour() | -16777216, true);
-            graphics.pose().popMatrix();
+      if (!FavelaCrateReel.spinning()) {
+         Minecraft client = Minecraft.getInstance();
+         if (Config.vulnHud && state != VULNERABLE && client.player != null) {
+            String text = wording();
+            if (text != null && !text.trim().isEmpty()) {
+               Font font = client.font;
+               graphics.pose().pushMatrix();
+               graphics.pose().translate((float)Config.vulnX, (float)Config.vulnY);
+               graphics.pose().scale(Config.vulnScale, Config.vulnScale);
+               graphics.text(font, text.trim(), 0, 0, colour() | -16777216, true);
+               graphics.pose().popMatrix();
+            }
          }
-      }
+
+            }
 
    }
 }

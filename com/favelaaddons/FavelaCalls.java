@@ -106,15 +106,18 @@ public class FavelaCalls {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      Minecraft client = Minecraft.getInstance();
-      if (Config.calls && ticksLeft > 0 && !message.isEmpty() && client.player != null) {
-         Font font = client.font;
-         graphics.pose().pushMatrix();
-         graphics.pose().translate((float)Config.callX, (float)Config.callY);
-         graphics.pose().scale(Config.callScale, Config.callScale);
-         graphics.text(font, message, 0, 0, color | -16777216, true);
-         graphics.pose().popMatrix();
-      }
+      if (!FavelaCrateReel.spinning()) {
+         Minecraft client = Minecraft.getInstance();
+         if (Config.calls && ticksLeft > 0 && !message.isEmpty() && client.player != null) {
+            Font font = client.font;
+            graphics.pose().pushMatrix();
+            graphics.pose().translate((float)Config.callX, (float)Config.callY);
+            graphics.pose().scale(Config.callScale, Config.callScale);
+            graphics.text(font, message, 0, 0, color | -16777216, true);
+            graphics.pose().popMatrix();
+         }
+
+            }
 
    }
 }

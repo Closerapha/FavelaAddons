@@ -68,17 +68,20 @@ public class FavelaTrapCounter {
 
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      Minecraft client = Minecraft.getInstance();
-      if (Config.trapCounter && client.player != null && (trapCount > 0 || !Config.trapCounterHideEmpty)) {
-         int max = Math.max(1, Config.trapCounterMax);
-         String text = Config.trapCounterLabel + " " + trapCount;
-         int color = trapCount >= max ? RED : (trapCount >= max * 3 / 4 ? YELLOW : GREEN);
-         Font font = client.font;
-         graphics.pose().pushMatrix();
-         graphics.pose().translate((float)Config.trapCounterX, (float)Config.trapCounterY);
-         graphics.pose().scale(Config.trapCounterScale, Config.trapCounterScale);
-         graphics.text(font, text, 0, 0, color, true);
-         graphics.pose().popMatrix();
-      }
+      if (!FavelaCrateReel.spinning()) {
+         Minecraft client = Minecraft.getInstance();
+         if (Config.trapCounter && client.player != null && (trapCount > 0 || !Config.trapCounterHideEmpty)) {
+            int max = Math.max(1, Config.trapCounterMax);
+            String text = Config.trapCounterLabel + " " + trapCount;
+            int color = trapCount >= max ? RED : (trapCount >= max * 3 / 4 ? YELLOW : GREEN);
+            Font font = client.font;
+            graphics.pose().pushMatrix();
+            graphics.pose().translate((float)Config.trapCounterX, (float)Config.trapCounterY);
+            graphics.pose().scale(Config.trapCounterScale, Config.trapCounterScale);
+            graphics.text(font, text, 0, 0, color, true);
+            graphics.pose().popMatrix();
+         }
+            }
+
    }
 }

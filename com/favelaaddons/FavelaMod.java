@@ -52,7 +52,7 @@ public class FavelaMod implements ClientModInitializer {
          FavelaDPS.onTick(client);
       });
       HudElementRegistry.addLast(Identifier.parse("favelaaddons:alert"), (graphics, tracker) -> {
-         if (alertTimeRemaining > 0) {
+         if (alertTimeRemaining > 0 && !FavelaCrateReel.spinning()) {
             String text = Config.aliveOrDeadMode && aliveOrDeadColor != 0 ? aliveOrDeadMessage : Config.alertText;
             int renderColor = Config.aliveOrDeadMode && aliveOrDeadColor != 0 ? aliveOrDeadColor : Config.alertColor;
             renderColor |= -16777216;

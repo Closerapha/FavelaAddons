@@ -67,7 +67,7 @@ public class FavelaPrimed {
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
       Minecraft client = Minecraft.getInstance();
-      if (Config.primedTimer && client.player != null && isPrimed(client.player.getMainHandItem())) {
+      if (Config.primedTimer && !FavelaCrateReel.spinning() && client.player != null && isPrimed(client.player.getMainHandItem())) {
          Font font = client.font;
          String text = Config.primedTimerLabel + label();
          graphics.pose().pushMatrix();

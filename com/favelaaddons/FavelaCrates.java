@@ -50,13 +50,16 @@ public class FavelaCrates {
    private static final double TOUCH_RANGE = 9.0;
    private static final int CRATE_SLOTS = 90;
    private static final int MAX_REMEMBERED = 2048;
-   private static final long PRIZE_DELAY = 700L;
+   private static final long PRIZE_TIMEOUT = 6000L;
+   private static final long PRIZE_STILL = 600L;
    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
    private static final Map<String, List<ItemStack>> POOLS = new HashMap();
    private static Entity pendingPrize = null;
    private static ItemStack pendingStack = ItemStack.EMPTY;
    private static String pendingCrate = "";
    private static long pendingAt = 0L;
+   private static long pendingChanged = 0L;
+   private static String pendingName = "";
    private static final Set<Integer> seenDisplays = new HashSet();
    private static ClientLevel lastLevel = null;
    private static Screen lastScreen = null;
@@ -450,22 +453,34 @@ public class FavelaCrates {
          }
 
          if (pendingPrize != null) {
+            long now = System.currentTimeMillis();
+            boolean gone = true;
+
             try {
+               gone = pendingPrize.isRemoved() || client.level.getEntity(pendingPrize.getId()) == null;
                ItemStack live = ((Display.ItemDisplay)pendingPrize).getItemStack();
                if (live != null && !live.isEmpty()) {
+                  String name = FavelaDisplays.sanitize(live.getHoverName().getString());
+                  if (!name.equals(pendingName)) {
+                     pendingName = name;
+                     pendingChanged = now;
+                  }
+
                   pendingStack = live.copy();
                }
             } catch (Exception var10) {
             }
 
-            if (System.currentTimeMillis() >= pendingAt) {
-               Entity settled = pendingPrize;
+            boolean still = pendingChanged > 0L && now - pendingChanged >= PRIZE_STILL;
+            if (gone || still || now >= pendingAt) {
                pendingPrize = null;
                if (!pendingStack.isEmpty()) {
                   FavelaCrateReel.spin(poolFor(pendingCrate), pendingStack);
                }
 
                pendingStack = ItemStack.EMPTY;
+               pendingName = "";
+               pendingChanged = 0L;
             }
          } else if (!crates.isEmpty() && !prizes.isEmpty() && !FavelaCrateReel.spinning()) {
             Entity chosen = null;
@@ -488,8 +503,10 @@ public class FavelaCrates {
             if (chosen != null) {
                pendingPrize = chosen;
                pendingCrate = crateKey(FavelaDisplays.modelId(chosenCrate));
-               pendingAt = System.currentTimeMillis() + PRIZE_DELAY;
+               pendingAt = System.currentTimeMillis() + PRIZE_TIMEOUT;
                pendingStack = ItemStack.EMPTY;
+               pendingName = "";
+               pendingChanged = 0L;
             }
 
          }

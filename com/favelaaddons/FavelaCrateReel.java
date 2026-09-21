@@ -33,6 +33,9 @@ public class FavelaCrateReel {
    private static final long HOLD_MILLIS = 2500L;
    private static final long FREE_LIMIT = 20000L;
    private static final int MIN_AHEAD = 3;
+   private static final long FADE_IN = 300L;
+   private static final long FADE_OUT = 500L;
+   private static final long BLIND_LIMIT = 8000L;
    private static final float SCALE = 2.0F;
    private static final int ROW_HEIGHT = 34;
    private static final int BACKDROP = -1777726976;
@@ -153,6 +156,36 @@ public class FavelaCrateReel {
       land(winner);
    }
 
+   private static float shade(long now) {
+      float level = 1.0F;
+      long since = now - freeStart;
+      if (since < FADE_IN) {
+         level = (float)since / (float)FADE_IN;
+      }
+
+      if (phase == FREE) {
+         long over = since - BLIND_LIMIT;
+         if (over > 0L) {
+            float relief = over >= FADE_OUT ? 0.0F : 1.0F - (float)over / (float)FADE_OUT;
+            if (relief < level) {
+               level = relief;
+            }
+         }
+      }
+
+      if (phase == LANDING) {
+         long left = landMillis + HOLD_MILLIS - (now - landStart);
+         if (left < FADE_OUT) {
+            float tail = left <= 0L ? 0.0F : (float)left / (float)FADE_OUT;
+            if (tail < level) {
+               level = tail;
+            }
+         }
+      }
+
+      return level;
+   }
+
    private static float offset() {
       long now = System.currentTimeMillis();
       if (phase == FREE) {
@@ -184,9 +217,15 @@ public class FavelaCrateReel {
             reel.clear();
          } else {
             int width = graphics.guiWidth();
+            int height = graphics.guiHeight();
+            int veil = Math.round(shade(now) * 255.0F);
+            if (veil > 0) {
+               graphics.fill(0, 0, width, height, veil << 24);
+            }
+
             int centre = width / 2;
             int band = cell == null ? ROW_HEIGHT : CELL_H;
-            int top = graphics.guiHeight() / 2 - band;
+            int top = height / 2 - band;
             int anchor = cell == null ? band / 2 : FRAME_MID;
             float scroll = offset();
             if (cell == null) {

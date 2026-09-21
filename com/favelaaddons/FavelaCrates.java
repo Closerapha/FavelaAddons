@@ -468,15 +468,28 @@ public class FavelaCrates {
                pendingStack = ItemStack.EMPTY;
             }
          } else if (!crates.isEmpty() && !prizes.isEmpty() && !FavelaCrateReel.spinning()) {
+            Entity chosen = null;
+            Entity chosenCrate = null;
+            double chosenDistance = Double.MAX_VALUE;
+
             for(Entity prize : prizes) {
                Entity crate = nearest(crates, prize);
                if (crate != null) {
-                  pendingPrize = prize;
-                  pendingCrate = crateKey(FavelaDisplays.modelId(crate));
-                  pendingAt = System.currentTimeMillis() + PRIZE_DELAY;
-                  pendingStack = ItemStack.EMPTY;
-                  break;
+                  double distance = FavelaDisplays.renderedPosition(crate).distanceToSqr(FavelaDisplays.renderedPosition(prize));
+
+                  if (distance < chosenDistance) {
+                     chosenDistance = distance;
+                     chosen = prize;
+                     chosenCrate = crate;
+                  }
                }
+            }
+
+            if (chosen != null) {
+               pendingPrize = chosen;
+               pendingCrate = crateKey(FavelaDisplays.modelId(chosenCrate));
+               pendingAt = System.currentTimeMillis() + PRIZE_DELAY;
+               pendingStack = ItemStack.EMPTY;
             }
 
          }

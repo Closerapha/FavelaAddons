@@ -4,20 +4,20 @@ Fabric-Loom-Client-Only-Entries: com/favelaaddons/AlertHudEditorScreen
  ig.class;com/favelaaddons/FavelaBossBar.class;com/favelaaddons/Favela
  BossHp.class;com/favelaaddons/FavelaCalls.class;com/favelaaddons/Fave
  laCrateReel.class;com/favelaaddons/FavelaCrates$1.class;com/favelaadd
- ons/FavelaCrates$Saved.class;com/favelaaddons/FavelaCrates.class;com/
- favelaaddons/FavelaDPS$DamageHit.class;com/favelaaddons/FavelaDPS.cla
- ss;com/favelaaddons/FavelaDisplays.class;com/favelaaddons/FavelaFonts
- .class;com/favelaaddons/FavelaGear.class;com/favelaaddons/FavelaMod.c
- lass;com/favelaaddons/FavelaModMenu$NameBinding.class;com/favelaaddon
- s/FavelaModMenu.class;com/favelaaddons/FavelaPortals.class;com/favela
- addons/FavelaPrimed.class;com/favelaaddons/FavelaSplits$1.class;com/f
- avelaaddons/FavelaSplits$Best.class;com/favelaaddons/FavelaSplits$Rou
- te.class;com/favelaaddons/FavelaSplits$Segment.class;com/favelaaddons
- /FavelaSplits$Split.class;com/favelaaddons/FavelaSplits$Step.class;co
- m/favelaaddons/FavelaSplits.class;com/favelaaddons/FavelaTraits.class
- ;com/favelaaddons/FavelaTrapCounter.class;com/favelaaddons/FavelaVuln
- .class;com/favelaaddons/client/mixin/FavelaAudioMixin.class;com/favel
- aaddons/client/mixin/FavelaBossBarAccessor.class;com/favelaaddons/cli
- ent/mixin/FavelaBossBarBarMixin.class;com/favelaaddons/client/mixin/F
- avelaPrimedMixin.class
+ ons/FavelaCrates$2.class;com/favelaaddons/FavelaCrates$Saved.class;co
+ m/favelaaddons/FavelaCrates.class;com/favelaaddons/FavelaDPS$DamageHi
+ t.class;com/favelaaddons/FavelaDPS.class;com/favelaaddons/FavelaDispl
+ ays.class;com/favelaaddons/FavelaFonts.class;com/favelaaddons/FavelaG
+ ear.class;com/favelaaddons/FavelaMod.class;com/favelaaddons/FavelaMod
+ Menu$NameBinding.class;com/favelaaddons/FavelaModMenu.class;com/favel
+ aaddons/FavelaPortals.class;com/favelaaddons/FavelaPrimed.class;com/f
+ avelaaddons/FavelaSplits$1.class;com/favelaaddons/FavelaSplits$Best.c
+ lass;com/favelaaddons/FavelaSplits$Route.class;com/favelaaddons/Favel
+ aSplits$Segment.class;com/favelaaddons/FavelaSplits$Split.class;com/f
+ avelaaddons/FavelaSplits$Step.class;com/favelaaddons/FavelaSplits.cla
+ ss;com/favelaaddons/FavelaTraits.class;com/favelaaddons/FavelaTrapCou
+ nter.class;com/favelaaddons/FavelaVuln.class;com/favelaaddons/client/
+ mixin/FavelaAudioMixin.class;com/favelaaddons/client/mixin/FavelaBoss
+ BarAccessor.class;com/favelaaddons/client/mixin/FavelaBossBarBarMixin
+ .class;com/favelaaddons/client/mixin/FavelaPrimedMixin.class
 

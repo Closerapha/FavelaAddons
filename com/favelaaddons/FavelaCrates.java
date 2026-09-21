@@ -56,8 +56,9 @@ public class FavelaCrates {
    private static Screen lastScreen = null;
    private static String lastSignature = "";
 
+   private static boolean loaded = false;
+
    public static void registrar() {
-      loadPools();
       ClientTickEvents.END_CLIENT_TICK.register(FavelaCrates::onTick);
    }
 
@@ -68,6 +69,32 @@ public class FavelaCrates {
       }
 
       return new File(folder, "crates.json");
+   }
+
+   private static Map<String, List<Saved>> readStored() {
+      Map<String, List<Saved>> stored = new HashMap();
+      File file = poolFile();
+      if (!file.exists()) {
+         return stored;
+      } else {
+         try {
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+
+            try {
+               Map<String, List<Saved>> parsed = (Map)GSON.fromJson(reader, (new TypeToken<Map<String, List<Saved>>>() {
+               }).getType());
+               if (parsed != null) {
+                  stored.putAll(parsed);
+               }
+            } finally {
+               reader.close();
+            }
+         } catch (Exception e) {
+            System.out.println("[FA Crate] Could not read crates.json: " + e.getMessage());
+         }
+
+         return stored;
+      }
    }
 
    private static void loadPools() {
@@ -90,7 +117,9 @@ public class FavelaCrates {
                         }
                      }
 
-                     if (!pool.isEmpty()) {
+                     if (pool.isEmpty()) {
+                        System.out.println("[FA Crate] Could not rebuild the pool for " + entry.getKey());
+                     } else {
                         POOLS.put(entry.getKey(), pool);
                      }
                   }
@@ -107,7 +136,7 @@ public class FavelaCrates {
 
    private static void savePools() {
       try {
-         Map<String, List<Saved>> stored = new HashMap();
+         Map<String, List<Saved>> stored = readStored();
 
          for(Map.Entry<String, List<ItemStack>> entry : POOLS.entrySet()) {
             List<Saved> list = new ArrayList();
@@ -133,6 +162,11 @@ public class FavelaCrates {
    }
 
    private static void onTick(Minecraft client) {
+      if (!loaded && client.level != null) {
+         loaded = true;
+         loadPools();
+      }
+
       readScreen(client);
       watchWorld(client);
    }

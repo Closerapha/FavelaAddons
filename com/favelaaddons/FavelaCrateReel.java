@@ -22,10 +22,11 @@ public class FavelaCrateReel {
    private static final int STRIP = 512;
    private static final int PITCH = 44;
    private static final float FREE_SPEED = 0.34F;
-   private static final long LAND_MILLIS = 1200L;
+   private static final int MIN_LAND = 900;
+   private static final int MAX_LAND = 2200;
    private static final long HOLD_MILLIS = 2500L;
    private static final long FREE_LIMIT = 20000L;
-   private static final int MIN_AHEAD = 6;
+   private static final int MIN_AHEAD = 3;
    private static final float SCALE = 2.0F;
    private static final int ROW_HEIGHT = 34;
    private static final int BACKDROP = -1777726976;
@@ -40,6 +41,7 @@ public class FavelaCrateReel {
    private static int phase = IDLE;
    private static long freeStart = 0L;
    private static long landStart = 0L;
+   private static long landMillis = 0L;
    private static float landFrom = 0.0F;
    private static float landTo = 0.0F;
    private static String prize = "";
@@ -108,6 +110,8 @@ public class FavelaCrateReel {
          reel.set(target, winner);
          landFrom = here;
          landTo = (float)(target * PITCH);
+         long fitted = Math.round(3.0 * (double)(landTo - landFrom) / (double)FREE_SPEED);
+         landMillis = Math.max((long)MIN_LAND, Math.min((long)MAX_LAND, fitted));
          prize = FavelaDisplays.sanitize(winner.getHoverName().getString()).trim();
          phase = LANDING;
          landStart = System.currentTimeMillis();
@@ -131,10 +135,10 @@ public class FavelaCrateReel {
          return 0.0F;
       } else {
          long elapsed = now - landStart;
-         if (elapsed >= LAND_MILLIS) {
+         if (elapsed >= landMillis) {
             return landTo;
          } else {
-            float t = (float)elapsed / (float)LAND_MILLIS;
+            float t = (float)elapsed / (float)landMillis;
             float left = 1.0F - t;
             float eased = 1.0F - left * left * left;
             return landFrom + (landTo - landFrom) * eased;
@@ -149,7 +153,7 @@ public class FavelaCrateReel {
          if (phase == FREE && now - freeStart > FREE_LIMIT) {
             phase = IDLE;
             reel.clear();
-         } else if (phase == LANDING && now - landStart > LAND_MILLIS + HOLD_MILLIS) {
+         } else if (phase == LANDING && now - landStart > landMillis + HOLD_MILLIS) {
             phase = IDLE;
             reel.clear();
          } else {
@@ -186,7 +190,7 @@ public class FavelaCrateReel {
                graphics.fill(centre - 1, top + 1, centre + 1, top + ROW_HEIGHT - 1, MARKER);
             }
 
-            if (phase == LANDING && now - landStart >= LAND_MILLIS && !prize.isEmpty()) {
+            if (phase == LANDING && now - landStart >= landMillis && !prize.isEmpty()) {
                Font font = client.font;
                graphics.text(font, prize, centre - font.width(prize) / 2, top + band + 4, LABEL, true);
             }

@@ -431,11 +431,16 @@ public class FavelaCrates {
 
          List<Entity> crates = new ArrayList();
          List<Entity> prizes = new ArrayList();
+         List<Entity> labels = new ArrayList();
          AABB box = client.player.getBoundingBox().inflate(CRATE_RANGE * 3.0);
 
          try {
             for(Entity entity : client.level.getEntities(client.player, box)) {
-               if (entity instanceof Display.ItemDisplay) {
+               if (entity instanceof Display.TextDisplay) {
+                  if (seenDisplays.add(entity.getId()) && !fresh) {
+                     labels.add(entity);
+                  }
+               } else if (entity instanceof Display.ItemDisplay) {
                   String model = FavelaDisplays.modelId(entity);
                   if (model == null) {
                      seenDisplays.add(entity.getId());
@@ -450,6 +455,47 @@ public class FavelaCrates {
             }
          } catch (Exception var11) {
             return;
+         }
+
+         if (!crates.isEmpty() && !labels.isEmpty() && !FavelaCrateReel.spinning()) {
+            Entity bestLabel = null;
+            Entity labelCrate = null;
+            double labelDistance = Double.MAX_VALUE;
+
+            for(Entity label : labels) {
+               Entity crate = nearest(crates, label);
+               if (crate != null) {
+                  double distance = FavelaDisplays.renderedPosition(crate).distanceToSqr(FavelaDisplays.renderedPosition(label));
+                  if (distance < labelDistance) {
+                     labelDistance = distance;
+                     bestLabel = label;
+                     labelCrate = crate;
+                  }
+               }
+            }
+
+            if (bestLabel != null) {
+               String wanted = "";
+
+               try {
+                  Component text = ((Display.TextDisplay)bestLabel).getText();
+                  wanted = text == null ? "" : FavelaDisplays.sanitize(text.getString());
+               } catch (Exception var13) {
+               }
+
+               if (!wanted.trim().isEmpty()) {
+                  String key = crateKey(FavelaDisplays.modelId(labelCrate));
+                  List<ItemStack> pool = poolFor(key);
+                  ItemStack winner = matchByName(pool, wanted);
+
+                  if (winner != null) {
+                     pendingPrize = null;
+                     pendingStack = ItemStack.EMPTY;
+                     FavelaCrateReel.spin(pool, winner.copy());
+                     return;
+                  }
+               }
+            }
          }
 
          if (pendingPrize != null) {
@@ -586,6 +632,34 @@ public class FavelaCrates {
 
    public static int lastSeen() {
       return lastPool.size();
+   }
+
+   private static String flatten(String raw) {
+      StringBuilder out = new StringBuilder();
+
+      for(int i = 0; i < raw.length(); ++i) {
+         char c = Character.toLowerCase(raw.charAt(i));
+         if (c >= 'a' && c <= 'z' || c >= '0' && c <= '9') {
+            out.append(c);
+         }
+      }
+
+      return out.toString();
+   }
+
+   private static ItemStack matchByName(List<ItemStack> pool, String wanted) {
+      String target = flatten(wanted);
+      if (target.isEmpty()) {
+         return null;
+      } else {
+         for(ItemStack stack : pool) {
+            if (flatten(FavelaDisplays.sanitize(stack.getHoverName().getString())).equals(target)) {
+               return stack;
+            }
+         }
+
+         return null;
+      }
    }
 
    private static List<ItemStack> poolFor(String crate) {

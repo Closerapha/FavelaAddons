@@ -16,9 +16,11 @@ import net.minecraft.world.item.ItemStack;
 public class FavelaCrateReel {
    private static final Identifier GREEN_CELL = Identifier.parse("favelaaddons:textures/gui/crate_cell_green.png");
    private static final String[] GREEN_CRATES = new String[]{"uncommon_crate", "strange_pet", "strange_mount"};
-   private static final int CELL = 28;
+   private static final int CELL_W = 38;
+   private static final int CELL_H = 62;
+   private static final int FRAME_MID = 35;
    private static final int STRIP = 512;
-   private static final int PITCH = 34;
+   private static final int PITCH = 44;
    private static final float FREE_SPEED = 0.34F;
    private static final long LAND_MILLIS = 1200L;
    private static final long HOLD_MILLIS = 2500L;
@@ -153,7 +155,9 @@ public class FavelaCrateReel {
          } else {
             int width = graphics.guiWidth();
             int centre = width / 2;
-            int top = graphics.guiHeight() / 2 - ROW_HEIGHT;
+            int band = cell == null ? ROW_HEIGHT : CELL_H;
+            int top = graphics.guiHeight() / 2 - band;
+            int anchor = cell == null ? band / 2 : FRAME_MID;
             float scroll = offset();
             if (cell == null) {
                graphics.fill(0, top, width, top + ROW_HEIGHT, BACKDROP);
@@ -162,7 +166,7 @@ public class FavelaCrateReel {
             }
 
             graphics.pose().pushMatrix();
-            graphics.pose().translate((float)centre, (float)(top + ROW_HEIGHT / 2));
+            graphics.pose().translate((float)centre, (float)(top + anchor));
             graphics.pose().scale(SCALE, SCALE);
             int first = Math.max(0, (int)((scroll - (float)width) / (float)PITCH));
             int last = Math.min(reel.size() - 1, (int)((scroll + (float)width) / (float)PITCH));
@@ -171,17 +175,20 @@ public class FavelaCrateReel {
                float x = (float)(i * PITCH) - scroll;
                int at = Math.round(x);
                if (cell != null) {
-                  graphics.blit(RenderPipelines.GUI_TEXTURED, cell, at - CELL / 2, -CELL / 2, 0.0F, 0.0F, CELL, CELL, CELL, CELL);
+                  graphics.blit(RenderPipelines.GUI_TEXTURED, cell, at - CELL_W / 2, -FRAME_MID, 0.0F, 0.0F, CELL_W, CELL_H, CELL_W, CELL_H);
                }
 
                graphics.item(reel.get(i), at - 8, -8);
             }
 
             graphics.pose().popMatrix();
-            graphics.fill(centre - 1, top + 1, centre + 1, top + ROW_HEIGHT - 1, MARKER);
+            if (cell == null) {
+               graphics.fill(centre - 1, top + 1, centre + 1, top + ROW_HEIGHT - 1, MARKER);
+            }
+
             if (phase == LANDING && now - landStart >= LAND_MILLIS && !prize.isEmpty()) {
                Font font = client.font;
-               graphics.text(font, prize, centre - font.width(prize) / 2, top + ROW_HEIGHT + 4, LABEL, true);
+               graphics.text(font, prize, centre - font.width(prize) / 2, top + band + 4, LABEL, true);
             }
 
          }

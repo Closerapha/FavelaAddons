@@ -63,6 +63,7 @@ public class FavelaCrates {
    private static String lastSignature = "";
 
    private static boolean loaded = false;
+   private static List<ItemStack> lastPool = new ArrayList();
    private static final long TOUCH_WINDOW = 4000L;
    private static final double TOUCH_SPREAD = 4.0;
    private static Vec3 touchedPos = null;
@@ -376,6 +377,10 @@ public class FavelaCrates {
          String current = signature.toString();
          if (!current.isEmpty() && !current.equals(lastSignature)) {
             lastSignature = current;
+            if (slotCount >= CRATE_SLOTS) {
+               lastPool = pool;
+            }
+
             String rarity = titleCrate(screen.getTitle());
             String crate = rarity.isEmpty() ? "" : nearestCrateKey(client, rarity, CRATE_RANGE * 2.0);
             boolean guessed = false;
@@ -530,6 +535,27 @@ public class FavelaCrates {
             return ItemStack.EMPTY;
          }
       }
+   }
+
+   public static String saveAs(String name) {
+      if (name == null || name.trim().isEmpty()) {
+         return "§cGive a crate name, like epic.";
+      } else if (lastPool.isEmpty()) {
+         return "§cOpen the crate screen first, then run this.";
+      } else {
+         String key = name.trim().toLowerCase(Locale.ROOT);
+         if (crateKey(key).isEmpty()) {
+            key = key + "_crate";
+         }
+
+         POOLS.put(key, new ArrayList(lastPool));
+         savePools();
+         return "§aSaved §e" + lastPool.size() + "§a item(s) as §e" + key;
+      }
+   }
+
+   public static int lastSeen() {
+      return lastPool.size();
    }
 
    private static List<ItemStack> poolFor(String crate) {

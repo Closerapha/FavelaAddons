@@ -37,6 +37,8 @@ public class FavelaMod implements ClientModInitializer {
       FavelaCalls.registrar();
       FavelaBossHp.registrar();
       FavelaPrimed.registrar();
+      FavelaCrates.registrar();
+      FavelaCrateReel.registrar();
       FavelaVuln.registrar();
       FavelaSplits.registrar();
       FavelaPortals.registrar();
@@ -172,6 +174,25 @@ public class FavelaMod implements ClientModInitializer {
          }));
          root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("hud").executes((context) -> {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new AlertHudEditorScreen(Component.literal("HUD Editor"))));
+            return 1;
+         }));
+         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("crate").executes((context) -> {
+            Minecraft client = Minecraft.getInstance();
+            List<ItemStack> pool = new ArrayList();
+
+            for(int slot = 0; slot < client.player.getInventory().getContainerSize(); ++slot) {
+               ItemStack stack = client.player.getInventory().getItem(slot);
+               if (stack != null && !stack.isEmpty()) {
+                  pool.add(stack);
+               }
+            }
+
+            if (pool.isEmpty()) {
+               ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§cNothing in your inventory to spin with."));
+            } else {
+               FavelaCrateReel.spin(pool, (ItemStack)pool.get(pool.size() - 1));
+            }
+
             return 1;
          }));
          dispatcher.register(root);

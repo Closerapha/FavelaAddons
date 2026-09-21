@@ -415,8 +415,8 @@ public class FavelaCrates {
 
    private static void watchWorld(Minecraft client) {
       if (client.level != null && client.player != null) {
-         boolean fresh = client.level != lastLevel;
-         if (fresh) {
+         boolean fresh = client.level != lastLevel || client.screen != null;
+         if (client.level != lastLevel) {
             lastLevel = client.level;
             seenDisplays.clear();
          }

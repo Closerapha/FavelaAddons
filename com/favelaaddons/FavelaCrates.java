@@ -43,6 +43,7 @@ public class FavelaCrates {
    private static final String[] CRATE_NAMES = new String[]{"common", "uncommon", "rare", "epic", "legendary", "seasonal", "usual", "strange", "fabled", "exotic"};
    private static final double CRATE_RANGE = 6.0;
    private static final double PRIZE_RANGE = 5.0;
+   private static final double TOUCH_RANGE = 4.0;
    private static final int MAX_REMEMBERED = 2048;
    private static final long PRIZE_DELAY = 700L;
    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
@@ -189,17 +190,17 @@ public class FavelaCrates {
       }
    }
 
-   private static String nearestCrateKey(Minecraft client, String rarity) {
-      String best = rarity;
-      double bestDistance = Double.MAX_VALUE;
+   private static String nearestCrateKey(Minecraft client, String rarity, double reach) {
+      String best = "";
+      double bestDistance = reach * reach;
 
       try {
-         AABB box = client.player.getBoundingBox().inflate(CRATE_RANGE * 2.0);
+         AABB box = client.player.getBoundingBox().inflate(reach);
 
          for(Entity entity : client.level.getEntities(client.player, box)) {
             if (entity instanceof Display.ItemDisplay) {
                String key = crateKey(FavelaDisplays.modelId(entity));
-               if (!key.isEmpty() && crateOf(key).equals(rarity)) {
+               if (!key.isEmpty() && (rarity.isEmpty() || crateOf(key).equals(rarity))) {
                   double distance = entity.distanceToSqr(client.player);
                   if (distance < bestDistance) {
                      bestDistance = distance;
@@ -208,7 +209,7 @@ public class FavelaCrates {
                }
             }
          }
-      } catch (Exception var10) {
+      } catch (Exception var11) {
       }
 
       return best;
@@ -312,10 +313,17 @@ public class FavelaCrates {
          if (!current.isEmpty() && !current.equals(lastSignature)) {
             lastSignature = current;
             String rarity = titleCrate(screen.getTitle());
-            if (!rarity.isEmpty()) {
-               String crate = nearestCrateKey(client, rarity);
+            String crate = rarity.isEmpty() ? "" : nearestCrateKey(client, rarity, CRATE_RANGE * 2.0);
+            boolean guessed = false;
+            if (crate.isEmpty()) {
+               crate = rarity.isEmpty() ? nearestCrateKey(client, "", TOUCH_RANGE) : rarity;
+               guessed = true;
+            }
+
+            if (!crate.isEmpty()) {
                List<ItemStack> known = (List)POOLS.get(crate);
-               if (known == null || known.size() < pool.size()) {
+               boolean better = known == null || !guessed && known.size() < pool.size();
+               if (better) {
                   POOLS.put(crate, pool);
                   savePools();
                }

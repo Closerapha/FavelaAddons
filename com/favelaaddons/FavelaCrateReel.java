@@ -35,6 +35,7 @@ public class FavelaCrateReel {
    private static final int MIN_AHEAD = 3;
    private static final long FADE_IN = 300L;
    private static final long FADE_OUT = 500L;
+   private static final long REEL_FADE = 350L;
    private static final long BLIND_LIMIT = 8000L;
    private static final float SCALE = 2.0F;
    private static final int ROW_HEIGHT = 34;
@@ -156,6 +157,19 @@ public class FavelaCrateReel {
       land(winner);
    }
 
+   private static long tail(long now) {
+      return phase != LANDING ? -1L : now - landStart - landMillis - HOLD_MILLIS;
+   }
+
+   private static float hide(long now) {
+      long over = tail(now);
+      if (over <= 0L) {
+         return 0.0F;
+      } else {
+         return over >= REEL_FADE ? 1.0F : (float)over / (float)REEL_FADE;
+      }
+   }
+
    private static float shade(long now) {
       float level = 1.0F;
       long since = now - freeStart;
@@ -173,13 +187,11 @@ public class FavelaCrateReel {
          }
       }
 
-      if (phase == LANDING) {
-         long left = landMillis + HOLD_MILLIS - (now - landStart);
-         if (left < FADE_OUT) {
-            float tail = left <= 0L ? 0.0F : (float)left / (float)FADE_OUT;
-            if (tail < level) {
-               level = tail;
-            }
+      long past = tail(now) - REEL_FADE;
+      if (past > 0L) {
+         float out = past >= FADE_OUT ? 0.0F : 1.0F - (float)past / (float)FADE_OUT;
+         if (out < level) {
+            level = out;
          }
       }
 
@@ -212,7 +224,7 @@ public class FavelaCrateReel {
          if (phase == FREE && now - freeStart > FREE_LIMIT) {
             phase = IDLE;
             reel.clear();
-         } else if (phase == LANDING && now - landStart > landMillis + HOLD_MILLIS) {
+         } else if (phase == LANDING && now - landStart > landMillis + HOLD_MILLIS + REEL_FADE + FADE_OUT) {
             phase = IDLE;
             reel.clear();
          } else {
@@ -258,6 +270,11 @@ public class FavelaCrateReel {
             if (phase == LANDING && now - landStart >= landMillis && !prize.isEmpty()) {
                Font font = client.font;
                graphics.text(font, prize, centre - font.width(prize) / 2, top + band + 4, LABEL, true);
+            }
+
+            int fog = Math.round(hide(now) * 255.0F);
+            if (fog > 0) {
+               graphics.fill(0, 0, width, height, fog << 24);
             }
 
          }

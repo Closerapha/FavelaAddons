@@ -27,9 +27,9 @@ public class FavelaCrateReel {
    private static final int FRAME_MID = 29;
    private static final int STRIP = 512;
    private static final int PITCH = 44;
-   private static final float FREE_SPEED = 0.51F;
-   private static final int MIN_LAND = 600;
-   private static final int MAX_LAND = 1467;
+   private static final float FREE_SPEED = 0.77F;
+   private static final int MIN_LAND = 400;
+   private static final int MAX_LAND = 978;
    private static final long HOLD_MILLIS = 2500L;
    private static final long FREE_LIMIT = 20000L;
    private static final int MIN_AHEAD = 3;

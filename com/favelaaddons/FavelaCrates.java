@@ -262,6 +262,7 @@ public class FavelaCrates {
 
             for(int glyph : text.codePoints().toArray()) {
                String texture = FavelaFonts.texture(font, glyph);
+
                if (texture != null) {
 
                   if (texture.contains(TITLE_MARK)) {

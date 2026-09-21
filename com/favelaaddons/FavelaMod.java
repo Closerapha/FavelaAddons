@@ -176,27 +176,16 @@ public class FavelaMod implements ClientModInitializer {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new AlertHudEditorScreen(Component.literal("HUD Editor"))));
             return 1;
          }));
-         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("crate").then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.word()).executes((context) -> {
+         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("crate").then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("test").then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.word()).executes((context) -> {
+            String reply = FavelaCrates.simulate(StringArgumentType.getString(context, "name"));
+            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal(reply));
+            return 1;
+         }))).then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.word()).executes((context) -> {
             String reply = FavelaCrates.saveAs(StringArgumentType.getString(context, "name"));
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal(reply));
             return 1;
          })).executes((context) -> {
-            Minecraft client = Minecraft.getInstance();
-            List<ItemStack> pool = new ArrayList();
-
-            for(int slot = 0; slot < client.player.getInventory().getContainerSize(); ++slot) {
-               ItemStack stack = client.player.getInventory().getItem(slot);
-               if (stack != null && !stack.isEmpty()) {
-                  pool.add(stack);
-               }
-            }
-
-            if (pool.isEmpty()) {
-               ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal("§cNothing in your inventory to spin with."));
-            } else {
-               FavelaCrateReel.spin(pool, (ItemStack)pool.get(pool.size() - 1));
-            }
-
+            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal(FavelaCrates.listCrates()));
             return 1;
          }));
          dispatcher.register(root);

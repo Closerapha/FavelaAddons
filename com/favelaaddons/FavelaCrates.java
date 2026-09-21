@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -73,6 +74,10 @@ public class FavelaCrates {
 
    private static boolean loaded = false;
    private static List<ItemStack> lastPool = new ArrayList();
+   private static final long SIM_SPIN = 2200L;
+   private static final Random PICKER = new Random();
+   private static ItemStack simWinner = ItemStack.EMPTY;
+   private static long simAt = 0L;
    private static final long TOUCH_WINDOW = 4000L;
    private static final double TOUCH_SPREAD = 4.0;
    private static Vec3 touchedPos = null;
@@ -235,6 +240,12 @@ public class FavelaCrates {
             }
          } catch (Exception var2) {
          }
+      }
+
+      if (simAt > 0L && System.currentTimeMillis() >= simAt) {
+         simAt = 0L;
+         FavelaCrateReel.land(simWinner);
+         simWinner = ItemStack.EMPTY;
       }
 
       readScreen(client);
@@ -660,17 +671,46 @@ public class FavelaCrates {
       }
    }
 
+   private static String resolveKey(String name) {
+      String key = name.trim().toLowerCase(Locale.ROOT);
+      return crateKey(key).isEmpty() ? key + "_crate" : key;
+   }
+
+   public static String listCrates() {
+      if (POOLS.isEmpty()) {
+         return "§cNo crate pools saved yet.";
+      } else {
+         StringBuilder out = new StringBuilder("§aKnown crates:");
+
+         for(String key : new java.util.TreeSet<String>(POOLS.keySet())) {
+            out.append(" §e").append(key).append("§7(").append(((List)POOLS.get(key)).size()).append(")");
+         }
+
+         return out.toString();
+      }
+   }
+
+   public static String simulate(String name) {
+      String key = resolveKey(name);
+      List<ItemStack> pool = (List)POOLS.get(key);
+      if (pool == null || pool.isEmpty()) {
+         return "§cNo pool saved for §e" + key;
+      } else {
+         ItemStack winner = ((ItemStack)pool.get(PICKER.nextInt(pool.size()))).copy();
+         FavelaCrateReel.begin(pool, FavelaCrateReel.cellFor(key));
+         simWinner = winner;
+         simAt = System.currentTimeMillis() + SIM_SPIN;
+         return "§aSpinning §e" + key + "§a, rolled §e" + FavelaDisplays.sanitize(winner.getHoverName().getString()).trim();
+      }
+   }
+
    public static String saveAs(String name) {
       if (name == null || name.trim().isEmpty()) {
          return "§cGive a crate name, like epic.";
       } else if (lastPool.isEmpty()) {
          return "§cOpen the crate screen first, then run this.";
       } else {
-         String key = name.trim().toLowerCase(Locale.ROOT);
-         if (crateKey(key).isEmpty()) {
-            key = key + "_crate";
-         }
-
+         String key = resolveKey(name);
          POOLS.put(key, new ArrayList(lastPool));
          savePools();
          return "§aSaved §e" + lastPool.size() + "§a item(s) as §e" + key;

@@ -60,6 +60,11 @@ public class FavelaCrates {
    private static long pendingAt = 0L;
    private static long pendingChanged = 0L;
    private static String pendingName = "";
+   private static Entity pendingLabel = null;
+   private static String labelText = "";
+   private static long labelChanged = 0L;
+   private static long labelUntil = 0L;
+   private static String labelCrateKey = "";
    private static final Set<Integer> seenDisplays = new HashSet();
    private static ClientLevel lastLevel = null;
    private static Screen lastScreen = null;
@@ -474,28 +479,49 @@ public class FavelaCrates {
                }
             }
 
-            if (bestLabel != null) {
-               String wanted = "";
+            if (bestLabel != null && pendingLabel == null) {
+               pendingLabel = bestLabel;
+               labelCrateKey = crateKey(FavelaDisplays.modelId(labelCrate));
+               labelText = "";
+               labelChanged = 0L;
+               labelUntil = System.currentTimeMillis() + PRIZE_TIMEOUT;
+               pendingPrize = null;
+               pendingStack = ItemStack.EMPTY;
+            }
+         }
 
-               try {
-                  Component text = ((Display.TextDisplay)bestLabel).getText();
-                  wanted = text == null ? "" : FavelaDisplays.sanitize(text.getString());
-               } catch (Exception var13) {
+         if (pendingLabel != null) {
+            long now = System.currentTimeMillis();
+            boolean gone = true;
+
+            try {
+               gone = pendingLabel.isRemoved() || client.level.getEntity(pendingLabel.getId()) == null;
+               Component text = ((Display.TextDisplay)pendingLabel).getText();
+               String seen = text == null ? "" : FavelaDisplays.sanitize(text.getString()).trim();
+               if (!seen.isEmpty() && !seen.equals(labelText)) {
+                  labelText = seen;
+                  labelChanged = now;
                }
+            } catch (Exception var14) {
+            }
 
-               if (!wanted.trim().isEmpty()) {
-                  String key = crateKey(FavelaDisplays.modelId(labelCrate));
-                  List<ItemStack> pool = poolFor(key);
-                  ItemStack winner = matchByName(pool, wanted);
+            boolean still = labelChanged > 0L && now - labelChanged >= PRIZE_STILL;
+            if (gone || still || now >= labelUntil) {
+               pendingLabel = null;
+               if (!labelText.isEmpty()) {
+                  List<ItemStack> pool = poolFor(labelCrateKey);
+                  ItemStack winner = matchByName(pool, labelText);
 
                   if (winner != null) {
-                     pendingPrize = null;
-                     pendingStack = ItemStack.EMPTY;
                      FavelaCrateReel.spin(pool, winner.copy());
-                     return;
                   }
                }
+
+               labelText = "";
+               labelChanged = 0L;
             }
+
+            return;
          }
 
          if (pendingPrize != null) {

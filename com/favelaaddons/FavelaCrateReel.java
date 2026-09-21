@@ -14,11 +14,17 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public class FavelaCrateReel {
-   private static final Identifier GREEN_CELL = Identifier.parse("favelaaddons:textures/gui/crate_cell_green.png");
-   private static final String[] GREEN_CRATES = new String[]{"uncommon_crate", "strange_pet", "strange_mount"};
+   private static final String[][] CELL_ART = new String[][]{
+      {"common_crate", "common"}, {"usual_pet", "common"}, {"usual_mount", "common"},
+      {"uncommon_crate", "uncommon"}, {"strange_pet", "uncommon"}, {"strange_mount", "uncommon"},
+      {"rare_crate", "rare"}, {"fabled_pet", "rare"}, {"fabled_mount", "rare"},
+      {"epic_crate", "epic"}, {"exotic_pet", "epic"}, {"exotic_mount", "epic"},
+      {"legendary_crate", "legendary"},
+      {"seasonal_crate", "seasonal"}
+   };
    private static final int CELL_W = 38;
-   private static final int CELL_H = 62;
-   private static final int FRAME_MID = 35;
+   private static final int CELL_H = 52;
+   private static final int FRAME_MID = 29;
    private static final int STRIP = 512;
    private static final int PITCH = 44;
    private static final float FREE_SPEED = 0.34F;
@@ -62,9 +68,9 @@ public class FavelaCrateReel {
 
    public static Identifier cellFor(String crate) {
       if (crate != null) {
-         for(String green : GREEN_CRATES) {
-            if (green.equals(crate)) {
-               return GREEN_CELL;
+         for(String[] entry : CELL_ART) {
+            if (entry[0].equals(crate)) {
+               return Identifier.parse("favelaaddons:textures/gui/crate_cell_" + entry[1] + ".png");
             }
          }
       }

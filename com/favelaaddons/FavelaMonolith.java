@@ -28,6 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
 
 public class FavelaMonolith {
+   private static final String[] MODELS = new String[]{"arcanist_orb"};
    private static final String ANCHOR_BONE = "/body";
    private static final String GLOW_BONE = "/orb";
    private static final double SCAN_RANGE = 48.0;
@@ -80,7 +81,7 @@ public class FavelaMonolith {
          return false;
       } else {
          String model = FavelaDisplays.modelId(entity);
-         return model != null && FavelaDisplays.matchesAny(model, Config.parsedMonolithModels);
+         return model != null && FavelaDisplays.matchesAny(model, MODELS);
       }
    }
 

@@ -36,6 +36,9 @@ public class FavelaMonolith {
    private static final int PLAIN_GLOW = 16777215;
    private static final int ATTACK_GLOW = 5636095;
    private static final int VITALITY_GLOW = 16733695;
+   private static final int ALERT_TINT = -21846;
+   private static final float ALERT_SCALE = 2.0F;
+   private static final int ALERT_LIFT = 40;
    private static final List<Pillar> pillars = new ArrayList();
    private static final Map<String, EntityDataAccessor> keys = new HashMap();
 
@@ -215,19 +218,33 @@ public class FavelaMonolith {
             }
          }
 
-         if (Config.monolith && Config.monolithDistance && !pillars.isEmpty()) {
+         if (Config.monolith && !pillars.isEmpty()) {
             Minecraft client = Minecraft.getInstance();
             Pillar target = offensive();
             if (client.player != null && target != null) {
-               Object[] metres = new Object[]{spanTo(client, target)};
-               String text = String.format(Locale.ROOT, "%.1f", metres) + unit();
+               double span = spanTo(client, target);
                Font font = client.font;
-               float scale = Config.monolithDistanceScale <= 0.0F ? 1.0F : Config.monolithDistanceScale;
-               graphics.pose().pushMatrix();
-               graphics.pose().translate((float)homeX(graphics.guiWidth(), font.width(text)), (float)homeY(graphics.guiHeight()));
-               graphics.pose().scale(scale, scale);
-               graphics.text(font, text, 0, 0, target.glow | -16777216, true);
-               graphics.pose().popMatrix();
+               if (Config.monolithDistance) {
+                  Object[] metres = new Object[]{span};
+                  String text = String.format(Locale.ROOT, "%.1f", metres) + unit();
+                  float scale = Config.monolithDistanceScale <= 0.0F ? 1.0F : Config.monolithDistanceScale;
+                  graphics.pose().pushMatrix();
+                  graphics.pose().translate((float)homeX(graphics.guiWidth(), font.width(text)), (float)homeY(graphics.guiHeight()));
+                  graphics.pose().scale(scale, scale);
+                  graphics.text(font, text, 0, 0, target.glow | -16777216, true);
+                  graphics.pose().popMatrix();
+               }
+
+               if (Config.monolithTeleport && span >= (double)Config.monolithTeleportAt) {
+                  String warn = Config.monolithTeleportText;
+                  if (warn != null && !warn.trim().isEmpty()) {
+                     graphics.pose().pushMatrix();
+                     graphics.pose().translate((float)(graphics.guiWidth() / 2), (float)(graphics.guiHeight() / 2 - ALERT_LIFT));
+                     graphics.pose().scale(ALERT_SCALE, ALERT_SCALE);
+                     graphics.text(font, warn, -font.width(warn) / 2, 0, ALERT_TINT, true);
+                     graphics.pose().popMatrix();
+                  }
+               }
             }
          }
 

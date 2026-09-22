@@ -22,6 +22,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.gizmos.Gizmos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Display;
@@ -73,6 +74,24 @@ public class FavelaMonolith {
       return model != null && model.toLowerCase(Locale.ROOT).endsWith(tail);
    }
 
+   private static final Map<String, EntityDataAccessor> keys = new HashMap();
+
+   private static Object hidden(Entity entity, String field) {
+      try {
+         EntityDataAccessor key = (EntityDataAccessor)keys.get(field);
+         if (key == null) {
+            java.lang.reflect.Field found = Display.class.getDeclaredField(field);
+            found.setAccessible(true);
+            key = (EntityDataAccessor)found.get(null);
+            keys.put(field, key);
+         }
+
+         return entity.getEntityData().get(key);
+      } catch (Throwable e) {
+         return "?";
+      }
+   }
+
    private static String fingerprint(Entity entity) {
       StringBuilder out = new StringBuilder();
 
@@ -89,7 +108,14 @@ public class FavelaMonolith {
          out.append("?");
       }
 
+      out.append(" glow=").append(hidden(entity, "DATA_GLOW_COLOR_OVERRIDE_ID"));
+      out.append(" bright=").append(hidden(entity, "DATA_BRIGHTNESS_OVERRIDE_ID"));
+      out.append(" billboard=").append(hidden(entity, "DATA_BILLBOARD_RENDER_CONSTRAINTS_ID"));
+      out.append(" shadow=").append(hidden(entity, "DATA_SHADOW_STRENGTH_ID"));
+      out.append(" viewRange=").append(hidden(entity, "DATA_VIEW_RANGE_ID"));
+      out.append(" leftRotation=").append(hidden(entity, "DATA_LEFT_ROTATION_ID"));
       out.append(" invisible=").append(entity.isInvisible());
+      out.append(" glowing=").append(entity.isCurrentlyGlowing());
       return out.toString();
    }
 

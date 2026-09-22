@@ -17,6 +17,8 @@ public class AlertHudEditorScreen extends Screen {
    private boolean isDraggingCall = false;
    private boolean isDraggingBossHp = false;
    private boolean isDraggingSplits = false;
+   private boolean isDraggingMonolith = false;
+   private boolean isDraggingMonolithRange = false;
    private double dragOffsetX;
    private double dragOffsetY;
 
@@ -92,6 +94,38 @@ public class AlertHudEditorScreen extends Screen {
          graphics.pose().popMatrix();
       }
 
+
+      if (Config.monolith && Config.monolithHud) {
+         String monolithText = this.monolithPreview();
+         int monolithWidth = this.font.width(monolithText);
+         Objects.requireNonNull(this.font);
+         graphics.pose().pushMatrix();
+         graphics.pose().translate((float)Config.monolithX, (float)Config.monolithY);
+         graphics.pose().scale(Config.monolithScale, Config.monolithScale);
+         graphics.text(this.font, monolithText, 0, 0, -11141291, true);
+         if (this.isMouseOver((double)mouseX, (double)mouseY, Config.monolithX, Config.monolithY, monolithWidth, 9, Config.monolithScale)) {
+            graphics.fill(-2, -2, monolithWidth + 2, 11, 1157627903);
+         }
+
+         graphics.pose().popMatrix();
+      }
+
+      if (Config.monolith && Config.monolithDistance) {
+         String rangeText = this.rangePreview();
+         int rangeWidth = this.font.width(rangeText);
+         int rangeLeft = this.rangeX();
+         int rangeTop = this.rangeY();
+         Objects.requireNonNull(this.font);
+         graphics.pose().pushMatrix();
+         graphics.pose().translate((float)rangeLeft, (float)rangeTop);
+         graphics.pose().scale(Config.monolithDistanceScale, Config.monolithDistanceScale);
+         graphics.text(this.font, rangeText, 0, 0, -11141291, true);
+         if (this.isMouseOver((double)mouseX, (double)mouseY, rangeLeft, rangeTop, rangeWidth, 9, Config.monolithDistanceScale)) {
+            graphics.fill(-2, -2, rangeWidth + 2, 11, 1157627903);
+         }
+
+         graphics.pose().popMatrix();
+      }
 
       if (Config.primedTimer) {
          String primedText = this.primedPreview();
@@ -181,6 +215,23 @@ public class AlertHudEditorScreen extends Screen {
 
    }
 
+   private String monolithPreview() {
+      String text = Config.monolithAttackText;
+      return text != null && !text.trim().isEmpty() ? text : "Attack";
+   }
+
+   private String rangePreview() {
+      return "12.4" + FavelaMonolith.unit();
+   }
+
+   private int rangeX() {
+      return FavelaMonolith.homeX(this.width, this.font.width(this.rangePreview()));
+   }
+
+   private int rangeY() {
+      return FavelaMonolith.homeY(this.height);
+   }
+
    private String callPreview() {
       String text = Config.ambushText;
       return text != null && !text.trim().isEmpty() ? text.trim() : "AMBUSH";
@@ -204,11 +255,41 @@ public class AlertHudEditorScreen extends Screen {
       return mouseX >= (double)x && mouseX <= (double)x + scaledWidth && mouseY >= (double)y && mouseY <= (double)y + scaledHeight;
    }
 
+   private boolean grabMonolith(double mouseX, double mouseY) {
+      if (Config.monolith && Config.monolithHud) {
+         Objects.requireNonNull(this.font);
+         if (this.isMouseOver(mouseX, mouseY, Config.monolithX, Config.monolithY, this.font.width(this.monolithPreview()), 9, Config.monolithScale)) {
+            this.isDraggingMonolith = true;
+            this.dragOffsetX = mouseX - (double)Config.monolithX;
+            this.dragOffsetY = mouseY - (double)Config.monolithY;
+            return true;
+         }
+      }
+
+      if (Config.monolith && Config.monolithDistance) {
+         int left = this.rangeX();
+         int top = this.rangeY();
+         Objects.requireNonNull(this.font);
+         if (this.isMouseOver(mouseX, mouseY, left, top, this.font.width(this.rangePreview()), 9, Config.monolithDistanceScale)) {
+            this.isDraggingMonolithRange = true;
+            this.dragOffsetX = mouseX - (double)left;
+            this.dragOffsetY = mouseY - (double)top;
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
       double mouseX = event.x();
       double mouseY = event.y();
       int button = event.button();
       if (button == 0) {
+         if (this.grabMonolith(mouseX, mouseY)) {
+            return true;
+         }
+
          if (Config.aliveOrDeadMode) {
             int var10003 = Config.aliveOrDeadX;
             int var10004 = Config.aliveOrDeadY;
@@ -335,6 +416,24 @@ public class AlertHudEditorScreen extends Screen {
    }
 
    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+      if (this.isDraggingMonolith) {
+         double atX = this.minecraft.mouseHandler.xpos() * (double)this.width / (double)this.minecraft.getWindow().getScreenWidth();
+         double atY = this.minecraft.mouseHandler.ypos() * (double)this.height / (double)this.minecraft.getWindow().getScreenHeight();
+         Config.monolithX = this.snapX((int)(atX - this.dragOffsetX), this.font.width(this.monolithPreview()), Config.monolithScale);
+         Config.monolithY = (int)(atY - this.dragOffsetY);
+         return true;
+      }
+
+      if (this.isDraggingMonolithRange) {
+         double atX = this.minecraft.mouseHandler.xpos() * (double)this.width / (double)this.minecraft.getWindow().getScreenWidth();
+         double atY = this.minecraft.mouseHandler.ypos() * (double)this.height / (double)this.minecraft.getWindow().getScreenHeight();
+         int placedX = this.snapX((int)(atX - this.dragOffsetX), this.font.width(this.rangePreview()), Config.monolithDistanceScale);
+         int placedY = (int)(atY - this.dragOffsetY);
+         Config.monolithDistanceX = placedX == 0 && placedY == 0 ? 1 : placedX;
+         Config.monolithDistanceY = placedY;
+         return true;
+      }
+
       double mouseX = event.x();
       double mouseY = event.y();
       if (this.isDraggingAliveOrDead) {
@@ -387,7 +486,7 @@ public class AlertHudEditorScreen extends Screen {
    }
 
    public boolean mouseReleased(MouseButtonEvent event) {
-      if (!this.isDraggingAlert && !this.isDraggingAliveOrDead && !this.isDraggingDps && !this.isDraggingTrap && !this.isDraggingCall && !this.isDraggingBossHp && !this.isDraggingSplits) {
+      if (!this.isDraggingAlert && !this.isDraggingAliveOrDead && !this.isDraggingDps && !this.isDraggingTrap && !this.isDraggingCall && !this.isDraggingBossHp && !this.isDraggingSplits && !this.isDraggingMonolith && !this.isDraggingMonolithRange) {
          return super.mouseReleased(event);
       } else {
          this.isDraggingAlert = false;
@@ -399,12 +498,18 @@ public class AlertHudEditorScreen extends Screen {
          this.isDraggingCall = false;
          this.isDraggingBossHp = false;
          this.isDraggingSplits = false;
+         this.isDraggingMonolith = false;
+         this.isDraggingMonolithRange = false;
          Config.save();
          return true;
       }
    }
 
    public boolean keyPressed(KeyEvent event) {
+      if (this.sizeMonolith(event)) {
+         return true;
+      }
+
       int keyCode;
       double mouseX;
       double mouseY;
@@ -512,6 +617,39 @@ public class AlertHudEditorScreen extends Screen {
          Config.save();
          return true;
       }
+   }
+
+   private boolean sizeMonolith(KeyEvent event) {
+      int keyCode = event.key();
+      boolean up = keyCode == 61 || keyCode == 334;
+      boolean down = keyCode == 45 || keyCode == 333;
+      if (!up && !down) {
+         return false;
+      } else {
+         double mouseX = this.minecraft.mouseHandler.xpos() * (double)this.width / (double)this.minecraft.getWindow().getScreenWidth();
+         double mouseY = this.minecraft.mouseHandler.ypos() * (double)this.height / (double)this.minecraft.getWindow().getScreenHeight();
+         Objects.requireNonNull(this.font);
+         if (Config.monolith && Config.monolithHud && this.isMouseOver(mouseX, mouseY, Config.monolithX, Config.monolithY, this.font.width(this.monolithPreview()), 9, Config.monolithScale)) {
+            Config.monolithScale = this.step(Config.monolithScale, up);
+            Config.save();
+            return true;
+         } else if (Config.monolith && Config.monolithDistance && this.isMouseOver(mouseX, mouseY, this.rangeX(), this.rangeY(), this.font.width(this.rangePreview()), 9, Config.monolithDistanceScale)) {
+            Config.monolithDistanceScale = this.step(Config.monolithDistanceScale, up);
+            Config.save();
+            return true;
+         } else {
+            return false;
+         }
+      }
+   }
+
+   private float step(float scale, boolean up) {
+      float moved = up ? scale + 0.1F : scale - 0.1F;
+      if (moved < 0.5F) {
+         moved = 0.5F;
+      }
+
+      return moved > 5.0F ? 5.0F : moved;
    }
 
    public boolean shouldCloseOnEsc() {

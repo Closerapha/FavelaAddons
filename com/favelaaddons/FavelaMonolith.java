@@ -144,7 +144,23 @@ public class FavelaMonolith {
       pillars.addAll(found);
    }
 
-   private static String wording(int glow) {
+   public static String unit() {
+      return Config.monolithBlocks ? " blocks" : "m";
+   }
+
+   public static boolean unplaced() {
+      return Config.monolithDistanceX == 0 && Config.monolithDistanceY == 0;
+   }
+
+   public static int homeX(int screenWidth, int textWidth) {
+      return unplaced() ? screenWidth / 2 - textWidth / 2 : Config.monolithDistanceX;
+   }
+
+   public static int homeY(int screenHeight) {
+      return unplaced() ? screenHeight / 2 + 20 : Config.monolithDistanceY;
+   }
+
+   public static String wording(int glow) {
       if (glow == ATTACK_GLOW) {
          return Config.monolithAttackText;
       } else if (glow == VITALITY_GLOW) {
@@ -203,13 +219,13 @@ public class FavelaMonolith {
             Pillar target = offensive();
             if (client.player != null && target != null) {
                Object[] metres = new Object[]{spanTo(client, target)};
-               String text = String.format(Locale.ROOT, "%.1fm", metres);
+               String text = String.format(Locale.ROOT, "%.1f", metres) + unit();
                Font font = client.font;
                float scale = Config.monolithDistanceScale <= 0.0F ? 1.0F : Config.monolithDistanceScale;
                graphics.pose().pushMatrix();
-               graphics.pose().translate((float)(graphics.guiWidth() / 2), (float)(graphics.guiHeight() / 2 + Config.monolithDistanceDrop));
+               graphics.pose().translate((float)homeX(graphics.guiWidth(), font.width(text)), (float)homeY(graphics.guiHeight()));
                graphics.pose().scale(scale, scale);
-               graphics.text(font, text, -font.width(text) / 2, 0, target.glow | -16777216, true);
+               graphics.text(font, text, 0, 0, target.glow | -16777216, true);
                graphics.pose().popMatrix();
             }
          }

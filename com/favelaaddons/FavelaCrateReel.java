@@ -28,11 +28,11 @@ public class FavelaCrateReel {
    private static final int STRIP = 512;
    private static final int PITCH = 44;
    private static final float FREE_SPEED = 0.77F;
-   private static final int MIN_LAND = 400;
-   private static final int MAX_LAND = 978;
+   private static final int MIN_LAND = 700;
+   private static final int MAX_LAND = 1600;
    private static final long HOLD_MILLIS = 2500L;
    private static final long FREE_LIMIT = 20000L;
-   private static final int MIN_AHEAD = 3;
+   private static final int MIN_AHEAD = 9;
    private static final long FADE_IN = 300L;
    private static final long FADE_OUT = 700L;
    private static final long REEL_FADE = 350L;
@@ -122,7 +122,7 @@ public class FavelaCrateReel {
          landIndex = target;
          landFrom = here;
          landTo = (float)(target * PITCH);
-         long fitted = Math.round(3.0 * (double)(landTo - landFrom) / (double)FREE_SPEED);
+         long fitted = Math.round(2.0 * (double)(landTo - landFrom) / (double)FREE_SPEED);
          landMillis = Math.max((long)MIN_LAND, Math.min((long)MAX_LAND, fitted));
          prize = FavelaDisplays.sanitize(winner.getHoverName().getString()).trim();
          phase = LANDING;
@@ -211,7 +211,7 @@ public class FavelaCrateReel {
          } else {
             float t = (float)elapsed / (float)landMillis;
             float left = 1.0F - t;
-            float eased = 1.0F - left * left * left;
+            float eased = 1.0F - left * left;
             return landFrom + (landTo - landFrom) * eased;
          }
       }

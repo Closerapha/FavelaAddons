@@ -1,8 +1,17 @@
 package com.favelaaddons;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Locale;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
@@ -26,12 +35,14 @@ public class FavelaMonolith {
    private static final double SCAN_RANGE = 48.0;
    private static final double TWIN_GAP = 0.6;
    private static final double VISIBLE_SCALE = 0.02;
+   private static final double NEAR_CENTRE = 3.0;
    private static final int RING_STEPS = 48;
    private static final float RING_WIDTH = 2.0F;
    private static final int ACTIVE_TINT = -16711792;
    private static final int LABEL = -1;
    private static final int ACTIVE_LABEL = -16711792;
    private static final List<Pillar> pillars = new ArrayList();
+   private static final Map<Integer, String> marks = new HashMap();
 
    public static void registrar() {
       ClientTickEvents.END_CLIENT_TICK.register(FavelaMonolith::onTick);
@@ -56,6 +67,36 @@ public class FavelaMonolith {
    private static boolean named(Entity entity, String tail) {
       String model = FavelaDisplays.modelId(entity);
       return model != null && model.toLowerCase(Locale.ROOT).endsWith(tail);
+   }
+
+   private static String fingerprint(Entity entity) {
+      StringBuilder out = new StringBuilder();
+
+      try {
+         ItemStack stack = ((Display.ItemDisplay)entity).getItemStack();
+         if (stack == null || stack.isEmpty()) {
+            out.append("empty");
+         } else {
+            out.append(stack.getItem());
+            out.append(" model=").append(FavelaDisplays.modelId(stack));
+            out.append(" parts=").append(stack.getComponents());
+         }
+      } catch (Exception e) {
+         out.append("?");
+      }
+
+      out.append(" invisible=").append(entity.isInvisible());
+      return out.toString();
+   }
+
+   private static void watch(Entity entity) {
+      String now = fingerprint(entity);
+      String before = (String)marks.put(entity.getId(), now);
+      if (before != null && !before.equals(now)) {
+         System.out.println("[FA Monolith] CHANGED " + FavelaDisplays.modelId(entity));
+         System.out.println("    was " + before);
+         System.out.println("    now " + now);
+      }
    }
 
    private static double biggestScale(Entity entity) {
@@ -91,6 +132,7 @@ public class FavelaMonolith {
       try {
          for(Entity entity : client.level.getEntities(client.player, search)) {
             if (bone(entity)) {
+
                if (named(entity, ANCHOR_BONE)) {
                   anchors.add(entity);
                } else if (named(entity, TWIN_BONE)) {
@@ -175,23 +217,74 @@ public class FavelaMonolith {
       }
    }
 
+   private static String describe(Entity entity) {
+      String model = FavelaDisplays.modelId(entity);
+      if (model == null && entity instanceof Display.ItemDisplay) {
+         ItemStack stack = ((Display.ItemDisplay)entity).getItemStack();
+         if (stack != null && !stack.isEmpty()) {
+            model = "item:" + FavelaDisplays.sanitize(stack.getHoverName().getString()).trim();
+         }
+      }
+
+      return model == null ? entity.getType().toString() : model;
+   }
+
+   private static String save(String body) {
+      try {
+         File folder = new File(new File(FabricLoader.getInstance().getConfigDir().toFile(), "favelaaddons"), "debug");
+         if (!folder.exists() && !folder.mkdirs()) {
+            return null;
+         } else {
+            String name = "monolith-" + (new SimpleDateFormat("yyyyMMdd-HHmmss")).format(new Date()) + ".txt";
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(folder, name)), StandardCharsets.UTF_8);
+            writer.write(body);
+            writer.close();
+            return name;
+         }
+      } catch (Exception e) {
+         return null;
+      }
+   }
+
    public static String probe() {
       Minecraft client = Minecraft.getInstance();
-      if (client.level != null && client.player != null) {
+      if (client.level == null || client.player == null) {
+         return "§cNo world.";
+      } else {
          StringBuilder out = new StringBuilder();
          out.append("[FA Monolith] probe\n");
+         List<Vec3> centres = new ArrayList();
          AABB search = client.player.getBoundingBox().inflate(SCAN_RANGE);
-         int seen = 0;
+         int bones = 0;
 
          try {
             for(Entity entity : client.level.getEntities(client.player, search)) {
                if (bone(entity)) {
-                  ++seen;
+                  ++bones;
                   Vec3 at = FavelaDisplays.renderedPosition(entity);
-                  ItemStack stack = ((Display.ItemDisplay)entity).getItemStack();
-                  String item = stack == null || stack.isEmpty() ? "-" : FavelaDisplays.sanitize(stack.getHoverName().getString()).trim();
-                  Object[] row = new Object[]{FavelaDisplays.modelId(entity), biggestScale(entity), at.distanceTo(client.player.position()), at.y, item, FavelaDisplays.modelId(stack)};
-                  out.append(String.format(Locale.ROOT, "  %-48s scale %.3f  dist %5.1f  y %7.2f  item %s / %s%n", row));
+                  if (named(entity, ANCHOR_BONE)) {
+                     centres.add(at);
+                  }
+
+                  Object[] row = new Object[]{describe(entity), biggestScale(entity), at.distanceTo(client.player.position()), at.y};
+                  out.append(String.format(Locale.ROOT, "  bone %-44s scale %7.3f  dist %5.1f  y %7.2f%n", row));
+               }
+            }
+
+            out.append("  --- within ").append(NEAR_CENTRE).append(" blocks of a monolith centre ---\n");
+
+            for(Entity entity : client.level.getEntities(client.player, search)) {
+               if (!bone(entity)) {
+                  Vec3 at = FavelaDisplays.renderedPosition(entity);
+
+                  for(Vec3 centre : centres) {
+                     if (at.distanceTo(centre) <= NEAR_CENTRE) {
+                        double scale = entity instanceof Display ? biggestScale(entity) : 0.0;
+                        Object[] row = new Object[]{entity.getType().toString(), describe(entity), scale, at.distanceTo(centre), at.y};
+                        out.append(String.format(Locale.ROOT, "  near %-30s %-40s scale %7.3f  off %5.2f  y %7.2f%n", row));
+                        break;
+                     }
+                  }
                }
             }
          } catch (Exception e) {
@@ -199,9 +292,12 @@ public class FavelaMonolith {
          }
 
          System.out.print(out);
-         return seen == 0 ? "§cNo monolith bones in range." : "§aProbed §e" + seen + "§a bones, see the log.";
-      } else {
-         return "§cNo world.";
+         if (bones == 0) {
+            return "§cNo monolith bones in range.";
+         } else {
+            String name = save(out.toString());
+            return "§aProbed §e" + bones + "§a bones, §e" + centres.size() + "§a centre(s) -> §e" + (name == null ? "log only" : "config/favelaaddons/debug/" + name);
+         }
       }
    }
 }

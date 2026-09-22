@@ -153,6 +153,12 @@ public class FavelaSplits {
 
    }
 
+   private static Segment optSeg(String name, String cue) {
+      Segment segment = chatSeg(name, cue);
+      segment.optional = true;
+      return segment;
+   }
+
    private static Segment chatSeg(String name, String cue) {
       Segment segment = new Segment();
       segment.name = name;
@@ -193,7 +199,7 @@ public class FavelaSplits {
       route.portal = "shatters";
       route.portalStart = 28;
       route.world = "";
-      route.segments = new Segment[]{chatSeg("Valerion Clear", "If you insist on entering, prepare to face the wrath of the Rustborn Kingdom's last knight"), group("Valerion", new Segment[]{chatSeg("Phase 1", "My sword may rust, my armor may wear, but my loyalty to this kingdom will never fade"), chatSeg("Desperation", "Valerion has been defeated")}), chatSeg("Mythrion", "After eons... The first infiltration through the kingdom has occurred"), chatSeg("Nebula Clear", "Your fate is entwined with the cosmic threads of oblivion"), chatSeg("Nebula", "Nebula has been defeated"), chatSeg("Opha Clear", "And so they persist"), group("Ophanim", new Segment[]{chatSeg("Phase 1", "You are truly powerless against the very fabric of time"), chatSeg("Phase 2", "And as the clock ticks forwards, your very resolve is tested against the hands of fate"), chatSeg("Phase 3", "Very well. Let the true test of your strength commence"), chatSeg("Phase 4", "Wait...*yawn* that...sound|Judgment approaches"), chatSeg("Desperation", "Ophanim has been defeated")})};
+      route.segments = new Segment[]{chatSeg("Valerion Clear", "If you insist on entering, prepare to face the wrath of the Rustborn Kingdom's last knight"), group("Valerion", new Segment[]{chatSeg("Phase 1", "My sword may rust, my armor may wear, but my loyalty to this kingdom will never fade"), chatSeg("Desperation", "Valerion has been defeated")}), chatSeg("Mythrion", "After eons... The first infiltration through the kingdom has occurred"), chatSeg("Nebula Clear", "Your fate is entwined with the cosmic threads of oblivion"), chatSeg("Nebula", "Nebula has been defeated"), chatSeg("Opha Clear", "And so they persist"), group("Ophanim", new Segment[]{chatSeg("Phase 1", "You are truly powerless against the very fabric of time"), chatSeg("Phase 2", "And as the clock ticks forwards, your very resolve is tested against the hands of fate"), optSeg("Phase 3", "Judgment approaches"), chatSeg("Phase 4", "Wait...*yawn*. that...sound"), chatSeg("Desperation", "Ophanim has been defeated")})};
       return route;
    }
 
@@ -744,10 +750,23 @@ public class FavelaSplits {
 
             } else if (matchesCue(segment.chat, message)) {
                closeSegment(segment);
+            } else if (skippable(segment) && segmentIndex + 1 < steps.size()) {
+               Segment ahead = ((Step)steps.get(segmentIndex + 1)).segment;
+               if (ahead != null && matchesCue(ahead.chat, message)) {
+                  skipSegment();
+                  Segment now = current();
+                  if (now != null) {
+                     closeSegment(now);
+                  }
+               }
             }
 
          }
       }
+   }
+
+   private static boolean skippable(Segment segment) {
+      return segment != null && segment.optional != null && segment.optional;
    }
 
    private static boolean matchesCue(String cue, String message) {
@@ -786,6 +805,19 @@ public class FavelaSplits {
 
       return out.toString();
    }
+   private static void skipSegment() {
+      Step step = (Step)steps.get(segmentIndex);
+      long from = step.startMillis;
+      step.row.finish(0L, from - runStart);
+
+      segmentStart = from;
+      ++segmentIndex;
+      if (segmentIndex < steps.size()) {
+         openStep(from);
+      }
+
+   }
+
    private static void closeSegment(Segment segment) {
       long now = System.currentTimeMillis();
       Step step = (Step)steps.get(segmentIndex);
@@ -1510,6 +1542,7 @@ public class FavelaSplits {
       String bossKill;
       Float hp;
       String chat;
+      Boolean optional;
       Segment[] children;
    }
 }

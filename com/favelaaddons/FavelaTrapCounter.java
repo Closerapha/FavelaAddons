@@ -27,6 +27,10 @@ public class FavelaTrapCounter {
    }
 
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (Config.trapCounter && client.level != null && client.player != null) {
          if (client.player.tickCount % 5 == 0) {
             try {
@@ -68,7 +72,7 @@ public class FavelaTrapCounter {
 
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      if (!FavelaCrateReel.spinning()) {
+      if (FavelaPower.on() && !FavelaCrateReel.spinning()) {
          Minecraft client = Minecraft.getInstance();
          if (Config.trapCounter && client.player != null && (trapCount > 0 || !Config.trapCounterHideEmpty)) {
             int max = Math.max(1, Config.trapCounterMax);

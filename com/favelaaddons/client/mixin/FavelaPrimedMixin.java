@@ -1,5 +1,6 @@
 package com.favelaaddons.client.mixin;
 
+import com.favelaaddons.FavelaPower;
 import com.favelaaddons.FavelaPrimed;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +17,10 @@ public class FavelaPrimedMixin {
       require = 0
    )
    private void favela$trackPrimedSwing(InteractionHand hand, CallbackInfo ci) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       try {
          FavelaPrimed.onSwing((LocalPlayer)(Object)this, hand);
       } catch (Exception var3) {

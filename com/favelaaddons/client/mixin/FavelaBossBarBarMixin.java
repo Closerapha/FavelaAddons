@@ -2,6 +2,7 @@ package com.favelaaddons.client.mixin;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.favelaaddons.FavelaBossBar;
+import com.favelaaddons.FavelaPower;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.BossHealthOverlay;
 import net.minecraft.resources.Identifier;
@@ -21,6 +22,10 @@ public class FavelaBossBarBarMixin {
       require = 0
    )
    private BossEvent.BossBarColor favela$neutralSprite(BossEvent event) {
+      if (FavelaPower.off()) {
+         return event.getColor();
+      }
+
       try {
          return FavelaBossBar.spriteColour(event, event.getColor());
       } catch (Exception var3) {
@@ -37,6 +42,11 @@ public class FavelaBossBarBarMixin {
       require = 0
    )
    private void favela$tintBar(GuiGraphicsExtractor graphics, RenderPipeline pipeline, Identifier sprite, int textureWidth, int textureHeight, int u, int v, int x, int y, int width, int height) {
+      if (FavelaPower.off()) {
+         graphics.blitSprite(pipeline, sprite, textureWidth, textureHeight, u, v, x, y, width, height);
+         return;
+      }
+
       int tint = 0;
 
       try {

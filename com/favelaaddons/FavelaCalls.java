@@ -39,6 +39,10 @@ public class FavelaCalls {
    }
 
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (ticksLeft > 0) {
          --ticksLeft;
       }
@@ -106,7 +110,7 @@ public class FavelaCalls {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      if (!FavelaCrateReel.spinning()) {
+      if (FavelaPower.on() && !FavelaCrateReel.spinning()) {
          Minecraft client = Minecraft.getInstance();
          if (Config.calls && ticksLeft > 0 && !message.isEmpty() && client.player != null) {
             Font font = client.font;

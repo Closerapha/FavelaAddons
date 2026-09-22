@@ -1,6 +1,7 @@
 package com.favelaaddons.client.mixin;
 
 import com.favelaaddons.Config;
+import com.favelaaddons.FavelaPower;
 import com.favelaaddons.FavelaMod;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
@@ -18,6 +19,10 @@ public class FavelaAudioMixin {
       require = 0
    )
    private void play(SoundInstance sound, CallbackInfoReturnable<Void> cir) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (sound != null) {
          try {
             if (Config.aliveOrDeadMode) {

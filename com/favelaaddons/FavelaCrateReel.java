@@ -219,7 +219,7 @@ public class FavelaCrateReel {
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
       Minecraft client = Minecraft.getInstance();
-      if (phase != IDLE && !reel.isEmpty() && client.player != null) {
+      if (FavelaPower.on() && phase != IDLE && !reel.isEmpty() && client.player != null) {
          long now = System.currentTimeMillis();
          if (phase == FREE && now - freeStart > FREE_LIMIT) {
             phase = IDLE;

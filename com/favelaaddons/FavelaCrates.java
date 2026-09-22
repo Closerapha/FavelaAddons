@@ -241,6 +241,10 @@ public class FavelaCrates {
    }
 
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (!loaded && client.level != null) {
          loaded = true;
          loadPools();

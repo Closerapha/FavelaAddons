@@ -32,6 +32,7 @@ public class FavelaMod implements ClientModInitializer {
 
    public void onInitializeClient() {
       Config.load();
+      FavelaPower.registrar();
 
       FavelaTrapCounter.registrar();
       FavelaCalls.registrar();
@@ -45,6 +46,10 @@ public class FavelaMod implements ClientModInitializer {
       ClientReceiveMessageEvents.GAME.register((ClientReceiveMessageEvents.Game)(message, overlay) -> this.handleChatMessage(message.getString()));
       ClientReceiveMessageEvents.CHAT.register((ClientReceiveMessageEvents.Chat)(message, signedMessage, sender, params, receptionTimestamp) -> this.handleChatMessage(message.getString()));
       ClientTickEvents.END_CLIENT_TICK.register((ClientTickEvents.EndTick)(client) -> {
+         if (FavelaPower.off()) {
+            return;
+         }
+
          if (alertTimeRemaining > 0) {
             --alertTimeRemaining;
          }
@@ -52,7 +57,7 @@ public class FavelaMod implements ClientModInitializer {
          FavelaDPS.onTick(client);
       });
       HudElementRegistry.addLast(Identifier.parse("favelaaddons:alert"), (graphics, tracker) -> {
-         if (alertTimeRemaining > 0 && !FavelaCrateReel.spinning()) {
+         if (FavelaPower.on() && alertTimeRemaining > 0 && !FavelaCrateReel.spinning()) {
             String text = Config.aliveOrDeadMode && aliveOrDeadColor != 0 ? aliveOrDeadMessage : Config.alertText;
             int renderColor = Config.aliveOrDeadMode && aliveOrDeadColor != 0 ? aliveOrDeadColor : Config.alertColor;
             renderColor |= -16777216;
@@ -66,7 +71,7 @@ public class FavelaMod implements ClientModInitializer {
             graphics.pose().popMatrix();
          }
 
-         if (Config.dpsHudEnabled) {
+         if (FavelaPower.on() && Config.dpsHudEnabled) {
             double dps = FavelaDPS.getCurrentDPS();
             Object[] var10001 = new Object[]{dps};
             String dpsText = "DPS: " + String.format("%.1f", var10001);
@@ -193,6 +198,10 @@ public class FavelaMod implements ClientModInitializer {
    }
 
    private void handleChatMessage(String chatText) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       FavelaSplits.onChat(chatText);
       Minecraft client = Minecraft.getInstance();
       if (client.player != null) {

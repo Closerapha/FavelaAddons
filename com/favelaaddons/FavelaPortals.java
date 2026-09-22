@@ -14,6 +14,10 @@ public class FavelaPortals {
    }
 
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (!Config.splits || client.level == null || client.player == null) {
          seen.clear();
       } else if (--cooldown <= 0) {

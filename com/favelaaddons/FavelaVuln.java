@@ -44,6 +44,10 @@ public class FavelaVuln {
    }
 
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (ticksLeft > 0) {
          --ticksLeft;
       } else if (Config.vulnHud && client.player != null && client.level != null && !inHub(client) && bossBarUp()) {
@@ -212,7 +216,7 @@ public class FavelaVuln {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      if (!FavelaCrateReel.spinning()) {
+      if (FavelaPower.on() && !FavelaCrateReel.spinning()) {
          Minecraft client = Minecraft.getInstance();
          if (Config.vulnHud && state != VULNERABLE && client.player != null) {
             String text = wording();

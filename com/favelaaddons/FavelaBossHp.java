@@ -30,6 +30,10 @@ public class FavelaBossHp {
    }
 
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       float now = progress();
       if (now >= 0.0F) {
          if (now <= ZERO && lastProgress > ZERO) {
@@ -93,7 +97,7 @@ public class FavelaBossHp {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      if (!FavelaCrateReel.spinning()) {
+      if (FavelaPower.on() && !FavelaCrateReel.spinning()) {
          Minecraft client = Minecraft.getInstance();
          if (Config.bossHp && client.player != null) {
             float progress = progress();

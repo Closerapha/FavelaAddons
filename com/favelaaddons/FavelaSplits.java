@@ -472,6 +472,10 @@ public class FavelaSplits {
       }
    }
    private static void onTick(Minecraft client) {
+      if (FavelaPower.off()) {
+         return;
+      }
+
       if (!Config.splits || client.player == null || client.level == null) {
          return;
       }
@@ -1158,7 +1162,7 @@ public class FavelaSplits {
    }
 
    private static void render(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
-      if (!FavelaCrateReel.spinning()) {
+      if (FavelaPower.on() && !FavelaCrateReel.spinning()) {
          Minecraft client = Minecraft.getInstance();
          if (Config.splits && client.player != null && (!finished.isEmpty() || active != null)) {
             Font font = client.font;

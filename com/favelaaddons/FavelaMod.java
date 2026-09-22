@@ -34,6 +34,7 @@ public class FavelaMod implements ClientModInitializer {
       Config.load();
       FavelaPower.registrar();
 
+      FavelaMonolith.registrar();
       FavelaTrapCounter.registrar();
       FavelaCalls.registrar();
       FavelaBossHp.registrar();

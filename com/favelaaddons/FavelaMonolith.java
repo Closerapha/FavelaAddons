@@ -44,6 +44,7 @@ public class FavelaMonolith {
    }
 
    private static class Pillar {
+      Entity anchor;
       Vec3 at;
       int glow;
    }
@@ -123,6 +124,7 @@ public class FavelaMonolith {
       for(Entity anchor : anchors) {
          Vec3 at = FavelaDisplays.renderedPosition(anchor);
          Pillar pillar = new Pillar();
+         pillar.anchor = anchor;
          pillar.at = at;
          pillar.glow = PLAIN_GLOW;
          double closest = Double.MAX_VALUE;
@@ -152,6 +154,30 @@ public class FavelaMonolith {
       }
    }
 
+   private static Pillar offensive() {
+      Pillar farthest = null;
+      double reach = -1.0;
+      Minecraft client = Minecraft.getInstance();
+      if (client.player == null) {
+         return null;
+      } else {
+         for(Pillar pillar : pillars) {
+            double gap = spanTo(client, pillar);
+            if (gap > reach) {
+               reach = gap;
+               farthest = pillar;
+            }
+         }
+
+         return farthest;
+      }
+   }
+
+   private static double spanTo(Minecraft client, Pillar pillar) {
+      Vec3 at = pillar.anchor == null ? pillar.at : FavelaDisplays.renderedPosition(pillar.anchor);
+      return at.distanceTo(client.player.position());
+   }
+
    private static void hud(GuiGraphicsExtractor graphics, DeltaTracker tracker) {
       if (FavelaPower.on() && !FavelaCrateReel.spinning()) {
          if (Config.monolith && Config.monolithHud && !pillars.isEmpty()) {
@@ -171,6 +197,23 @@ public class FavelaMonolith {
                graphics.pose().popMatrix();
             }
          }
+
+         if (Config.monolith && Config.monolithDistance && !pillars.isEmpty()) {
+            Minecraft client = Minecraft.getInstance();
+            Pillar target = offensive();
+            if (client.player != null && target != null) {
+               Object[] metres = new Object[]{spanTo(client, target)};
+               String text = String.format(Locale.ROOT, "%.1fm", metres);
+               Font font = client.font;
+               float scale = Config.monolithDistanceScale <= 0.0F ? 1.0F : Config.monolithDistanceScale;
+               graphics.pose().pushMatrix();
+               graphics.pose().translate((float)(graphics.guiWidth() / 2), (float)(graphics.guiHeight() / 2 + Config.monolithDistanceDrop));
+               graphics.pose().scale(scale, scale);
+               graphics.text(font, text, -font.width(text) / 2, 0, target.glow | -16777216, true);
+               graphics.pose().popMatrix();
+            }
+         }
+
       }
    }
 

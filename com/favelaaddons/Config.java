@@ -90,6 +90,9 @@ public class Config {
    public static int monolithX = 10;
    public static int monolithY = 120;
    public static float monolithScale = 1.2F;
+   public static boolean monolithDistance = true;
+   public static int monolithDistanceDrop = 20;
+   public static float monolithDistanceScale = 1.0F;
    public static String monolithAttackText = "Attack";
    public static String monolithVitalityText = "Vitality";
    public static boolean vulnHud = false;
@@ -245,6 +248,9 @@ public class Config {
                monolithX = data.monolithX != 0 ? data.monolithX : 10;
                monolithY = data.monolithY != 0 ? data.monolithY : 120;
                monolithScale = data.monolithScale != 0.0F ? data.monolithScale : 1.2F;
+               monolithDistance = data.monolithDistance != null ? data.monolithDistance : true;
+               monolithDistanceDrop = data.monolithDistanceDrop != 0 ? data.monolithDistanceDrop : 20;
+               monolithDistanceScale = data.monolithDistanceScale != 0.0F ? data.monolithDistanceScale : 1.0F;
                if (data.monolithAttackText != null) {
                   monolithAttackText = data.monolithAttackText;
                }
@@ -332,7 +338,7 @@ public class Config {
          OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8);
 
          try {
-            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, primedTimer, primedTimerMs, primedTimerLabel, primedTimerX, primedTimerY, primedTimerScale, vulnHud, vulnResistantText, vulnInvulnerableText, vulnResistantColor, vulnInvulnerableColor, vulnX, vulnY, vulnScale, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, ambushColor, deathmarkColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, monolith, monolithHud, monolithModels, monolithX, monolithY, monolithScale, monolithAttackText, monolithVitalityText, portalRange, portalModels);
+            FavelaData data = new FavelaData(triggerText, alertText, alertX, alertY, alertScale, alertTime, alertColor, aliveOrDeadMode, aliveOrDeadX, aliveOrDeadY, aliveOrDeadScale, soundTriggers, soundVolume, dpsHudEnabled, dpsHudX, dpsHudY, dpsHudScale, dpsHudColor, hideDamageNumbers, primedTimer, primedTimerMs, primedTimerLabel, primedTimerX, primedTimerY, primedTimerScale, vulnHud, vulnResistantText, vulnInvulnerableText, vulnResistantColor, vulnInvulnerableColor, vulnX, vulnY, vulnScale, splits, splitsShowPhases, splitsMaxRows, splitsWidth, splitsX, splitsY, splitsScale, bossHp, bossHpLabel, bossHpDecimals, bossHpColorByHealth, bossHpColor, bossHpX, bossHpY, bossHpScale, calls, ambushAt, ambushText, deathmarkAt, deathmarkText, ambushColor, deathmarkColor, callStayTicks, callSound, callX, callY, callScale, trapCounter, trapCounterModels, trapCounterMax, trapCounterRange, trapCounterX, trapCounterY, trapCounterScale, trapCounterLabel, trapCounterHideEmpty, monolith, monolithHud, monolithModels, monolithX, monolithY, monolithScale, monolithDistance, monolithDistanceDrop, monolithDistanceScale, monolithAttackText, monolithVitalityText, portalRange, portalModels);
             GSON.toJson(data, writer);
          } catch (Throwable var4) {
             try {
@@ -506,6 +512,12 @@ public class Config {
       int monolithY;
       @SerializedName("monolitoEscala")
       float monolithScale;
+      @SerializedName("monolitoDistancia")
+      Boolean monolithDistance;
+      @SerializedName("monolitoDistanciaQueda")
+      int monolithDistanceDrop;
+      @SerializedName("monolitoDistanciaEscala")
+      float monolithDistanceScale;
       @SerializedName("monolitoTextoAtaque")
       String monolithAttackText;
       @SerializedName("monolitoTextoVitalidade")
@@ -515,7 +527,7 @@ public class Config {
       @SerializedName("portalModelos")
       String portalModels;
 
-      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean primedTimer, int primedTimerMs, String primedTimerLabel, int primedTimerX, int primedTimerY, float primedTimerScale, boolean vulnHud, String vulnResistantText, String vulnInvulnerableText, int vulnResistantColor, int vulnInvulnerableColor, int vulnX, int vulnY, float vulnScale, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int ambushColor, int deathmarkColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, boolean monolith, boolean monolithHud, String monolithModels, int monolithX, int monolithY, float monolithScale, String monolithAttackText, String monolithVitalityText, int portalRange, String portalModels) {
+      FavelaData(String triggerText, String alertText, int alertX, int alertY, float alertScale, int alertTime, int alertColor, boolean aliveOrDeadMode, int aliveOrDeadX, int aliveOrDeadY, float aliveOrDeadScale, String soundTriggers, float soundVolume, boolean dpsHudEnabled, int dpsHudX, int dpsHudY, float dpsHudScale, int dpsHudColor, boolean hideDamageNumbers, boolean primedTimer, int primedTimerMs, String primedTimerLabel, int primedTimerX, int primedTimerY, float primedTimerScale, boolean vulnHud, String vulnResistantText, String vulnInvulnerableText, int vulnResistantColor, int vulnInvulnerableColor, int vulnX, int vulnY, float vulnScale, boolean splits, boolean splitsShowPhases, int splitsMaxRows, int splitsWidth, int splitsX, int splitsY, float splitsScale, boolean bossHp, String bossHpLabel, int bossHpDecimals, boolean bossHpColorByHealth, int bossHpColor, int bossHpX, int bossHpY, float bossHpScale, boolean calls, int ambushAt, String ambushText, int deathmarkAt, String deathmarkText, int ambushColor, int deathmarkColor, int callStayTicks, boolean callSound, int callX, int callY, float callScale, boolean trapCounter, String trapCounterModels, int trapCounterMax, int trapCounterRange, int trapCounterX, int trapCounterY, float trapCounterScale, String trapCounterLabel, boolean trapCounterHideEmpty, boolean monolith, boolean monolithHud, String monolithModels, int monolithX, int monolithY, float monolithScale, boolean monolithDistance, int monolithDistanceDrop, float monolithDistanceScale, String monolithAttackText, String monolithVitalityText, int portalRange, String portalModels) {
          this.triggerText = triggerText;
          this.alertText = alertText;
          this.alertX = alertX;
@@ -593,6 +605,9 @@ public class Config {
          this.monolithX = monolithX;
          this.monolithY = monolithY;
          this.monolithScale = monolithScale;
+         this.monolithDistance = monolithDistance;
+         this.monolithDistanceDrop = monolithDistanceDrop;
+         this.monolithDistanceScale = monolithDistanceScale;
          this.monolithAttackText = monolithAttackText;
          this.monolithVitalityText = monolithVitalityText;
       }

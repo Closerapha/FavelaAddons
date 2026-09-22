@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +45,8 @@ public class FavelaMonolith {
    private static final int ACTIVE_LABEL = -16711792;
    private static final List<Pillar> pillars = new ArrayList();
    private static final Map<Integer, String> marks = new HashMap();
+   private static final Map<Integer, String> guests = new HashMap();
+   private static final double GUEST_RANGE = 5.0;
 
    public static void registrar() {
       ClientTickEvents.END_CLIENT_TICK.register(FavelaMonolith::onTick);
@@ -112,6 +116,53 @@ public class FavelaMonolith {
       }
    }
 
+   private static void guestCheck(Minecraft client, List<Entity> anchors) {
+      if (anchors.isEmpty()) {
+         if (!guests.isEmpty()) {
+            guests.clear();
+         }
+
+         return;
+      }
+
+      Map<Integer, String> now = new HashMap();
+
+      try {
+         for(Entity anchor : anchors) {
+            Vec3 centre = FavelaDisplays.renderedPosition(anchor);
+            AABB box = new AABB(centre.x - GUEST_RANGE, centre.y - GUEST_RANGE, centre.z - GUEST_RANGE, centre.x + GUEST_RANGE, centre.y + GUEST_RANGE, centre.z + GUEST_RANGE);
+
+            for(Entity entity : client.level.getEntities(client.player, box)) {
+               if (!bone(entity)) {
+                  Vec3 at = FavelaDisplays.renderedPosition(entity);
+                  if (at.distanceTo(centre) <= GUEST_RANGE) {
+                     Object[] row = new Object[]{entity.getType().toString(), describe(entity), at.y - centre.y, at.distanceTo(centre)};
+                     now.put(entity.getId(), String.format(Locale.ROOT, "%s %s  dy %+.2f  off %.2f", row));
+                  }
+               }
+            }
+         }
+      } catch (Exception e) {
+         return;
+      }
+
+      for(Integer id : now.keySet()) {
+         if (!guests.containsKey(id)) {
+            System.out.println("[FA Monolith] + " + id + "  " + (String)now.get(id));
+         }
+      }
+
+      Set<Integer> gone = new HashSet(guests.keySet());
+      gone.removeAll(now.keySet());
+
+      for(Integer id : gone) {
+         System.out.println("[FA Monolith] - " + id + "  " + (String)guests.get(id));
+      }
+
+      guests.clear();
+      guests.putAll(now);
+   }
+
    private static void onTick(Minecraft client) {
       if (FavelaPower.off()) {
          return;
@@ -164,6 +215,7 @@ public class FavelaMonolith {
 
       pillars.clear();
       pillars.addAll(found);
+
    }
 
    private static void render(LevelRenderContext context) {

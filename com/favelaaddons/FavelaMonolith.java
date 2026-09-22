@@ -13,14 +13,11 @@ import java.util.Locale;
 import java.util.Map;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Display;
@@ -38,14 +35,11 @@ public class FavelaMonolith {
    private static final int PLAIN_GLOW = 16777215;
    private static final int ATTACK_GLOW = 5636095;
    private static final int VITALITY_GLOW = 16733695;
-   private static final int RING_STEPS = 48;
-   private static final float RING_WIDTH = 2.0F;
    private static final List<Pillar> pillars = new ArrayList();
    private static final Map<String, EntityDataAccessor> keys = new HashMap();
 
    public static void registrar() {
       ClientTickEvents.END_CLIENT_TICK.register(FavelaMonolith::onTick);
-      LevelRenderEvents.BEFORE_GIZMOS.register(FavelaMonolith::render);
       HudElementRegistry.addLast(Identifier.parse("favelaaddons:monolith"), FavelaMonolith::hud);
    }
 
@@ -150,40 +144,11 @@ public class FavelaMonolith {
 
    private static String wording(int glow) {
       if (glow == ATTACK_GLOW) {
-         return "Attack";
+         return Config.monolithAttackText;
       } else if (glow == VITALITY_GLOW) {
-         return "Vitality";
+         return Config.monolithVitalityText;
       } else {
          return String.format(Locale.ROOT, "#%06X", new Object[]{glow});
-      }
-   }
-
-   private static void render(LevelRenderContext context) {
-      if (FavelaPower.off()) {
-         return;
-      }
-
-      if (Config.monolith && Config.monolithRing && !pillars.isEmpty()) {
-         try {
-            double radius = (double)Math.max(1, Config.monolithRadius);
-
-            for(Pillar pillar : pillars) {
-               int colour = (pillar.glow == PLAIN_GLOW ? Config.monolithColor : pillar.glow) | -16777216;
-               Vec3 previous = null;
-
-               for(int step = 0; step <= RING_STEPS; ++step) {
-                  double angle = (double)step / (double)RING_STEPS * Math.PI * (double)2.0F;
-                  Vec3 point = new Vec3(pillar.at.x + Math.cos(angle) * radius, pillar.at.y, pillar.at.z + Math.sin(angle) * radius);
-                  if (previous != null) {
-                     Gizmos.line(previous, point, colour, RING_WIDTH).setAlwaysOnTop();
-                  }
-
-                  previous = point;
-               }
-            }
-         } catch (Exception e) {
-         }
-
       }
    }
 

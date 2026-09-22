@@ -182,6 +182,10 @@ public class FavelaMod implements ClientModInitializer {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new AlertHudEditorScreen(Component.literal("HUD Editor"))));
             return 1;
          }));
+         root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("monolith").executes((context) -> {
+            ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal(FavelaMonolith.probe()));
+            return 1;
+         }));
          root.then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("crate").then(LiteralArgumentBuilder.<FabricClientCommandSource>literal("test").then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.word()).executes((context) -> {
             String reply = FavelaCrates.simulate(StringArgumentType.getString(context, "name"));
             ((FabricClientCommandSource)context.getSource()).getPlayer().sendSystemMessage(Component.literal(reply));

@@ -318,8 +318,9 @@ public class FavelaMonolith {
                      centres.add(at);
                   }
 
-                  Object[] row = new Object[]{describe(entity), biggestScale(entity), at.distanceTo(client.player.position()), at.y};
-                  out.append(String.format(Locale.ROOT, "  bone %-44s scale %7.3f  dist %5.1f  y %7.2f%n", row));
+                  Object[] row = new Object[]{describe(entity), biggestScale(entity), at.y};
+                  out.append(String.format(Locale.ROOT, "  bone %-44s scale %7.3f  y %7.2f%n", row));
+                  out.append("       ").append(fingerprint(entity)).append(System.lineSeparator());
                }
             }
 

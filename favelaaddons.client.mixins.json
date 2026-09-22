@@ -6,6 +6,7 @@
 		"FavelaAudioMixin",
 		"FavelaPrimedMixin",
 		"FavelaBossBarBarMixin",
+		"FavelaFocusMixin",
 		"FavelaBossBarAccessor"
 	],
 	"injectors": {

@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import java.util.Locale;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
@@ -155,6 +157,57 @@ public class FavelaVuln {
          } else {
             return red > green + RED_MARGIN ? RESISTANT : INVULNERABLE;
          }
+      }
+   }
+
+   private static String ownerNear(Minecraft client, Vec3 at) {
+      String best = "-";
+      double closest = Double.MAX_VALUE;
+
+      try {
+         for(Entity entity : client.level.entitiesForRendering()) {
+            String model = FavelaDisplays.modelId(entity);
+            if (model != null && model.startsWith("modelengine:")) {
+               double gap = FavelaDisplays.renderedPosition(entity).distanceTo(at);
+               if (gap < closest && gap <= 12.0) {
+                  closest = gap;
+                  best = model.substring("modelengine:".length());
+                  int slash = best.indexOf(47);
+                  if (slash > 0) {
+                     best = best.substring(0, slash);
+                  }
+               }
+            }
+         }
+      } catch (Exception e) {
+      }
+
+      return closest == Double.MAX_VALUE ? best : best + " @" + String.format(Locale.ROOT, "%.1f", new Object[]{closest});
+   }
+
+   public static String describeOwners() {
+      Minecraft client = Minecraft.getInstance();
+      if (client.player == null || client.level == null) {
+         return "(no level)";
+      } else {
+         double rangeSqr = (double)RANGE * (double)RANGE;
+         StringBuilder out = new StringBuilder();
+
+         for(Entity entity : client.level.entitiesForRendering()) {
+            if (entity instanceof Display.TextDisplay) {
+               Display.TextDisplay display = (Display.TextDisplay)entity;
+               if (display.distanceToSqr(client.player) <= rangeSqr) {
+                  int colour = fillColourOf(display);
+                  if (colour != NO_COLOUR) {
+                     Vec3 at = FavelaDisplays.renderedPosition(display);
+                     Object[] row = new Object[]{colour, stateName(classify(colour)), at.distanceTo(client.player.position()), at.y, ownerNear(client, at)};
+                     out.append(String.format(Locale.ROOT, "%n      #%06X %-12s dist %5.1f  y %7.2f  owner %s", row));
+                  }
+               }
+            }
+         }
+
+         return out.length() == 0 ? "(none)" : out.toString();
       }
    }
 

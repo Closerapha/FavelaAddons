@@ -48,6 +48,7 @@ public class FavelaSplits {
    private static final float DEAD_EDGE = 0.02F;
    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
    private static final List<Route> ROUTES = new ArrayList();
+   private static final int ROUTE_VERSION = 2;
    private static final List<Split> finished = new ArrayList();
    private static final List<Split> done = new ArrayList();
    private static final List<Step> steps = new ArrayList();
@@ -142,6 +143,10 @@ public class FavelaSplits {
                ROUTES.add(route);
             }
 
+            saveTable();
+         }
+
+         if (upgrade()) {
             saveTable();
          }
 
@@ -275,8 +280,69 @@ public class FavelaSplits {
       return route;
    }
 
+   private static void carry(Segment[] fresh, Segment[] kept) {
+      if (fresh != null && kept != null) {
+         for(int i = 0; i < fresh.length && i < kept.length; ++i) {
+            Segment a = fresh[i];
+            Segment b = kept[i];
+            if (a != null && b != null) {
+               if (b.name != null && !b.name.trim().isEmpty()) {
+                  a.name = b.name;
+               }
+
+               carry(a.children, b.children);
+            }
+         }
+
+      }
+   }
+
+   private static boolean upgrade() {
+      boolean touched = false;
+      Route[] fresh = defaultRoutes();
+
+      for(int i = 0; i < ROUTES.size(); ++i) {
+         Route mine = (Route)ROUTES.get(i);
+         if (mine.version < ROUTE_VERSION) {
+            for(Route stock : fresh) {
+               if (stock.dungeon != null && stock.dungeon.equals(mine.dungeon)) {
+                  carry(stock.segments, mine.segments);
+                  stock.version = ROUTE_VERSION;
+                  ROUTES.set(i, stock);
+                  touched = true;
+                  break;
+               }
+            }
+         }
+      }
+
+      for(Route stock : fresh) {
+         boolean known = false;
+
+         for(Object seen : ROUTES) {
+            if (stock.dungeon != null && stock.dungeon.equals(((Route)seen).dungeon)) {
+               known = true;
+               break;
+            }
+         }
+
+         if (!known) {
+            stock.version = ROUTE_VERSION;
+            ROUTES.add(stock);
+            touched = true;
+         }
+      }
+
+      return touched;
+   }
+
    private static Route[] defaultRoutes() {
-      return new Route[]{raphsCastle(), rustbornKingdom(), dawnOfCreation(), celestialsProvince(), seraphsDomain(), neoEden()};
+      Route[] made = new Route[]{raphsCastle(), rustbornKingdom(), dawnOfCreation(), celestialsProvince(), seraphsDomain(), neoEden()};
+      for(Route route : made) {
+         route.version = ROUTE_VERSION;
+      }
+
+      return made;
    }
 
    private static Route route(String dungeon, String portal, int portalStart, String[] specs) {
@@ -1523,6 +1589,7 @@ public class FavelaSplits {
    }
 
    private static class Route {
+      int version;
       String dungeon;
       String portal;
       String startChat;

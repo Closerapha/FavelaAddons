@@ -100,7 +100,7 @@ public class Config {
    public static String monolithVitalityText = "Vitality";
    public static boolean slotBinds = false;
    public static int slotBindKey = 0;
-   public static int slotBindColor = 5635925;
+   public static int slotBindColor = 9498256;
    public static float slotBindWidth = 1.0F;
    public static int slotBindProfile = 1;
    public static boolean slotBindLines = true;
@@ -273,7 +273,7 @@ public class Config {
                }
                slotBinds = data.slotBinds != null ? data.slotBinds : false;
                slotBindKey = data.slotBindKey;
-               slotBindColor = data.slotBindColor != 0 ? data.slotBindColor : 5635925;
+               slotBindColor = data.slotBindColor != 0 ? data.slotBindColor : 9498256;
                slotBindWidth = data.slotBindWidth != 0.0F ? data.slotBindWidth : 1.0F;
                slotBindProfile = data.slotBindProfile != 0 ? data.slotBindProfile : 1;
                slotBindLines = data.slotBindLines != null ? data.slotBindLines : true;
